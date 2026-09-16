@@ -1,0 +1,717 @@
+/* =========================================================
+   SOLEN — RESPONSIVE POLISH
+   Additive mobile/tablet layer.
+   Does not replace existing desktop styling.
+========================================================= */
+
+
+/* =========================================================
+   GLOBAL SAFETY
+========================================================= */
+
+html,
+body,
+#root {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+  /* ---------- GLOBAL ---------- */
+
+  .app {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* ---------- NAVIGATION ---------- */
+
+  .navbar {
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+
+  .nav-links {
+    gap: 18px;
+  }
+
+  .nav-links a {
+    font-size: 0.75rem;
+  }
+
+  .nav-cta {
+    padding: 10px 14px;
+    font-size: 0.68rem;
+  }
+
+
+  /* ---------- HERO ---------- */
+
+  .hero {
+    min-height: 680px;
+  }
+
+  .hero-content {
+    padding-left: 7vw;
+    padding-right: 7vw;
+  }
+
+
+  /* ---------- DESTINATIONS ---------- */
+
+  .destination-section {
+    padding-left: 6vw;
+    padding-right: 6vw;
+  }
+
+  .destination-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+
+  /* ---------- EXPERIENCES ---------- */
+
+  .experiences-section {
+    padding-left: 6vw;
+    padding-right: 6vw;
+  }
+
+  .experience-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+
+  /* ---------- FEELING ---------- */
+
+  .feeling-section {
+    min-height: auto;
+  }
+
+  .feeling-content {
+    padding-left: 6vw;
+    padding-right: 6vw;
+  }
+
+
+  /* ---------- PLANNER CTA ---------- */
+
+  .planner-section {
+    padding-left: 6vw;
+    padding-right: 6vw;
+  }
+
+
+  /* ---------- PLANNER ---------- */
+
+  .planner-page {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .planner-container {
+    width: min(100% - 40px, 900px);
+  }
+
+  .planner-step {
+    width: 100%;
+  }
+
+  .planner-destinations,
+  .planner-durations,
+  .planner-travel-styles,
+  .planner-interests {
+    width: 100%;
+  }
+
+  .planner-destination-option,
+  .planner-duration-option,
+  .planner-style-option,
+  .planner-interest-option {
+    min-width: 0;
+  }
+
+
+  /* ---------- JOURNEY RESULT ---------- */
+
+  .journey-results {
+    width: min(100% - 40px, 1100px);
+  }
+
+  .journey-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .journey-day {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+
+  .journey-actions {
+    gap: 12px;
+  }
+
+  .journey-action-left {
+    gap: 10px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  /* ---------- GLOBAL ---------- */
+
+  body {
+    min-width: 0;
+  }
+
+  /* ---------- NAVIGATION ---------- */
+
+  .navbar {
+    position: relative;
+    padding: 18px 6vw;
+    min-height: 70px;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .nav-cta {
+    padding: 9px 13px;
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
+  }
+
+  .brand {
+    flex-shrink: 0;
+  }
+
+
+  /* ---------- HERO ---------- */
+
+  .hero {
+    min-height: 620px;
+  }
+
+  .hero-content {
+    padding: 90px 6vw 70px;
+  }
+
+  .hero h1 {
+    font-size: clamp(3rem, 14vw, 5rem);
+    line-height: 0.92;
+  }
+
+  .hero-wordmark {
+    font-size: 1.55rem;
+  }
+
+
+  /* ---------- DESTINATIONS ---------- */
+
+  .destination-section {
+    padding: 80px 6vw;
+  }
+
+  .destination-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .destination-card {
+    min-height: 390px;
+  }
+
+
+  /* ---------- EXPERIENCES ---------- */
+
+  .experiences-section {
+    padding: 80px 6vw;
+  }
+
+  .experience-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+
+  /* ---------- FEELING ---------- */
+
+  .feeling-section {
+    min-height: auto;
+    padding: 85px 6vw;
+  }
+
+  .feeling-content {
+    width: 100%;
+    padding: 0;
+  }
+
+  .feeling-list button {
+    width: 100%;
+    font-size: 20px;
+    padding: 17px 0;
+  }
+
+
+  /* ---------- PLANNER CTA ---------- */
+
+  .planner-section {
+    padding: 80px 6vw;
+  }
+
+
+  /* ---------- PLANNER HERO ---------- */
+
+  .planner-hero {
+    padding-left: 6vw;
+    padding-right: 6vw;
+  }
+
+  .planner-hero h1 {
+    font-size: clamp(2.8rem, 12vw, 4.5rem);
+    line-height: 0.95;
+  }
+
+  .planner-hero p {
+    max-width: 100%;
+  }
+
+
+  /* ---------- PLANNER CONTAINER ---------- */
+
+  .planner-container {
+    width: calc(100% - 32px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .planner-step {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .planner-step h2 {
+    font-size: clamp(2rem, 9vw, 3rem);
+    line-height: 1;
+  }
+
+  .planner-step-copy {
+    max-width: 100%;
+  }
+
+
+  /* ---------- PLANNER OPTIONS ---------- */
+
+  .planner-destinations {
+    grid-template-columns: 1fr;
+  }
+
+  .planner-destination-option {
+    min-height: 58px;
+  }
+
+  .planner-durations {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .planner-duration-option {
+    min-height: 100px;
+  }
+
+  .planner-travel-styles {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .planner-interests {
+    grid-template-columns: 1fr 1fr;
+  }
+
+
+  /* ---------- BUDGET ---------- */
+
+  .planner-budget {
+    width: 100%;
+  }
+
+  .planner-budget-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+
+  .planner-currency {
+    width: 100%;
+  }
+
+  .planner-currency select {
+    width: 100%;
+  }
+
+
+  /* ---------- CONTINUE / CRAFT BUTTONS ---------- */
+
+  .planner-continue,
+  .planner-craft-button {
+    width: 100%;
+    min-height: 54px;
+  }
+
+
+  /* ---------- CRAFTING SCREEN ---------- */
+
+  .planner-crafting {
+    min-height: 75vh;
+    padding: 60px 8vw;
+    text-align: center;
+  }
+
+  .planner-crafting h1 {
+    font-size: clamp(2.5rem, 11vw, 4rem);
+    line-height: 0.95;
+  }
+
+
+  /* =======================================================
+     JOURNEY RESULTS
+  ======================================================= */
+
+  .journey-results {
+    width: calc(100% - 32px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .journey-header h1 {
+    font-size: clamp(3rem, 14vw, 5rem);
+    line-height: 0.9;
+  }
+
+  .journey-header > p {
+    font-size: 0.8rem;
+  }
+
+
+  /* ---------- JOURNEY HERO IMAGE ---------- */
+
+  .journey-hero-image {
+    width: 100%;
+    height: auto;
+    min-height: 260px;
+    object-fit: cover;
+  }
+
+
+  /* ---------- OVERVIEW ---------- */
+
+  .journey-overview {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .journey-overview-item {
+    padding: 20px 0;
+  }
+
+
+  /* ---------- EXPERIENCE ---------- */
+
+  .journey-experience {
+    padding: 24px 20px;
+  }
+
+
+  /* ---------- PREFERENCES ---------- */
+
+  .journey-preferences {
+    width: 100%;
+    margin-bottom: 50px;
+    padding: 24px 18px;
+  }
+
+  .journey-preferences strong {
+    font-size: 1.5rem;
+  }
+
+
+  /* ---------- COST ---------- */
+
+  .journey-total-estimate {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+
+
+  /* ---------- ITINERARY ---------- */
+
+  .journey-itinerary {
+    width: 100%;
+  }
+
+  .journey-days {
+    width: 100%;
+  }
+
+  .journey-day {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 24px 0;
+  }
+
+  .journey-day-number {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .journey-day-content {
+    min-width: 0;
+  }
+
+  .journey-day-topline {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .journey-day-content h3 {
+    font-size: 1.8rem;
+    line-height: 1.05;
+  }
+
+  .journey-day-content ul {
+    padding-left: 18px;
+  }
+
+
+  /* ---------- ROUTE ---------- */
+
+  .journey-map-section {
+    display: block;
+    width: 100%;
+    margin-top: 75px;
+    padding-top: 55px;
+  }
+
+  .journey-map-section h2 {
+    font-size: clamp(2.2rem, 10vw, 3.4rem);
+    line-height: 1;
+  }
+
+  .journey-route {
+    width: 100%;
+    padding-left: 0;
+  }
+
+  .journey-route-line {
+    left: 19px;
+  }
+
+  .journey-route-stop {
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    gap: 12px;
+    width: 100%;
+    padding: 18px 0;
+  }
+
+  .journey-route-marker {
+    width: 38px;
+    height: 38px;
+    font-size: 0.6rem;
+  }
+
+  .journey-route-copy {
+    min-width: 0;
+  }
+
+  .journey-route-copy strong {
+    font-size: 1.35rem;
+    line-height: 1;
+  }
+
+  .journey-route-copy small {
+    display: block;
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .journey-route-heart {
+    font-size: 1rem;
+  }
+
+
+  /* ---------- ACTIONS ---------- */
+
+  .journey-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+    margin-top: 45px;
+  }
+
+  .journey-action-left {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .journey-save-button,
+  .journey-secondary-button,
+  .journey-start-over {
+    width: 100%;
+    min-height: 50px;
+  }
+
+  .journey-action-message {
+    text-align: center;
+    padding: 5px 0;
+  }
+
+
+  /* ---------- SAVED JOURNEY ---------- */
+
+  .planner-resume {
+    width: 100%;
+  }
+
+  .planner-clear-saved {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 480px) {
+
+  /* ---------- NAV ---------- */
+
+  .navbar {
+    padding: 16px 5vw;
+  }
+
+  .hero-content {
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+
+  .nav-cta {
+    font-size: 0.58rem;
+    padding: 8px 10px;
+  }
+
+
+  /* ---------- DESTINATIONS ---------- */
+
+  .destination-section,
+  .experiences-section,
+  .feeling-section,
+  .planner-section {
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+
+
+  /* ---------- PLANNER ---------- */
+
+  .planner-container,
+  .journey-results {
+    width: calc(100% - 24px);
+  }
+
+  .planner-durations,
+  .planner-travel-styles,
+  .planner-interests {
+    grid-template-columns: 1fr;
+  }
+
+  .planner-duration-option {
+    min-height: 70px;
+  }
+
+
+  /* ---------- ROUTE ---------- */
+
+  .journey-route-stop {
+    grid-template-columns: 38px minmax(0, 1fr);
+  }
+
+  .journey-route-heart {
+    display: none;
+  }
+
+
+  /* ---------- GLOBE ---------- */
+
+  .solen-globe-section {
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+
+  .solen-globe-heading-copy h2 {
+    font-size: 3rem;
+  }
+
+  .solen-globe {
+    width: 84vw;
+  }
+
+  .solen-globe-orbit {
+    width: 90vw;
+  }
+
+  .solen-globe-destination-list button {
+    grid-template-columns: 28px 1fr auto;
+    font-size: 1rem;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media (max-width: 360px) {
+
+  .nav-cta {
+    display: none;
+  }
+
+  .hero h1 {
+    font-size: 2.9rem;
+  }
+
+  .planner-step h2 {
+    font-size: 2rem;
+  }
+
+  .journey-header h1 {
+    font-size: 2.9rem;
+  }
+
+  .journey-route-copy strong {
+    font-size: 1.2rem;
+  }
+}

@@ -1,0 +1,68 @@
+// Destination markers rendered on the interactive SOLEN globe (Scope doc §8).
+// x/y are percentage positions on the globe surface, depth fakes 3D rotation.
+
+export const globeDestinations = [
+  {
+    name: 'Kyoto',
+    slug: 'kyoto',
+    region: 'Japan',
+    description: 'Ancient streets, quiet gardens & ritual',
+    x: 72,
+    y: 30,
+    depth: 1,
+  },
+  {
+    name: 'Bali',
+    slug: 'bali',
+    region: 'Indonesia',
+    description: 'Slow days, hidden temples & tropical calm',
+    x: 76,
+    y: 63,
+    depth: 1,
+  },
+  {
+    name: 'Maldives',
+    slug: 'maldives',
+    region: 'Indian Ocean',
+    description: 'Barefoot luxury & water without end',
+    x: 55,
+    y: 67,
+    depth: 1,
+  },
+  {
+    name: 'Morocco',
+    slug: 'morocco',
+    region: 'North Africa',
+    description: 'Colour, spice, architecture & discovery',
+    x: 27,
+    y: 48,
+    depth: 1,
+  },
+  {
+    name: 'Amalfi Coast',
+    slug: 'amalfi-coast',
+    region: 'Italy',
+    description: 'Cliffside mornings & Mediterranean evenings',
+    x: 39,
+    y: 39,
+    depth: 1,
+  },
+  {
+    name: 'Paris',
+    slug: 'paris',
+    region: 'France',
+    description: 'Art, romance & timeless city energy',
+    x: 34,
+    y: 29,
+    depth: 1,
+  },
+  {
+    name: 'Iceland',
+    slug: 'iceland',
+    region: 'North Atlantic',
+    description: 'Wild landscapes & endless horizons',
+    x: 26,
+    y: 15,
+    depth: 1,
+  },
+];

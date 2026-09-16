@@ -1,0 +1,38 @@
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import TripPlanner from './pages/planner/TripPlanner.jsx';
+
+import HomePage from './pages/home/HomePage.jsx';
+import DestinationDetail from './pages/destination/DestinationDetail.jsx';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
+function AppRoutes() {
+  return (
+    <>
+      <ScrollToTop />
+
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/destinations/:slug"
+          element={<DestinationDetail />}
+        />
+        <Route
+  path="/planner"
+  element={<TripPlanner />}
+/>
+      </Routes>
+    </>
+  );
+}
+
+export default AppRoutes;
