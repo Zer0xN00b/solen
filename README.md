@@ -13,14 +13,26 @@ profiles, a budget engine, and weather-aware itineraries.
 ## Quick start
 
 ```bash
-cd frontend
-npm install
-npm run dev        # local dev server
-npm run build      # production build
-npm run preview    # preview the production build
+npm install          # installs frontend + backend (npm workspaces)
+npm run dev          # runs BOTH servers: frontend :5173, API :4000
 ```
 
-**Stack:** React 19 · Vite · React Router 7 · plain CSS · localStorage.
+Other commands:
+
+```bash
+npm run dev:frontend   # Vite dev server only
+npm run dev:backend    # Express API only
+npm run build          # production build of the frontend
+npm run lint           # ESLint for frontend + backend
+npm run format         # Prettier across the repo
+```
+
+**Stack:** React 19 · Vite · React Router 7 · plain CSS (frontend) —
+Express 5 · SQLite (better-sqlite3) (backend, scaffolded).
+Node **20+** required (see `.nvmrc`).
+
+The frontend dev server proxies `/api/*` to the backend on port 4000,
+so frontend code can call relative `/api` URLs with no CORS setup.
 
 ---
 
@@ -30,11 +42,13 @@ npm run preview    # preview the production build
 solen/
 ├── README.md                        ← you are here
 ├── SOLEN_COMPLETE_SCOPE.md          ← complete scope, status & roadmap
-├── .gitignore
+├── package.json                     ← npm workspaces (frontend + backend)
+├── .nvmrc / .editorconfig           ← Node 20 + shared editor conventions
+├── .prettierrc.json / .gitignore
 │
 ├── frontend/                        ← React + Vite application (~85–90% done)
 │   ├── index.html
-│   ├── vite.config.js
+│   ├── vite.config.js               ← dev server + /api → :4000 proxy
 │   ├── public/
 │   │   └── assets/
 │   │       ├── brand/               ← logo
@@ -47,14 +61,8 @@ solen/
 │       │
 │       ├── pages/                   ← one folder per route
 │       │   ├── home/                ← /                (LOCKED design)
-│       │   │   ├── HomePage.jsx
-│       │   │   └── HomePage.css
 │       │   ├── destination/         ← /destinations/:slug (LOCKED design)
-│       │   │   ├── DestinationDetail.jsx
-│       │   │   └── DestinationDetail.css
-│       │   └── planner/             ← /planner
-│       │       ├── TripPlanner.jsx  ← UI + state only
-│       │       └── TripPlanner.css
+│       │   └── planner/             ← /planner (UI + state only)
 │       │
 │       ├── components/              ← reusable UI
 │       │   ├── globe/               ← custom CSS globe (SolenGlobe)
@@ -76,8 +84,16 @@ solen/
 │           ├── index.css
 │           └── responsive.css
 │
-└── backend/                         ← planned, not yet started
-    └── README.md                    ← proposed architecture (scope §43–58)
+└── backend/                         ← Express + SQLite (scaffolded, Phase 2+)
+    ├── .env.example
+    ├── data/                        ← local SQLite file (git-ignored)
+    └── src/
+        ├── server.js / app.js       ← entry point + app assembly
+        ├── config/env.js            ← environment access
+        ├── routes/                  ← /api routes (health check today)
+        ├── controllers/  services/  models/   ← built in Phases 2–4
+        ├── middleware/              ← notFound + errorHandler
+        └── database/connection.js   ← lazy SQLite connection
 ```
 
 ### Why `data/` and `engine/` are separate
@@ -85,7 +101,7 @@ solen/
 Everything in `engine/` is **pure functions** and everything in `data/` is
 **plain data** — neither touches React or the DOM. This is deliberate:
 
-- The scope's highest-priority work (scope §50, *Dynamic itinerary engine*)
+- The scope's highest-priority work (scope §50, _Dynamic itinerary engine_)
   is moving this exact logic to the backend. Clean modules make that a
   lift-and-shift instead of a rewrite.
 - The planner UI (`pages/planner/TripPlanner.jsx`) is now presentation-only,
@@ -98,11 +114,11 @@ Everything in `engine/` is **pure functions** and everything in `data/` is
 
 ## Routes
 
-| Route                  | Component           | Notes                          |
-| ---------------------- | ------------------- | ------------------------------ |
-| `/`                    | `HomePage`          | Design LOCKED (scope §5)       |
-| `/destinations/:slug`  | `DestinationDetail` | Design LOCKED (scope §7)       |
-| `/planner`             | `TripPlanner`       | Accepts `?destination=`, `?experience=`, `?feeling=` |
+| Route                 | Component           | Notes                                                |
+| --------------------- | ------------------- | ---------------------------------------------------- |
+| `/`                   | `HomePage`          | Design LOCKED (scope §5)                             |
+| `/destinations/:slug` | `DestinationDetail` | Design LOCKED (scope §7)                             |
+| `/planner`            | `TripPlanner`       | Accepts `?destination=`, `?experience=`, `?feeling=` |
 
 ---
 

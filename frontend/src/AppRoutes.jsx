@@ -22,14 +22,8 @@ function AppRoutes() {
 
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route
-          path="/destinations/:slug"
-          element={<DestinationDetail />}
-        />
-        <Route
-  path="/planner"
-  element={<TripPlanner />}
-/>
+        <Route path="/destinations/:slug" element={<DestinationDetail />} />
+        <Route path="/planner" element={<TripPlanner />} />
       </Routes>
     </>
   );

@@ -82,18 +82,8 @@
   overflow: hidden;
 
   background:
-    radial-gradient(
-      circle at 32% 25%,
-      rgba(255, 255, 255, 0.48),
-      transparent 24%
-    ),
-    radial-gradient(
-      circle at 38% 35%,
-      #6b4561 0%,
-      #4a1942 38%,
-      #241c2d 78%,
-      #17131b 100%
-    );
+    radial-gradient(circle at 32% 25%, rgba(255, 255, 255, 0.48), transparent 24%),
+    radial-gradient(circle at 38% 35%, #6b4561 0%, #4a1942 38%, #241c2d 78%, #17131b 100%);
 
   box-shadow:
     inset -55px -35px 90px rgba(0, 0, 0, 0.32),
@@ -110,13 +100,12 @@
 
   border-radius: 50%;
 
-  background:
-    radial-gradient(
-      circle at 35% 30%,
-      transparent 0 26%,
-      rgba(255, 255, 255, 0.05) 27% 28%,
-      transparent 29%
-    );
+  background: radial-gradient(
+    circle at 35% 30%,
+    transparent 0 26%,
+    rgba(255, 255, 255, 0.05) 27% 28%,
+    transparent 29%
+  );
 
   pointer-events: none;
 }
@@ -145,11 +134,7 @@
 
   border-radius: 50%;
 
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.16),
-    transparent 68%
-  );
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 68%);
 
   filter: blur(4px);
 }
@@ -166,11 +151,7 @@
 
   border-radius: 50%;
 
-  background: linear-gradient(
-    125deg,
-    transparent,
-    rgba(0, 0, 0, 0.18)
-  );
+  background: linear-gradient(125deg, transparent, rgba(0, 0, 0, 0.18));
 
   pointer-events: none;
 }
@@ -186,25 +167,23 @@
 }
 
 .globe-grid-horizontal {
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent 10%,
-      rgba(250, 247, 241, 0.8) 10.2%,
-      transparent 10.5%
-    );
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 10%,
+    rgba(250, 247, 241, 0.8) 10.2%,
+    transparent 10.5%
+  );
 }
 
 .globe-grid-vertical {
-  background:
-    repeating-linear-gradient(
-      to right,
-      transparent 0,
-      transparent 14%,
-      rgba(250, 247, 241, 0.7) 14.2%,
-      transparent 14.5%
-    );
+  background: repeating-linear-gradient(
+    to right,
+    transparent 0,
+    transparent 14%,
+    rgba(250, 247, 241, 0.7) 14.2%,
+    transparent 14.5%
+  );
 
   transform: scaleX(0.55);
 }

@@ -1,0 +1,6 @@
+# Never auto-format these
+node_modules/
+dist/
+package-lock.json
+SOLEN_COMPLETE_SCOPE.md
+backend/data/

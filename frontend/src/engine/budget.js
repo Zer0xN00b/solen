@@ -33,22 +33,31 @@ export const interestCostMultipliers = {
   Photography: 0.02,
 };
 
-export function getJourneyDailyEstimate(baseBudget, destination, travelStyle, selectedInterests, selectedExperience, isPremiumPlus, dayIndex) {
+export function getJourneyDailyEstimate(
+  baseBudget,
+  destination,
+  travelStyle,
+  selectedInterests,
+  selectedExperience,
+  isPremiumPlus,
+  dayIndex,
+) {
   const destinationFactor = destinationCostMultipliers[destination] || 1;
   const styleFactor = styleCostMultipliers[travelStyle] || 1;
   const interestFactor = (selectedInterests || []).reduce(
     (total, interest) => total + (interestCostMultipliers[interest] || 0),
-    0
+    0,
   );
-  const experienceFactor = selectedExperience === 'wild'
-    ? 0.08
-    : selectedExperience === 'table'
-      ? 0.1
-      : selectedExperience === 'soul'
-        ? 0.05
-        : selectedExperience === 'escape'
-          ? 0.08
-          : 0;
+  const experienceFactor =
+    selectedExperience === 'wild'
+      ? 0.08
+      : selectedExperience === 'table'
+        ? 0.1
+        : selectedExperience === 'soul'
+          ? 0.05
+          : selectedExperience === 'escape'
+            ? 0.08
+            : 0;
   const dayRhythm = [0.9, 1, 1.12, 0.96, 1.08, 1.15, 0.94][dayIndex % 7];
   const premiumFactor = isPremiumPlus ? 1.35 : 1;
 
@@ -58,7 +67,6 @@ export function getJourneyDailyEstimate(baseBudget, destination, travelStyle, se
       styleFactor *
       (1 + interestFactor + experienceFactor) *
       dayRhythm *
-      premiumFactor
+      premiumFactor,
   );
 }
-

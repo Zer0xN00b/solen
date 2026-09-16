@@ -1,0 +1,5 @@
+# Ignore local database files, keep the folder in git
+*.db
+*.db-journal
+*.sqlite
+!.gitignore

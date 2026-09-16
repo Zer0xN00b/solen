@@ -1,9 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import './TripPlanner.css';
-import { destinations, durations, travelStyles, interests, currencies, experiences } from '../../data/plannerOptions.js';
+import {
+  destinations,
+  durations,
+  travelStyles,
+  interests,
+  currencies,
+  experiences,
+} from '../../data/plannerOptions.js';
 import { itineraryData } from '../../data/destinations.js';
-import { createSlug, getTravelerProfile, getPersonalizedSummary } from '../../engine/personalization.js';
+import {
+  createSlug,
+  getTravelerProfile,
+  getPersonalizedSummary,
+} from '../../engine/personalization.js';
 import { getJourneyDailyEstimate } from '../../engine/budget.js';
 import { getWeatherAwareNote, buildJourneyDays } from '../../engine/journey.js';
 
@@ -41,7 +52,7 @@ function TripPlanner() {
 
     if (destinationParam) {
       const matchingDestination = destinations.find(
-        (item) => createSlug(item) === destinationParam
+        (item) => createSlug(item) === destinationParam,
       );
 
       if (matchingDestination) {
@@ -68,9 +79,7 @@ function TripPlanner() {
     }
   }, [searchParams]);
 
-  const selectedCurrency = currencies.find(
-    (item) => item.code === currency
-  );
+  const selectedCurrency = currencies.find((item) => item.code === currency);
 
   const handleBudgetChange = (value) => {
     const numericValue = Number(value);
@@ -88,7 +97,7 @@ function TripPlanner() {
     setSelectedInterests((current) =>
       current.includes(interest)
         ? current.filter((item) => item !== interest)
-        : [...current, interest]
+        : [...current, interest],
     );
   };
 
@@ -104,7 +113,7 @@ function TripPlanner() {
       travelStyle,
       selectedInterests,
       selectedExperience,
-      feelingParam
+      feelingParam,
     );
 
     const personalizedSummary = getPersonalizedSummary(
@@ -112,7 +121,7 @@ function TripPlanner() {
       travelStyle,
       selectedInterests,
       selectedExperience,
-      feelingParam
+      feelingParam,
     );
 
     const personalizedDays = buildJourneyDays(
@@ -124,7 +133,7 @@ function TripPlanner() {
       budget,
       selectedExperience,
       isPremiumPlus,
-      data.weather
+      data.weather,
     );
 
     return {
@@ -138,15 +147,9 @@ function TripPlanner() {
       feeling: feelingParam || '',
       travelerProfile,
       personalizedSummary,
-      experience: selectedExperience
-        ? experiences[selectedExperience]
-        : null,
-      accommodation: isPremiumPlus
-        ? data.accommodation.premium
-        : data.accommodation.standard,
-      dining: isPremiumPlus
-        ? data.dining.premium
-        : data.dining.standard,
+      experience: selectedExperience ? experiences[selectedExperience] : null,
+      accommodation: isPremiumPlus ? data.accommodation.premium : data.accommodation.standard,
+      dining: isPremiumPlus ? data.dining.premium : data.dining.standard,
       weather: data.weather,
       weatherNote: getWeatherAwareNote(data.weather, personalizedDays[0]),
       image: data.image,
@@ -155,12 +158,7 @@ function TripPlanner() {
   };
 
   const handleCraftJourney = () => {
-    if (
-      !destination ||
-      !duration ||
-      !travelStyle ||
-      selectedInterests.length === 0
-    ) {
+    if (!destination || !duration || !travelStyle || selectedInterests.length === 0) {
       return;
     }
 
@@ -184,7 +182,7 @@ function TripPlanner() {
         journey,
         isPremiumPlus,
         favoriteDays,
-      })
+      }),
     );
 
     setHasSavedJourney(true);
@@ -214,18 +212,12 @@ function TripPlanner() {
         setSelectedExperience(
           parsed.journey.experience
             ? Object.keys(experiences).find(
-                (key) =>
-                  experiences[key].name ===
-                  parsed.journey.experience.name
+                (key) => experiences[key].name === parsed.journey.experience.name,
               ) || ''
-            : ''
+            : '',
         );
         setIsPremiumPlus(Boolean(parsed.isPremiumPlus));
-        setFavoriteDays(
-          Array.isArray(parsed.favoriteDays)
-            ? parsed.favoriteDays
-            : []
-        );
+        setFavoriteDays(Array.isArray(parsed.favoriteDays) ? parsed.favoriteDays : []);
         setStep(6);
         setSaveMessage('Welcome back to your journey ✓');
 
@@ -245,17 +237,14 @@ function TripPlanner() {
     const summary = [
       `SOLEN — ${journey.destination}`,
       `${journey.duration} days · ${journey.travelStyle}`,
-      journey.experience
-        ? `Experience: ${journey.experience.name}`
-        : '',
+      journey.experience ? `Experience: ${journey.experience.name}` : '',
       `Stay: ${journey.accommodation}`,
       `Dining: ${journey.dining}`,
       `Weather: ${journey.weather}`,
       '',
       'Itinerary:',
       ...journey.days.map(
-        (day, index) =>
-          `Day ${index + 1}: ${day.title} — ${day.activities.join(', ')}`
+        (day, index) => `Day ${index + 1}: ${day.title} — ${day.activities.join(', ')}`,
       ),
     ]
       .filter(Boolean)
@@ -281,15 +270,16 @@ function TripPlanner() {
     setFavoriteDays((current) =>
       current.includes(dayIndex)
         ? current.filter((item) => item !== dayIndex)
-        : [...current, dayIndex]
+        : [...current, dayIndex],
     );
   };
 
   const getTotalTripEstimate = () => {
     if (!journey) return 0;
 
-    return journey.days.reduce((total, day) => total + day.budget, 0) *
-      (selectedCurrency?.rate || 1);
+    return (
+      journey.days.reduce((total, day) => total + day.budget, 0) * (selectedCurrency?.rate || 1)
+    );
   };
 
   const getBudgetBreakdown = () => {
@@ -310,13 +300,11 @@ function TripPlanner() {
     const shareText = [
       `SOLEN — ${journey.destination}`,
       `${journey.duration} days · ${journey.travelStyle}`,
-      journey.experience
-        ? `Experience: ${journey.experience.name}`
-        : '',
+      journey.experience ? `Experience: ${journey.experience.name}` : '',
       `Stay: ${journey.accommodation}`,
       `Dining: ${journey.dining}`,
       `Estimated trip spend: ${selectedCurrency?.symbol || '₹'}${Math.round(
-        getTotalTripEstimate()
+        getTotalTripEstimate(),
       ).toLocaleString()}`,
     ]
       .filter(Boolean)
@@ -386,12 +374,14 @@ function TripPlanner() {
         const usedTitles = new Set(
           currentJourney.days
             .filter((_, index) => index !== dayIndex)
-            .map((day) => day.title.replace(' · A Deeper Day', ''))
+            .map((day) => day.title.replace(' · A Deeper Day', '')),
         );
 
-        const replacementSource = sourceDays.find(
-          (day) => !usedTitles.has(day.title) && day.title !== currentJourney.days[dayIndex].title
-        ) || sourceDays[(dayIndex + 1) % sourceDays.length];
+        const replacementSource =
+          sourceDays.find(
+            (day) =>
+              !usedTitles.has(day.title) && day.title !== currentJourney.days[dayIndex].title,
+          ) || sourceDays[(dayIndex + 1) % sourceDays.length];
 
         const replacement = {
           ...replacementSource,
@@ -406,16 +396,13 @@ function TripPlanner() {
           currentJourney.interests,
           currentJourney.experience
             ? Object.keys(experiences).find(
-                (key) => experiences[key].name === currentJourney.experience.name
+                (key) => experiences[key].name === currentJourney.experience.name,
               )
             : '',
           currentJourney.isPremiumPlus,
-          dayIndex
+          dayIndex,
         );
-        replacement.weatherNote = getWeatherAwareNote(
-          currentJourney.weather,
-          replacement
-        );
+        replacement.weatherNote = getWeatherAwareNote(currentJourney.weather, replacement);
 
         const nextDays = [...currentJourney.days];
         nextDays[dayIndex] = replacement;
@@ -423,9 +410,7 @@ function TripPlanner() {
         return { ...currentJourney, days: nextDays };
       });
 
-      setFavoriteDays((current) =>
-        current.filter((index) => index !== dayIndex)
-      );
+      setFavoriteDays((current) => current.filter((index) => index !== dayIndex));
       setRegeneratingDay(null);
     }, 650);
   };
@@ -456,12 +441,9 @@ function TripPlanner() {
   };
 
   const formatBudget = (amount) => {
-    const convertedAmount =
-      amount * (selectedCurrency?.rate || 1);
+    const convertedAmount = amount * (selectedCurrency?.rate || 1);
 
-    return `${selectedCurrency?.symbol || '₹'}${Math.round(
-      convertedAmount
-    ).toLocaleString()}`;
+    return `${selectedCurrency?.symbol || '₹'}${Math.round(convertedAmount).toLocaleString()}`;
   };
 
   if (isCrafting) {
@@ -472,10 +454,7 @@ function TripPlanner() {
 
           <h1>Crafting your journey...</h1>
 
-          <p>
-            We&apos;re weaving together places, experiences,
-            stays, and moments just for you.
-          </p>
+          <p>We&apos;re weaving together places, experiences, stays, and moments just for you.</p>
 
           <div className="planner-loader">
             <span></span>
@@ -491,15 +470,13 @@ function TripPlanner() {
     return (
       <main className="planner-page">
         <section className="journey-results">
-
           <div className="journey-header">
             <p className="planner-eyebrow">YOUR JOURNEY</p>
 
             <h1>{journey.destination}</h1>
 
             <p>
-              {journey.duration} days ·{' '}
-              {journey.travelStyle}
+              {journey.duration} days · {journey.travelStyle}
             </p>
 
             {journey.experience && (
@@ -519,14 +496,9 @@ function TripPlanner() {
             )}
           </div>
 
-          <img
-            className="journey-hero-image"
-            src={journey.image}
-            alt={journey.destination}
-          />
+          <img className="journey-hero-image" src={journey.image} alt={journey.destination} />
 
           <div className="journey-overview">
-
             <div className="journey-overview-item">
               <span>STAY</span>
               <strong>{journey.accommodation}</strong>
@@ -541,7 +513,6 @@ function TripPlanner() {
               <span>WEATHER</span>
               <strong>{journey.weather}</strong>
             </div>
-
           </div>
 
           <div className="journey-weather-note">
@@ -599,9 +570,8 @@ function TripPlanner() {
               <div>
                 <strong>Your journey, elevated.</strong>
                 <p>
-                  Your premium budget unlocks upgraded
-                  accommodation, elevated dining, and a
-                  more indulgent daily experience.
+                  Your premium budget unlocks upgraded accommodation, elevated dining, and a more
+                  indulgent daily experience.
                 </p>
               </div>
             </div>
@@ -616,25 +586,18 @@ function TripPlanner() {
 
             <div className="journey-days">
               {journey.days.map((day, index) => {
-                const convertedDailyBudget =
-                  day.budget * (selectedCurrency?.rate || 1);
+                const convertedDailyBudget = day.budget * (selectedCurrency?.rate || 1);
 
                 return (
                   <article
-                    className={`journey-day ${
-                      favoriteDays.includes(index) ? 'is-favorite' : ''
-                    }`}
+                    className={`journey-day ${favoriteDays.includes(index) ? 'is-favorite' : ''}`}
                     key={`${day.title}-${index}`}
                   >
-                    <div className="journey-day-number">
-                      {String(index + 1).padStart(2, '0')}
-                    </div>
+                    <div className="journey-day-number">{String(index + 1).padStart(2, '0')}</div>
 
                     <div className="journey-day-content">
                       <div className="journey-day-topline">
-                        <p className="journey-day-label">
-                          DAY {index + 1}
-                        </p>
+                        <p className="journey-day-label">DAY {index + 1}</p>
 
                         <button
                           type="button"
@@ -672,9 +635,7 @@ function TripPlanner() {
 
                         <strong>
                           {selectedCurrency?.symbol || '₹'}
-                          {Math.round(
-                            convertedDailyBudget
-                          ).toLocaleString()}
+                          {Math.round(convertedDailyBudget).toLocaleString()}
                         </strong>
 
                         <button
@@ -711,9 +672,7 @@ function TripPlanner() {
                 return (
                   <button
                     type="button"
-                    className={`journey-route-stop ${
-                      isFavorite ? 'is-favorite' : ''
-                    }`}
+                    className={`journey-route-stop ${isFavorite ? 'is-favorite' : ''}`}
                     key={`${day.title}-route-${index}`}
                     onClick={() => toggleFavoriteDay(index)}
                     aria-label={`Day ${index + 1}: ${day.title}. ${
@@ -738,18 +697,12 @@ function TripPlanner() {
               })}
             </div>
 
-            <p className="journey-route-note">
-              Tap a day to save it as a favourite.
-            </p>
+            <p className="journey-route-note">Tap a day to save it as a favourite.</p>
           </section>
 
           <div className="journey-actions">
             <div className="journey-action-left">
-              <button
-                type="button"
-                className="journey-save-button"
-                onClick={handleSaveJourney}
-              >
+              <button type="button" className="journey-save-button" onClick={handleSaveJourney}>
                 Save This Journey →
               </button>
 
@@ -800,15 +753,10 @@ function TripPlanner() {
               )}
             </div>
 
-            <button
-              type="button"
-              className="journey-start-over"
-              onClick={handleStartOver}
-            >
+            <button type="button" className="journey-start-over" onClick={handleStartOver}>
               Start Over
             </button>
           </div>
-
         </section>
       </main>
     );
@@ -821,14 +769,10 @@ function TripPlanner() {
 
         <h1>Where are you dreaming of going?</h1>
 
-        <p>
-          Tell us a little about the journey you imagine.
-          We&apos;ll take care of the details.
-        </p>
+        <p>Tell us a little about the journey you imagine. We&apos;ll take care of the details.</p>
       </section>
 
       <section className="planner-container">
-
         <div className="planner-progress">
           <div className="planner-progress-label">
             <span>YOUR JOURNEY</span>
@@ -837,20 +781,13 @@ function TripPlanner() {
 
           <div className="planner-progress-track">
             {[1, 2, 3, 4, 5].map((item) => (
-              <span
-                key={item}
-                className={item <= step ? 'active' : ''}
-              />
+              <span key={item} className={item <= step ? 'active' : ''} />
             ))}
           </div>
 
           {hasSavedJourney && (
             <>
-              <button
-                type="button"
-                className="planner-resume"
-                onClick={handleResumeJourney}
-              >
+              <button type="button" className="planner-resume" onClick={handleResumeJourney}>
                 Resume saved journey →
               </button>
 
@@ -871,9 +808,7 @@ function TripPlanner() {
 
             <h2>Choose your destination</h2>
 
-            <p className="planner-step-copy">
-              Where are you dreaming of going?
-            </p>
+            <p className="planner-step-copy">Where are you dreaming of going?</p>
 
             <div className="planner-destinations">
               {destinations.map((place) => {
@@ -883,9 +818,7 @@ function TripPlanner() {
                   <button
                     key={place}
                     type="button"
-                    className={`planner-destination-option ${
-                      isSelected ? 'selected' : ''
-                    }`}
+                    className={`planner-destination-option ${isSelected ? 'selected' : ''}`}
                     onClick={() => setDestination(place)}
                   >
                     <span>{place}</span>
@@ -912,9 +845,7 @@ function TripPlanner() {
 
             <h2>How long will you disappear?</h2>
 
-            <p className="planner-step-copy">
-              Choose the rhythm that feels right.
-            </p>
+            <p className="planner-step-copy">Choose the rhythm that feels right.</p>
 
             <div className="planner-durations">
               {durations.map((option) => {
@@ -924,30 +855,18 @@ function TripPlanner() {
                   <button
                     key={option}
                     type="button"
-                    className={`planner-duration-option ${
-                      isSelected ? 'selected' : ''
-                    }`}
+                    className={`planner-duration-option ${isSelected ? 'selected' : ''}`}
                     onClick={() => setDuration(option)}
                   >
                     <span>{option}</span>
-                    <small>
-                      {option === '14+'
-                        ? 'days'
-                        : option === '1'
-                        ? 'day'
-                        : 'days'}
-                    </small>
+                    <small>{option === '14+' ? 'days' : option === '1' ? 'day' : 'days'}</small>
                   </button>
                 );
               })}
             </div>
 
             <div className="planner-navigation">
-              <button
-                type="button"
-                className="planner-back"
-                onClick={() => setStep(1)}
-              >
+              <button type="button" className="planner-back" onClick={() => setStep(1)}>
                 ← Back
               </button>
 
@@ -969,9 +888,7 @@ function TripPlanner() {
 
             <h2>What should your journey feel like?</h2>
 
-            <p className="planner-step-copy">
-              Choose the travel style that feels most like you.
-            </p>
+            <p className="planner-step-copy">Choose the travel style that feels most like you.</p>
 
             <div className="planner-durations">
               {travelStyles.map((option) => {
@@ -981,9 +898,7 @@ function TripPlanner() {
                   <button
                     key={option}
                     type="button"
-                    className={`planner-duration-option ${
-                      isSelected ? 'selected' : ''
-                    }`}
+                    className={`planner-duration-option ${isSelected ? 'selected' : ''}`}
                     onClick={() => setTravelStyle(option)}
                   >
                     {option}
@@ -993,11 +908,7 @@ function TripPlanner() {
             </div>
 
             <div className="planner-navigation">
-              <button
-                type="button"
-                className="planner-back"
-                onClick={() => setStep(2)}
-              >
+              <button type="button" className="planner-back" onClick={() => setStep(2)}>
                 ← Back
               </button>
 
@@ -1019,39 +930,28 @@ function TripPlanner() {
 
             <h2>What are you drawn to?</h2>
 
-            <p className="planner-step-copy">
-              Choose as many interests as you like.
-            </p>
+            <p className="planner-step-copy">Choose as many interests as you like.</p>
 
             <div className="planner-interests">
               {interests.map((interest) => {
-                const isSelected =
-                  selectedInterests.includes(interest);
+                const isSelected = selectedInterests.includes(interest);
 
                 return (
                   <button
                     key={interest}
                     type="button"
-                    className={`planner-interest-option ${
-                      isSelected ? 'selected' : ''
-                    }`}
+                    className={`planner-interest-option ${isSelected ? 'selected' : ''}`}
                     onClick={() => toggleInterest(interest)}
                   >
                     <span>{interest}</span>
-                    <span>
-                      {isSelected ? '✓' : '+'}
-                    </span>
+                    <span>{isSelected ? '✓' : '+'}</span>
                   </button>
                 );
               })}
             </div>
 
             <div className="planner-navigation">
-              <button
-                type="button"
-                className="planner-back"
-                onClick={() => setStep(3)}
-              >
+              <button type="button" className="planner-back" onClick={() => setStep(3)}>
                 ← Back
               </button>
 
@@ -1074,15 +974,12 @@ function TripPlanner() {
             <h2>What would you like to spend?</h2>
 
             <p className="planner-step-copy">
-              Set the budget that feels comfortable for your
-              journey.
+              Set the budget that feels comfortable for your journey.
             </p>
 
             <div className="planner-budget-top">
               <strong>
-                {isPremiumPlus
-                  ? `${selectedCurrency.symbol}6,000+`
-                  : formatBudget(budget)}
+                {isPremiumPlus ? `${selectedCurrency.symbol}6,000+` : formatBudget(budget)}
               </strong>
 
               <span>{currency}</span>
@@ -1094,27 +991,19 @@ function TripPlanner() {
               max="6000"
               step="500"
               value={budget}
-              onChange={(event) =>
-                handleBudgetChange(event.target.value)
-              }
+              onChange={(event) => handleBudgetChange(event.target.value)}
               className="planner-budget-slider"
             />
 
             <div className="planner-budget-labels">
-              <span>
-                {selectedCurrency.symbol}1,000
-              </span>
+              <span>{selectedCurrency.symbol}1,000</span>
 
-              <span>
-                {selectedCurrency.symbol}6,000+
-              </span>
+              <span>{selectedCurrency.symbol}6,000+</span>
             </div>
 
             <button
               type="button"
-              className={`planner-premium-option ${
-                isPremiumPlus ? 'selected' : ''
-              }`}
+              className={`planner-premium-option ${isPremiumPlus ? 'selected' : ''}`}
               onClick={() => {
                 setIsPremiumPlus(true);
                 setBudget(6000);
@@ -1125,28 +1014,19 @@ function TripPlanner() {
                 <span>Go all out</span>
               </div>
 
-              <span>
-                {isPremiumPlus ? '✓' : '+'}
-              </span>
+              <span>{isPremiumPlus ? '✓' : '+'}</span>
             </button>
 
             <div className="planner-currency">
-              <label htmlFor="planner-currency">
-                Currency
-              </label>
+              <label htmlFor="planner-currency">Currency</label>
 
               <select
                 id="planner-currency"
                 value={currency}
-                onChange={(event) =>
-                  setCurrency(event.target.value)
-                }
+                onChange={(event) => setCurrency(event.target.value)}
               >
                 {currencies.map((item) => (
-                  <option
-                    key={item.code}
-                    value={item.code}
-                  >
+                  <option key={item.code} value={item.code}>
                     {item.code} — {item.name}
                   </option>
                 ))}
@@ -1154,25 +1034,16 @@ function TripPlanner() {
             </div>
 
             <div className="planner-navigation">
-              <button
-                type="button"
-                className="planner-back"
-                onClick={() => setStep(4)}
-              >
+              <button type="button" className="planner-back" onClick={() => setStep(4)}>
                 ← Back
               </button>
 
-              <button
-                type="button"
-                className="planner-continue"
-                onClick={handleCraftJourney}
-              >
+              <button type="button" className="planner-continue" onClick={handleCraftJourney}>
                 Craft My Journey →
               </button>
             </div>
           </div>
         )}
-
       </section>
     </main>
   );

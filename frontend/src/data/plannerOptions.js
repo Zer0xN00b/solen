@@ -63,4 +63,3 @@ export const experiences = {
     description: 'Disappear somewhere beautiful and let the world wait.',
   },
 };
-

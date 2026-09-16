@@ -8,7 +8,6 @@ function HomePage() {
 
   return (
     <div className="app">
-
       {/* NAVIGATION */}
       <header className="navbar">
         <a href="#" className="brand">
@@ -29,23 +28,15 @@ function HomePage() {
 
       {/* HERO */}
       <main>
-
         <section className="hero">
-
           <div className="hero-image">
-            <img
-              src="/assets/hero/hero-main.png"
-              alt="A cinematic travel destination"
-            />
+            <img src="/assets/hero/hero-main.png" alt="A cinematic travel destination" />
           </div>
 
           <div className="hero-overlay"></div>
 
           <div className="hero-content">
-
-            <p className="hero-eyebrow">
-              LUXURY TRAVEL CONCIERGE
-            </p>
+            <p className="hero-eyebrow">LUXURY TRAVEL CONCIERGE</p>
 
             <h1>
               Some journeys
@@ -56,8 +47,8 @@ function HomePage() {
             </h1>
 
             <p className="hero-description">
-              Curated journeys, beautiful places and experiences
-              designed around the way you want to travel.
+              Curated journeys, beautiful places and experiences designed around the way you want to
+              travel.
             </p>
 
             <div className="hero-buttons">
@@ -69,26 +60,22 @@ function HomePage() {
                 Explore Destinations
               </a>
             </div>
-
           </div>
 
           <div className="scroll-indicator">
             <span>Scroll to discover</span>
             <div></div>
           </div>
-
         </section>
 
         {/* INTRO */}
         <section className="intro" id="about">
-
           <div className="section-label">
             <span>01</span>
             THE SOLEN WAY
           </div>
 
           <div className="intro-content">
-
             <h2>
               Travel should feel
               <br />
@@ -96,27 +83,19 @@ function HomePage() {
             </h2>
 
             <div className="intro-copy">
-              <p>
-                Not a checklist. Not a package. Not another
-                crowded itinerary.
-              </p>
+              <p>Not a checklist. Not a package. Not another crowded itinerary.</p>
 
               <p>
-                SOLEN creates thoughtful journeys around your
-                curiosity, your pace and the way you want to feel
-                when you arrive.
+                SOLEN creates thoughtful journeys around your curiosity, your pace and the way you
+                want to feel when you arrive.
               </p>
             </div>
-
           </div>
-
         </section>
 
         {/* DESTINATIONS */}
         <section className="destinations-section" id="destinations">
-
           <div className="section-heading">
-
             <div className="section-label">
               <span>02</span>
               DESTINATIONS
@@ -129,41 +108,26 @@ function HomePage() {
                 <em>drawn to?</em>
               </h2>
 
-              <p>
-                Places chosen for the stories they have to tell.
-              </p>
+              <p>Places chosen for the stories they have to tell.</p>
             </div>
-
           </div>
 
           <div className="destination-grid">
-
             {destinations.map((destination, index) => (
               <article
                 className={`destination-card destination-${index + 1}`}
                 key={destination.name}
                 onClick={() =>
-                  navigate(
-                    `/destinations/${destination.name
-                      .toLowerCase()
-                      .replace(/\s+/g, '-')}`
-                  )
+                  navigate(`/destinations/${destination.name.toLowerCase().replace(/\s+/g, '-')}`)
                 }
               >
-
                 <div className="destination-image">
-                  <img
-                    src={destination.image}
-                    alt={destination.name}
-                  />
+                  <img src={destination.image} alt={destination.name} />
                 </div>
 
                 <div className="destination-info">
-
                   <div>
-                    <span className="destination-number">
-                      0{index + 1}
-                    </span>
+                    <span className="destination-number">0{index + 1}</span>
 
                     <h3>{destination.name}</h3>
 
@@ -171,23 +135,17 @@ function HomePage() {
                   </div>
 
                   <span className="destination-arrow">↗</span>
-
                 </div>
-
               </article>
             ))}
-
           </div>
-
         </section>
 
         {/* FEELING */}
         <section className="feeling-section">
-
           <div className="feeling-background"></div>
 
           <div className="feeling-content">
-
             <div className="section-label light-label">
               <span>03</span>
               START WITH A FEELING
@@ -199,40 +157,26 @@ function HomePage() {
               to <em>feel?</em>
             </h2>
 
-            <p>
-              Sometimes the destination comes later.
-              Start with the feeling.
-            </p>
+            <p>Sometimes the destination comes later. Start with the feeling.</p>
 
             <div className="feeling-list">
-
               {feelings.map((feeling) => (
                 <button
                   key={feeling.key}
                   type="button"
-                  onClick={() =>
-                    navigate(`/planner?feeling=${feeling.key}`)
-                  }
+                  onClick={() => navigate(`/planner?feeling=${feeling.key}`)}
                 >
                   {feeling.label}
                   <span>→</span>
                 </button>
               ))}
-
             </div>
-
           </div>
-
         </section>
 
         {/* EXPERIENCES */}
-        <section
-          className="experiences-section"
-          id="experiences"
-        >
-
+        <section className="experiences-section" id="experiences">
           <div className="section-heading experience-heading">
-
             <div className="section-label">
               <span>04</span>
               EXPERIENCES
@@ -245,68 +189,39 @@ function HomePage() {
                 <em>the itinerary.</em>
               </h2>
 
-              <p>
-                The experiences you'll remember long after
-                you've returned home.
-              </p>
-
+              <p>The experiences you'll remember long after you've returned home.</p>
             </div>
-
           </div>
 
           <div className="experience-grid">
-
             {experiences.map((experience) => (
-              <article
-                className="experience-card"
-                key={experience.title}
-              >
-
+              <article className="experience-card" key={experience.title}>
                 <div className="experience-image">
-                  <img
-                    src={experience.image}
-                    alt={experience.title}
-                  />
+                  <img src={experience.image} alt={experience.title} />
                 </div>
 
                 <div className="experience-info">
-
                   <h3>{experience.title}</h3>
 
                   <p>{experience.description}</p>
 
                   <button
                     type="button"
-                    onClick={() =>
-                      navigate(
-                        `/planner?experience=${experience.key}`
-                      )
-                    }
+                    onClick={() => navigate(`/planner?experience=${experience.key}`)}
                   >
                     Discover <span>→</span>
                   </button>
-
                 </div>
-
               </article>
             ))}
-
           </div>
-
         </section>
         <SolenGlobe />
 
         {/* PLANNER CTA */}
-        <section
-          className="planner-section"
-          id="planner"
-        >
-
+        <section className="planner-section" id="planner">
           <div className="planner-inner">
-
-            <p className="planner-eyebrow">
-              YOUR JOURNEY AWAITS
-            </p>
+            <p className="planner-eyebrow">YOUR JOURNEY AWAITS</p>
 
             <h2>
               Your next story
@@ -315,31 +230,21 @@ function HomePage() {
             </h2>
 
             <p>
-              Tell us where you're dreaming of going,
-              how you want to travel and what matters to you.
+              Tell us where you're dreaming of going, how you want to travel and what matters to
+              you.
             </p>
 
-            <a
-              href="/planner"
-              className="button planner-button"
-            >
+            <a href="/planner" className="button planner-button">
               Build My Journey <span>→</span>
             </a>
-
           </div>
-
         </section>
-
       </main>
 
       {/* FOOTER */}
       <footer className="footer">
-
         <div className="footer-brand">
-          <img
-            src="/assets/brand/solen-logo.png"
-            alt="SOLEN"
-          />
+          <img src="/assets/brand/solen-logo.png" alt="SOLEN" />
 
           <p>
             Travel thoughtfully.
@@ -359,9 +264,7 @@ function HomePage() {
           <span>© 2026 SOLEN</span>
           <span>Luxury Travel Concierge</span>
         </div>
-
       </footer>
-
     </div>
   );
 }

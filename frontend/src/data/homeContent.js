@@ -96,4 +96,3 @@ export const feelings = [
     key: 'discover-culture',
   },
 ];
-

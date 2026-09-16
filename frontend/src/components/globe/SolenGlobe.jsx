@@ -5,9 +5,7 @@ import { globeDestinations } from '../../data/globeDestinations.js';
 
 function SolenGlobe() {
   const navigate = useNavigate();
-  const [activeDestination, setActiveDestination] = useState(
-    globeDestinations[0]
-  );
+  const [activeDestination, setActiveDestination] = useState(globeDestinations[0]);
 
   const handleDestinationClick = (destination) => {
     navigate(`/destinations/${destination.slug}`);
@@ -28,10 +26,7 @@ function SolenGlobe() {
             <em>beautifully open.</em>
           </h2>
 
-          <p>
-            Seven places to begin. Countless ways to make
-            the journey your own.
-          </p>
+          <p>Seven places to begin. Countless ways to make the journey your own.</p>
         </div>
       </div>
 
@@ -48,29 +43,20 @@ function SolenGlobe() {
 
             <div className="solen-globe-destinations">
               {globeDestinations.map((destination) => {
-                const isActive =
-                  activeDestination.name === destination.name;
+                const isActive = activeDestination.name === destination.name;
 
                 return (
                   <button
                     key={destination.name}
                     type="button"
-                    className={`solen-globe-point ${
-                      isActive ? 'active' : ''
-                    }`}
+                    className={`solen-globe-point ${isActive ? 'active' : ''}`}
                     style={{
                       left: `${destination.x}%`,
                       top: `${destination.y}%`,
                     }}
-                    onMouseEnter={() =>
-                      setActiveDestination(destination)
-                    }
-                    onFocus={() =>
-                      setActiveDestination(destination)
-                    }
-                    onClick={() =>
-                      handleDestinationClick(destination)
-                    }
+                    onMouseEnter={() => setActiveDestination(destination)}
+                    onFocus={() => setActiveDestination(destination)}
+                    onClick={() => handleDestinationClick(destination)}
                     aria-label={`Explore ${destination.name}`}
                   >
                     <span className="solen-globe-point-core"></span>
@@ -83,33 +69,22 @@ function SolenGlobe() {
         </div>
 
         <div className="solen-globe-info">
-          <p className="solen-globe-info-label">
-            CURRENTLY EXPLORING
-          </p>
+          <p className="solen-globe-info-label">CURRENTLY EXPLORING</p>
 
           <span className="solen-globe-number">
-            0
-            {globeDestinations.findIndex(
-              (item) => item.name === activeDestination.name
-            ) + 1}
+            0{globeDestinations.findIndex((item) => item.name === activeDestination.name) + 1}
           </span>
 
           <h3>{activeDestination.name}</h3>
 
-          <p className="solen-globe-region">
-            {activeDestination.region}
-          </p>
+          <p className="solen-globe-region">{activeDestination.region}</p>
 
-          <p className="solen-globe-description">
-            {activeDestination.description}
-          </p>
+          <p className="solen-globe-description">{activeDestination.description}</p>
 
           <button
             type="button"
             className="solen-globe-explore"
-            onClick={() =>
-              handleDestinationClick(activeDestination)
-            }
+            onClick={() => handleDestinationClick(activeDestination)}
           >
             Explore {activeDestination.name}
             <span>↗</span>
@@ -120,24 +95,12 @@ function SolenGlobe() {
               <button
                 key={destination.name}
                 type="button"
-                className={
-                  activeDestination.name === destination.name
-                    ? 'active'
-                    : ''
-                }
-                onMouseEnter={() =>
-                  setActiveDestination(destination)
-                }
-                onFocus={() =>
-                  setActiveDestination(destination)
-                }
-                onClick={() =>
-                  handleDestinationClick(destination)
-                }
+                className={activeDestination.name === destination.name ? 'active' : ''}
+                onMouseEnter={() => setActiveDestination(destination)}
+                onFocus={() => setActiveDestination(destination)}
+                onClick={() => handleDestinationClick(destination)}
               >
-                <span>
-                  {String(index + 1).padStart(2, '0')}
-                </span>
+                <span>{String(index + 1).padStart(2, '0')}</span>
 
                 {destination.name}
 

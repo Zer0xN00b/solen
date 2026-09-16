@@ -29,8 +29,7 @@ export const destinationEditorial = {
     name: 'Amalfi Coast',
     region: 'ITALY · EUROPE',
     image: '/assets/destinations/amalfi.png',
-    description:
-      'Cliffside villages, blue waters, and effortless Italian beauty.',
+    description: 'Cliffside villages, blue waters, and effortless Italian beauty.',
 
     introTitle: 'La dolce vita, above the sea.',
     intro:
@@ -52,8 +51,7 @@ export const destinationEditorial = {
     name: 'Bali',
     region: 'INDONESIA · ASIA',
     image: '/assets/destinations/bali.png',
-    description:
-      'Tropical stillness, lush landscapes, and soulful escapes.',
+    description: 'Tropical stillness, lush landscapes, and soulful escapes.',
 
     introTitle: 'Come for the island. Stay for the feeling.',
     intro:
@@ -75,8 +73,7 @@ export const destinationEditorial = {
     name: 'Iceland',
     region: 'ICELAND · EUROPE',
     image: '/assets/destinations/iceland.png',
-    description:
-      'Wild landscapes, endless skies, and the beauty of the unknown.',
+    description: 'Wild landscapes, endless skies, and the beauty of the unknown.',
 
     introTitle: 'For those drawn to the wild.',
     intro:
@@ -98,8 +95,7 @@ export const destinationEditorial = {
     name: 'Maldives',
     region: 'MALDIVES · ISLANDS',
     image: '/assets/destinations/maldives.png',
-    description:
-      'Turquoise waters, secluded shores, and complete escape.',
+    description: 'Turquoise waters, secluded shores, and complete escape.',
 
     introTitle: 'Nothing to do. Everything to feel.',
     intro:
@@ -121,8 +117,7 @@ export const destinationEditorial = {
     name: 'Morocco',
     region: 'MOROCCO · AFRICA',
     image: '/assets/destinations/morocco.png',
-    description:
-      'Ancient medinas, warm desert light, and unforgettable colour.',
+    description: 'Ancient medinas, warm desert light, and unforgettable colour.',
 
     introTitle: 'Where every corner tells a story.',
     intro:
@@ -144,8 +139,7 @@ export const destinationEditorial = {
     name: 'Paris',
     region: 'FRANCE · EUROPE',
     image: '/assets/destinations/paris.png',
-    description:
-      'Art, intimacy, timeless streets, and the pleasure of lingering.',
+    description: 'Art, intimacy, timeless streets, and the pleasure of lingering.',
 
     introTitle: 'For the pleasure of getting lost.',
     intro:

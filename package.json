@@ -1,0 +1,26 @@
+{
+  "name": "solen",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SOLEN — luxury travel concierge & personalized trip planner (monorepo)",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n frontend,backend -c cyan,magenta \"npm:dev -w frontend\" \"npm:dev -w backend\"",
+    "dev:frontend": "npm run dev -w frontend",
+    "dev:backend": "npm run dev -w backend",
+    "build": "npm run build -w frontend",
+    "lint": "npm run lint -w frontend && npm run lint -w backend",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "prettier": "^3.5.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

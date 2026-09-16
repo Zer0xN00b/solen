@@ -9,10 +9,18 @@ function Navbar() {
         <img src="/assets/solen-logo.png" alt="SOLEN Logo" />
       </div>
       <ul className="nav-links">
-        <li><a href="#destinations">Destinations</a></li>
-        <li><a href="#experiences">Experiences</a></li>
-        <li><a href="#emotions">Plan a Journey</a></li>
-        <li><a href="#planner">About</a></li>
+        <li>
+          <a href="#destinations">Destinations</a>
+        </li>
+        <li>
+          <a href="#experiences">Experiences</a>
+        </li>
+        <li>
+          <a href="#emotions">Plan a Journey</a>
+        </li>
+        <li>
+          <a href="#planner">About</a>
+        </li>
       </ul>
       <button className="nav-cta">Start Planning</button>
     </nav>

@@ -4,7 +4,6 @@
    Does not replace existing desktop styling.
 ========================================================= */
 
-
 /* =========================================================
    GLOBAL SAFETY
 ========================================================= */
@@ -20,13 +19,11 @@ img {
   max-width: 100%;
 }
 
-
 /* =========================================================
    TABLET
 ========================================================= */
 
 @media (max-width: 900px) {
-
   /* ---------- GLOBAL ---------- */
 
   .app {
@@ -54,7 +51,6 @@ img {
     font-size: 0.68rem;
   }
 
-
   /* ---------- HERO ---------- */
 
   .hero {
@@ -65,7 +61,6 @@ img {
     padding-left: 7vw;
     padding-right: 7vw;
   }
-
 
   /* ---------- DESTINATIONS ---------- */
 
@@ -79,7 +74,6 @@ img {
     gap: 18px;
   }
 
-
   /* ---------- EXPERIENCES ---------- */
 
   .experiences-section {
@@ -92,7 +86,6 @@ img {
     gap: 18px;
   }
 
-
   /* ---------- FEELING ---------- */
 
   .feeling-section {
@@ -104,14 +97,12 @@ img {
     padding-right: 6vw;
   }
 
-
   /* ---------- PLANNER CTA ---------- */
 
   .planner-section {
     padding-left: 6vw;
     padding-right: 6vw;
   }
-
 
   /* ---------- PLANNER ---------- */
 
@@ -142,7 +133,6 @@ img {
     min-width: 0;
   }
 
-
   /* ---------- JOURNEY RESULT ---------- */
 
   .journey-results {
@@ -166,13 +156,11 @@ img {
   }
 }
 
-
 /* =========================================================
    MOBILE
 ========================================================= */
 
 @media (max-width: 700px) {
-
   /* ---------- GLOBAL ---------- */
 
   body {
@@ -201,7 +189,6 @@ img {
     flex-shrink: 0;
   }
 
-
   /* ---------- HERO ---------- */
 
   .hero {
@@ -221,7 +208,6 @@ img {
     font-size: 1.55rem;
   }
 
-
   /* ---------- DESTINATIONS ---------- */
 
   .destination-section {
@@ -237,7 +223,6 @@ img {
     min-height: 390px;
   }
 
-
   /* ---------- EXPERIENCES ---------- */
 
   .experiences-section {
@@ -248,7 +233,6 @@ img {
     grid-template-columns: 1fr;
     gap: 18px;
   }
-
 
   /* ---------- FEELING ---------- */
 
@@ -268,13 +252,11 @@ img {
     padding: 17px 0;
   }
 
-
   /* ---------- PLANNER CTA ---------- */
 
   .planner-section {
     padding: 80px 6vw;
   }
-
 
   /* ---------- PLANNER HERO ---------- */
 
@@ -291,7 +273,6 @@ img {
   .planner-hero p {
     max-width: 100%;
   }
-
 
   /* ---------- PLANNER CONTAINER ---------- */
 
@@ -314,7 +295,6 @@ img {
   .planner-step-copy {
     max-width: 100%;
   }
-
 
   /* ---------- PLANNER OPTIONS ---------- */
 
@@ -342,7 +322,6 @@ img {
     grid-template-columns: 1fr 1fr;
   }
 
-
   /* ---------- BUDGET ---------- */
 
   .planner-budget {
@@ -363,7 +342,6 @@ img {
     width: 100%;
   }
 
-
   /* ---------- CONTINUE / CRAFT BUTTONS ---------- */
 
   .planner-continue,
@@ -371,7 +349,6 @@ img {
     width: 100%;
     min-height: 54px;
   }
-
 
   /* ---------- CRAFTING SCREEN ---------- */
 
@@ -385,7 +362,6 @@ img {
     font-size: clamp(2.5rem, 11vw, 4rem);
     line-height: 0.95;
   }
-
 
   /* =======================================================
      JOURNEY RESULTS
@@ -406,7 +382,6 @@ img {
     font-size: 0.8rem;
   }
 
-
   /* ---------- JOURNEY HERO IMAGE ---------- */
 
   .journey-hero-image {
@@ -415,7 +390,6 @@ img {
     min-height: 260px;
     object-fit: cover;
   }
-
 
   /* ---------- OVERVIEW ---------- */
 
@@ -428,13 +402,11 @@ img {
     padding: 20px 0;
   }
 
-
   /* ---------- EXPERIENCE ---------- */
 
   .journey-experience {
     padding: 24px 20px;
   }
-
 
   /* ---------- PREFERENCES ---------- */
 
@@ -448,14 +420,12 @@ img {
     font-size: 1.5rem;
   }
 
-
   /* ---------- COST ---------- */
 
   .journey-total-estimate {
     flex-wrap: wrap;
     gap: 8px 12px;
   }
-
 
   /* ---------- ITINERARY ---------- */
 
@@ -499,7 +469,6 @@ img {
   .journey-day-content ul {
     padding-left: 18px;
   }
-
 
   /* ---------- ROUTE ---------- */
 
@@ -556,7 +525,6 @@ img {
     font-size: 1rem;
   }
 
-
   /* ---------- ACTIONS ---------- */
 
   .journey-actions {
@@ -586,7 +554,6 @@ img {
     padding: 5px 0;
   }
 
-
   /* ---------- SAVED JOURNEY ---------- */
 
   .planner-resume {
@@ -599,13 +566,11 @@ img {
   }
 }
 
-
 /* =========================================================
    SMALL PHONES
 ========================================================= */
 
 @media (max-width: 480px) {
-
   /* ---------- NAV ---------- */
 
   .navbar {
@@ -622,7 +587,6 @@ img {
     padding: 8px 10px;
   }
 
-
   /* ---------- DESTINATIONS ---------- */
 
   .destination-section,
@@ -632,7 +596,6 @@ img {
     padding-left: 5vw;
     padding-right: 5vw;
   }
-
 
   /* ---------- PLANNER ---------- */
 
@@ -651,7 +614,6 @@ img {
     min-height: 70px;
   }
 
-
   /* ---------- ROUTE ---------- */
 
   .journey-route-stop {
@@ -661,7 +623,6 @@ img {
   .journey-route-heart {
     display: none;
   }
-
 
   /* ---------- GLOBE ---------- */
 
@@ -688,13 +649,11 @@ img {
   }
 }
 
-
 /* =========================================================
    VERY SMALL PHONES
 ========================================================= */
 
 @media (max-width: 360px) {
-
   .nav-cta {
     display: none;
   }

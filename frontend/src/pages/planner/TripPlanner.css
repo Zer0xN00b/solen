@@ -5,8 +5,8 @@
 
 .planner-page {
   min-height: 100vh;
-  background: #F3EBDD;
-  color: #241C1D;
+  background: #f3ebdd;
+  color: #241c1d;
   padding: 150px 7vw 100px;
 }
 
@@ -27,7 +27,7 @@
   font-size: 0.72rem;
   letter-spacing: 0.22em;
   font-weight: 600;
-  color: #4A1942;
+  color: #4a1942;
   margin-bottom: 24px;
   text-transform: uppercase;
 }
@@ -63,7 +63,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
-  color: #4A1942;
+  color: #4a1942;
   font-size: 0.62rem;
   letter-spacing: 0.16em;
 }
@@ -81,11 +81,13 @@
 .planner-progress-track span {
   height: 3px;
   background: rgba(74, 25, 66, 0.12);
-  transition: background 250ms ease, transform 250ms ease;
+  transition:
+    background 250ms ease,
+    transform 250ms ease;
 }
 
 .planner-progress-track span.active {
-  background: #4A1942;
+  background: #4a1942;
   transform: scaleY(1.4);
 }
 
@@ -93,7 +95,7 @@
   margin-top: 18px;
   border: none;
   background: transparent;
-  color: #4A1942;
+  color: #4a1942;
   padding: 0;
   font-size: 0.72rem;
   letter-spacing: 0.08em;
@@ -107,14 +109,14 @@
 
 /* STEPS */
 .planner-step {
-  background: #FAF7F1;
+  background: #faf7f1;
   padding: 60px 55px 65px;
 }
 
 .planner-step-number {
   font-size: 0.68rem;
   letter-spacing: 0.2em;
-  color: #8FA8B8;
+  color: #8fa8b8;
   margin: 0 0 20px;
 }
 
@@ -145,13 +147,16 @@
   border: none;
   border-bottom: 1px solid rgba(74, 25, 66, 0.15);
   background: transparent;
-  color: #241C1D;
+  color: #241c1d;
   padding: 24px 8px;
   display: grid;
   grid-template-columns: 1fr 30px;
   align-items: center;
   text-align: left;
-  transition: background 250ms ease, padding 250ms ease, color 250ms ease;
+  transition:
+    background 250ms ease,
+    padding 250ms ease,
+    color 250ms ease;
 }
 
 .planner-destination-option span:first-child {
@@ -167,8 +172,8 @@
 
 .planner-destination-option:hover,
 .planner-destination-option.selected {
-  background: #4A1942;
-  color: #FAF7F1;
+  background: #4a1942;
+  color: #faf7f1;
   padding-left: 20px;
   padding-right: 20px;
 }
@@ -186,13 +191,16 @@
   border: none;
   border-bottom: 1px solid rgba(74, 25, 66, 0.15);
   background: transparent;
-  color: #241C1D;
+  color: #241c1d;
   padding: 22px 8px;
   display: grid;
   grid-template-columns: 1fr 70px;
   align-items: center;
   text-align: left;
-  transition: background 250ms ease, padding 250ms ease, color 250ms ease;
+  transition:
+    background 250ms ease,
+    padding 250ms ease,
+    color 250ms ease;
 }
 
 .planner-duration-option span:first-child {
@@ -206,20 +214,20 @@
   font-size: 0.68rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #8FA8B8;
+  color: #8fa8b8;
 }
 
 .planner-duration-option:hover,
 .planner-duration-option.selected {
-  background: #4A1942;
-  color: #FAF7F1;
+  background: #4a1942;
+  color: #faf7f1;
   padding-left: 20px;
   padding-right: 20px;
 }
 
 .planner-duration-option:hover small,
 .planner-duration-option.selected small {
-  color: #8FA8B8;
+  color: #8fa8b8;
 }
 
 /* NAVIGATION */
@@ -234,11 +242,13 @@
 .planner-back {
   border: none;
   background: transparent;
-  color: #4A1942;
+  color: #4a1942;
   padding: 17px 0;
   font-size: 0.75rem;
   letter-spacing: 0.08em;
-  transition: transform 250ms ease, opacity 250ms ease;
+  transition:
+    transform 250ms ease,
+    opacity 250ms ease;
 }
 
 .planner-back:hover {
@@ -248,17 +258,19 @@
 
 .planner-continue {
   border: none;
-  background: #4A1942;
-  color: #FAF7F1;
+  background: #4a1942;
+  color: #faf7f1;
   padding: 17px 28px;
   font-size: 0.75rem;
   letter-spacing: 0.08em;
-  transition: transform 250ms ease, background 250ms ease;
+  transition:
+    transform 250ms ease,
+    background 250ms ease;
 }
 
 .planner-continue:hover:not(:disabled) {
   transform: translateX(4px);
-  background: #241C1D;
+  background: #241c1d;
 }
 
 .planner-continue:disabled {
@@ -279,13 +291,16 @@
   border-right: 1px solid rgba(74, 25, 66, 0.15);
   border-bottom: 1px solid rgba(74, 25, 66, 0.15);
   background: transparent;
-  color: #241C1D;
+  color: #241c1d;
   padding: 22px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   text-align: left;
-  transition: background 250ms ease, color 250ms ease, padding 250ms ease;
+  transition:
+    background 250ms ease,
+    color 250ms ease,
+    padding 250ms ease;
 }
 
 .planner-interest-option span:first-child {
@@ -294,19 +309,19 @@
 }
 
 .planner-interest-option span:last-child {
-  color: #8FA8B8;
+  color: #8fa8b8;
   font-size: 1rem;
 }
 
 .planner-interest-option:hover,
 .planner-interest-option.selected {
-  background: #4A1942;
-  color: #FAF7F1;
+  background: #4a1942;
+  color: #faf7f1;
   padding-left: 26px;
 }
 
 .planner-interest-option.selected span:last-child {
-  color: #FAF7F1;
+  color: #faf7f1;
 }
 
 /* BUDGET */
@@ -324,18 +339,18 @@
   font-size: clamp(3.2rem, 7vw, 5.5rem);
   line-height: 0.9;
   font-weight: 500;
-  color: #4A1942;
+  color: #4a1942;
 }
 
 .planner-budget-top span {
   font-size: 0.68rem;
   letter-spacing: 0.14em;
-  color: #8FA8B8;
+  color: #8fa8b8;
 }
 
 .planner-budget-slider {
   width: 100%;
-  accent-color: #4A1942;
+  accent-color: #4a1942;
   cursor: pointer;
 }
 
@@ -357,9 +372,13 @@
   align-items: center;
   border: 1px solid rgba(74, 25, 66, 0.2);
   background: transparent;
-  color: #241C1D;
+  color: #241c1d;
   text-align: left;
-  transition: background 250ms ease, color 250ms ease, border-color 250ms ease, padding 250ms ease;
+  transition:
+    background 250ms ease,
+    color 250ms ease,
+    border-color 250ms ease,
+    padding 250ms ease;
 }
 
 .planner-premium-option > div {
@@ -381,14 +400,14 @@
 }
 
 .planner-premium-option > span:last-child {
-  color: #8FA8B8;
+  color: #8fa8b8;
 }
 
 .planner-premium-option:hover,
 .planner-premium-option.selected {
-  background: #4A1942;
-  border-color: #4A1942;
-  color: #FAF7F1;
+  background: #4a1942;
+  border-color: #4a1942;
+  color: #faf7f1;
   padding-left: 28px;
   padding-right: 28px;
 }
@@ -412,20 +431,20 @@
   font-size: 0.68rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #4A1942;
+  color: #4a1942;
 }
 
 .planner-currency select {
   min-width: 240px;
   border: 1px solid rgba(74, 25, 66, 0.2);
   background: transparent;
-  color: #241C1D;
+  color: #241c1d;
   padding: 11px 14px;
   outline: none;
 }
 
 .planner-currency select:focus {
-  border-color: #4A1942;
+  border-color: #4a1942;
 }
 
 /* CRAFTING */
@@ -463,16 +482,27 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #4A1942;
+  background: #4a1942;
   animation: plannerPulse 1.2s ease-in-out infinite;
 }
 
-.planner-loader span:nth-child(2) { animation-delay: 150ms; }
-.planner-loader span:nth-child(3) { animation-delay: 300ms; }
+.planner-loader span:nth-child(2) {
+  animation-delay: 150ms;
+}
+.planner-loader span:nth-child(3) {
+  animation-delay: 300ms;
+}
 
 @keyframes plannerPulse {
-  0%, 100% { transform: translateY(0); opacity: 0.35; }
-  50% { transform: translateY(-8px); opacity: 1; }
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(-8px);
+    opacity: 1;
+  }
 }
 
 /* JOURNEY RESULTS */
@@ -492,7 +522,7 @@
   font-size: clamp(4rem, 9vw, 8rem);
   font-weight: 500;
   line-height: 0.9;
-  color: #4A1942;
+  color: #4a1942;
   margin: 0 0 20px;
 }
 
@@ -517,7 +547,7 @@
   margin-bottom: 8px;
   font-size: 0.7rem;
   letter-spacing: 0.18em;
-  color: #4A1942;
+  color: #4a1942;
 }
 
 .journey-experience strong {
@@ -565,7 +595,7 @@
   display: block;
   font-size: 0.65rem;
   letter-spacing: 0.18em;
-  color: #8FA8B8;
+  color: #8fa8b8;
   margin-bottom: 14px;
 }
 
@@ -581,8 +611,8 @@
   display: grid;
   grid-template-columns: 120px 1fr;
   gap: 30px;
-  background: #4A1942;
-  color: #FAF7F1;
+  background: #4a1942;
+  color: #faf7f1;
   padding: 34px 40px;
   margin-bottom: 100px;
 }
@@ -590,7 +620,7 @@
 .journey-premium-note > span {
   font-size: 0.65rem;
   letter-spacing: 0.2em;
-  color: #8FA8B8;
+  color: #8fa8b8;
 }
 
 .journey-premium-note strong {
@@ -616,7 +646,7 @@
   font-size: clamp(2.8rem, 5vw, 5rem);
   line-height: 0.95;
   font-weight: 500;
-  color: #241C1D;
+  color: #241c1d;
   margin: 0;
 }
 
@@ -636,13 +666,13 @@
   font-family: 'Cormorant Garamond', serif;
   font-size: 3rem;
   font-weight: 500;
-  color: #4A1942;
+  color: #4a1942;
 }
 
 .journey-day-label {
   font-size: 0.62rem;
   letter-spacing: 0.18em;
-  color: #8FA8B8;
+  color: #8fa8b8;
   margin: 0 0 8px;
 }
 
@@ -686,14 +716,14 @@
 .journey-day-meta span {
   font-size: 0.62rem;
   letter-spacing: 0.15em;
-  color: #8FA8B8;
+  color: #8fa8b8;
 }
 
 .journey-day-meta strong {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.5rem;
   font-weight: 500;
-  color: #4A1942;
+  color: #4a1942;
 }
 
 .journey-map-section {
@@ -734,9 +764,9 @@
 
 .journey-save-button,
 .journey-secondary-button {
-  border: 1px solid #4A1942;
+  border: 1px solid #4a1942;
   background: transparent;
-  color: #4A1942;
+  color: #4a1942;
   padding: 17px 22px;
   letter-spacing: 0.07em;
   font-size: 0.72rem;
@@ -750,14 +780,14 @@
 
 .journey-save-button:hover,
 .journey-secondary-button:hover {
-  background: #4A1942;
-  color: #FAF7F1;
+  background: #4a1942;
+  color: #faf7f1;
 }
 
 .journey-start-over {
   border: none;
-  background: #4A1942;
-  color: #FAF7F1;
+  background: #4a1942;
+  color: #faf7f1;
   padding: 17px 28px;
   letter-spacing: 0.08em;
   font-size: 0.75rem;
@@ -765,13 +795,13 @@
 }
 
 .journey-start-over:hover {
-  background: #241C1D;
+  background: #241c1d;
   transform: translateX(4px);
 }
 
 .journey-action-message {
   width: 100%;
-  color: #4A1942;
+  color: #4a1942;
   font-size: 0.7rem;
   letter-spacing: 0.06em;
   margin-top: 4px;
@@ -944,7 +974,6 @@
   }
 }
 
-
 /* =========================================
    NEXT PLANNER FEATURES
    Preserves the existing SOLEN visual system.
@@ -962,7 +991,7 @@
 .journey-preferences > span {
   display: block;
   margin-bottom: 10px;
-  color: #4A1942;
+  color: #4a1942;
   font-size: 0.68rem;
   letter-spacing: 0.2em;
 }
@@ -996,7 +1025,7 @@
 }
 
 .planner-clear-saved:hover {
-  color: #4A1942;
+  color: #4a1942;
 }
 
 @media (max-width: 700px) {
@@ -1009,7 +1038,6 @@
     font-size: 1.55rem;
   }
 }
-
 
 /* =========================================
    PERSONAL JOURNEY FEATURES
@@ -1028,14 +1056,14 @@
 .journey-total-estimate span {
   font-size: 0.6rem;
   letter-spacing: 0.16em;
-  color: #8FA8B8;
+  color: #8fa8b8;
 }
 
 .journey-total-estimate strong {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.55rem;
   font-weight: 500;
-  color: #4A1942;
+  color: #4a1942;
 }
 
 .journey-day-topline {
@@ -1048,7 +1076,7 @@
 .journey-favorite-button {
   border: 1px solid rgba(74, 25, 66, 0.18);
   background: transparent;
-  color: #4A1942;
+  color: #4a1942;
   width: 34px;
   height: 34px;
   display: inline-flex;
@@ -1061,7 +1089,7 @@
 
 .journey-favorite-button:hover,
 .journey-day.is-favorite .journey-favorite-button {
-  border-color: #4A1942;
+  border-color: #4a1942;
   background: rgba(74, 25, 66, 0.07);
 }
 
@@ -1123,9 +1151,11 @@
   border: 0;
   border-bottom: 1px solid rgba(74, 25, 66, 0.1);
   background: transparent;
-  color: #241C1D;
+  color: #241c1d;
   text-align: left;
-  transition: padding 220ms ease, background 220ms ease;
+  transition:
+    padding 220ms ease,
+    background 220ms ease;
 }
 
 .journey-route-stop:last-child {
@@ -1145,16 +1175,16 @@
   justify-content: center;
   border: 1px solid rgba(74, 25, 66, 0.24);
   border-radius: 50%;
-  background: #F3EBDD;
-  color: #4A1942;
+  background: #f3ebdd;
+  color: #4a1942;
   font-size: 0.62rem;
   letter-spacing: 0.08em;
 }
 
 .journey-route-stop.is-favorite .journey-route-marker {
-  border-color: #4A1942;
-  background: #4A1942;
-  color: #FAF7F1;
+  border-color: #4a1942;
+  background: #4a1942;
+  color: #faf7f1;
 }
 
 .journey-route-copy {
@@ -1165,7 +1195,7 @@
 
 .journey-route-day {
   margin-bottom: 3px;
-  color: #8FA8B8;
+  color: #8fa8b8;
   font-size: 0.58rem;
   letter-spacing: 0.18em;
 }
@@ -1189,7 +1219,7 @@
 }
 
 .journey-route-stop.is-favorite .journey-route-heart {
-  color: #4A1942;
+  color: #4a1942;
 }
 
 .journey-route-note {
@@ -1229,7 +1259,6 @@
    Crafting + Result Reveal + Route + Luxury Micro-interactions
 ========================================================= */
 
-
 /* =========================================================
    GLOBAL PLANNER MOTION
 ========================================================= */
@@ -1239,7 +1268,6 @@
 .planner-page input {
   -webkit-tap-highlight-color: transparent;
 }
-
 
 /* =========================================================
    PLANNER STEP TRANSITIONS
@@ -1260,7 +1288,6 @@
     transform: translateY(0);
   }
 }
-
 
 /* =========================================================
    OPTION MICRO-INTERACTIONS
@@ -1292,7 +1319,6 @@
   transform: translateY(0) scale(0.985);
 }
 
-
 /* =========================================================
    CONTINUE / NAVIGATION BUTTONS
 ========================================================= */
@@ -1322,7 +1348,6 @@
   cursor: not-allowed;
 }
 
-
 /* =========================================================
    PREMIUM OPTION
 ========================================================= */
@@ -1339,12 +1364,7 @@
   left: -120%;
   width: 70%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(250, 247, 241, 0.28),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(250, 247, 241, 0.28), transparent);
   transform: skewX(-18deg);
   transition: left 700ms ease;
   pointer-events: none;
@@ -1353,7 +1373,6 @@
 .planner-premium-option:hover::after {
   left: 140%;
 }
-
 
 /* =========================================================
    CRAFTING SCREEN
@@ -1370,11 +1389,7 @@
   width: 420px;
   height: 420px;
   border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(74, 25, 66, 0.07),
-    transparent 68%
-  );
+  background: radial-gradient(circle, rgba(74, 25, 66, 0.07), transparent 68%);
   animation: solenCraftGlow 5s ease-in-out infinite;
   pointer-events: none;
 }
@@ -1432,7 +1447,6 @@
   }
 }
 
-
 /* =========================================================
    CRAFTING LOADER
 ========================================================= */
@@ -1472,7 +1486,6 @@
   }
 }
 
-
 /* =========================================================
    JOURNEY RESULT — MAIN REVEAL
 ========================================================= */
@@ -1492,7 +1505,6 @@
     transform: translateY(0);
   }
 }
-
 
 /* =========================================================
    JOURNEY HEADER
@@ -1536,14 +1548,12 @@
   }
 }
 
-
 /* =========================================================
    EXPERIENCE CARD
 ========================================================= */
 
 .journey-experience {
-  animation:
-    solenExperienceReveal 850ms cubic-bezier(0.22, 1, 0.36, 1) 420ms both;
+  animation: solenExperienceReveal 850ms cubic-bezier(0.22, 1, 0.36, 1) 420ms both;
   transition:
     transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
     border-color 300ms ease,
@@ -1568,7 +1578,6 @@
   }
 }
 
-
 /* =========================================================
    JOURNEY HERO IMAGE
 ========================================================= */
@@ -1592,7 +1601,6 @@
     clip-path: inset(0 0 0 0);
   }
 }
-
 
 /* =========================================================
    JOURNEY OVERVIEW
@@ -1624,7 +1632,6 @@
   }
 }
 
-
 /* =========================================================
    PREMIUM NOTE
 ========================================================= */
@@ -1644,7 +1651,6 @@
     transform: translateY(0);
   }
 }
-
 
 /* =========================================================
    ITINERARY HEADING
@@ -1669,7 +1675,6 @@
     transform: translateY(0);
   }
 }
-
 
 /* =========================================================
    ITINERARY DAYS
@@ -1728,7 +1733,6 @@
   }
 }
 
-
 /* =========================================================
    DAY NUMBER
 ========================================================= */
@@ -1745,7 +1749,6 @@
   transform: scale(1.06);
 }
 
-
 /* =========================================================
    DAY CONTENT
 ========================================================= */
@@ -1757,10 +1760,9 @@
 }
 
 .journey-day:hover .journey-day-content h3 {
-  color: #4A1942;
+  color: #4a1942;
   transform: translateX(3px);
 }
-
 
 /* =========================================================
    DAILY SPEND
@@ -1775,7 +1777,6 @@
 .journey-day:hover .journey-day-meta {
   transform: translateX(3px);
 }
-
 
 /* =========================================================
    ROUTE SECTION
@@ -1797,7 +1798,6 @@
   }
 }
 
-
 /* =========================================================
    ROUTE LINE
 ========================================================= */
@@ -1818,7 +1818,6 @@
     opacity: 1;
   }
 }
-
 
 /* =========================================================
    ROUTE STOPS
@@ -1869,7 +1868,6 @@
   }
 }
 
-
 /* =========================================================
    ROUTE MARKERS
 ========================================================= */
@@ -1887,7 +1885,6 @@
   transform: scale(1.1);
   box-shadow: 0 0 0 6px rgba(74, 25, 66, 0.05);
 }
-
 
 /* =========================================================
    FAVORITE DAY
@@ -1939,7 +1936,6 @@
   }
 }
 
-
 /* =========================================================
    ROUTE NOTE
 ========================================================= */
@@ -1947,7 +1943,6 @@
 .journey-route-note {
   animation: solenCraftFade 700ms ease 2250ms both;
 }
-
 
 /* =========================================================
    ACTION BUTTONS
@@ -1992,7 +1987,6 @@
   transform: translateY(0) scale(0.985);
 }
 
-
 /* =========================================================
    ACTION MESSAGE
 ========================================================= */
@@ -2013,7 +2007,6 @@
   }
 }
 
-
 /* =========================================================
    RESUME SAVED JOURNEY
 ========================================================= */
@@ -2028,7 +2021,6 @@
 .planner-resume:hover {
   transform: translateX(4px);
 }
-
 
 /* =========================================================
    BUDGET SLIDER
@@ -2059,13 +2051,11 @@
   transform: scale(1.12);
 }
 
-
 /* =========================================================
    ACCESSIBILITY — REDUCED MOTION
 ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-
   .planner-page *,
   .planner-page *::before,
   .planner-page *::after {
@@ -2074,7 +2064,6 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-
 }
 /* SOLEN — PERSONALIZATION UPGRADE */
 
@@ -2306,7 +2295,9 @@
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  transition: opacity 180ms ease, transform 180ms ease;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
 }
 
 .journey-day-regenerate:hover:not(:disabled) {

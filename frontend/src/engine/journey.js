@@ -22,7 +22,17 @@ export function getWeatherAwareNote(weather, day) {
   return 'The plan leaves enough flexibility to enjoy the day comfortably as conditions change.';
 }
 
-export function buildJourneyDays(days, duration, travelStyle, selectedInterests, destination, budget, selectedExperience, isPremiumPlus, weather) {
+export function buildJourneyDays(
+  days,
+  duration,
+  travelStyle,
+  selectedInterests,
+  destination,
+  budget,
+  selectedExperience,
+  isPremiumPlus,
+  weather,
+) {
   const desiredDays = duration === '14+' ? 14 : Math.max(1, Number(duration) || 7);
   const personalized = personalizeDays(days, travelStyle, selectedInterests, destination);
   const result = [];
@@ -44,7 +54,7 @@ export function buildJourneyDays(days, duration, travelStyle, selectedInterests,
       selectedInterests,
       selectedExperience,
       isPremiumPlus,
-      index
+      index,
     );
     day.weatherNote = getWeatherAwareNote(weather, day);
     result.push(day);
@@ -52,4 +62,3 @@ export function buildJourneyDays(days, duration, travelStyle, selectedInterests,
 
   return result;
 }
-
