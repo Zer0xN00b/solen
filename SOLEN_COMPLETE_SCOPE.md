@@ -13,11 +13,25 @@ saved/favourite journey functionality, responsive premium UI, and a
 future full-stack layer for accounts, persistent journeys, APIs, and
 dynamic data.
 
-The current project is a React/Vite frontend with a substantial
-interactive planner. The frontend is currently the strongest and most
-complete part of the application. The remaining scope is primarily about
-turning the existing experience into a persistent, data-driven
-full-stack product.
+The project is a React/Vite frontend with a substantial interactive
+planner, now paired with a live TypeScript backend (Express 5 +
+Drizzle ORM + SQLite + Better Auth). The frontend remains the most
+complete part of the application; the remaining scope is finishing the
+frontend product layer and turning the planner into a persistent,
+data-driven full-stack experience.
+
+### Status snapshot — 17 September 2026
+
+-   The repository was restructured into a clean monorepo
+    (`frontend/` + `backend/` npm workspaces) and lives on GitHub with
+    automated two-way sync (auto-push from the build workspace).
+-   The backend is now real: Express 5 + TypeScript + Drizzle ORM over
+    SQLite, with Better Auth providing email/password authentication
+    and database-backed sessions via httpOnly cookies (no localStorage
+    tokens, by design).
+-   Backend foundation (Phase 2) and authentication core (part of
+    Phase 3) are DONE. Next: auth UI, journey persistence, then the
+    Phase 1 frontend product features.
 
 ------------------------------------------------------------------------
 
@@ -25,53 +39,79 @@ full-stack product.
 
 ## Frontend
 
-Current frontend stack:
+## Monorepo (restructured 17 Sep 2026)
 
--   React
+The project is an npm-workspaces monorepo. `npm install` at the root
+installs both apps; `npm run dev` starts the frontend (:5173) and the
+API (:4000) together. The Vite dev server proxies `/api/*` to the
+backend, so the frontend uses relative API URLs with no CORS setup.
+
+Frontend stack:
+
+-   React 19
 -   Vite
--   React Router
+-   React Router 7
 -   JavaScript / JSX
 -   CSS
 -   Google Fonts
--   Browser local storage
+-   Browser local storage (legacy journey saving — to be replaced by
+    account-based persistence)
 -   Browser Web Share API
 -   Clipboard API
 -   Browser print/PDF functionality
 
-Current project structure includes:
+Backend stack:
+
+-   Node.js 20+ / TypeScript (strict)
+-   Express 5
+-   Drizzle ORM over SQLite (better-sqlite3) — schema designed to stay
+    portable to PostgreSQL
+-   Better Auth (email/password; social OAuth and email verification
+    available as later plugins)
+-   Migrations committed in `backend/drizzle/`, auto-applied on boot
+
+Current project structure:
 
 ``` text
-solen/
-└── frontend/
-    └── frontend/
-        ├── node_modules/
-        ├── public/
-        │   └── assets/
-        │       ├── brand/
-        │       ├── destinations/
-        │       ├── experiences/
-        │       └── hero/
-        ├── src/
-        │   ├── App.jsx
-        │   ├── App.css
-        │   ├── AppRoutes.jsx
-        │   ├── DestinationDetail.jsx
-        │   ├── DestinationDetail.css
-        │   ├── TripPlanner.jsx
-        │   ├── TripPlanner.css
-        │   ├── SolenGlobe.jsx
-        │   ├── SolenGlobe.css
-        │   ├── navbar.jsx
-        │   ├── index.css
-        │   ├── main.jsx
-        │   └── responsive.css
-        ├── package.json
-        ├── package-lock.json
-        ├── vite.config.js
-        ├── eslint.config.js
-        ├── index.html
-        └── README.md
+solen/                          ← npm workspaces monorepo
+├── package.json                ← shared scripts; allowScripts approvals
+├── SOLEN_COMPLETE_SCOPE.md     ← this document
+├── LOCAL_SETUP.md              ← running SOLEN on a personal PC
+├── frontend/                   ← React + Vite
+│   ├── public/assets/          ← brand, hero, destinations, experiences
+│   └── src/
+│       ├── main.jsx            ← entry (BrowserRouter)
+│       ├── AppRoutes.jsx       ← route table + scroll restore
+│       ├── pages/              ← home/, destination/, planner/
+│       ├── components/         ← globe/, navbar/
+│       ├── data/               ← application data only (no logic)
+│       ├── engine/             ← pure personalization/budget/journey logic
+│       └── styles/             ← index.css, responsive.css
+└── backend/                    ← TypeScript + Express 5
+    ├── .env.example            ← documented environment variables
+    ├── drizzle/                ← committed SQL migrations
+    ├── data/                   ← local SQLite file (git-ignored)
+    └── src/
+        ├── server.ts / app.ts  ← entry point + app assembly
+        ├── auth/auth.ts        ← Better Auth configuration
+        ├── config/env.ts       ← typed environment access
+        ├── routes/             ← /api routes (health today)
+        ├── middleware/         ← notFound + errorHandler
+        ├── database/           ← schema.ts (generated), db.ts, migrate.ts
+        └── controllers/ services/ models/  ← future product code
 ```
+
+### Frontend code organization rules
+
+-   `pages/` — one folder per route (visual designs LOCKED for home and
+    destination pages)
+-   `components/` — reusable UI pieces
+-   `data/` — plain application data, no logic (destinations,
+    destinationEditorial, globeDestinations, homeContent,
+    plannerOptions)
+-   `engine/` — pure functions with no React/DOM imports
+    (personalization, budget, journey). This module set is deliberately
+    portable so the backend itinerary engine can lift-and-shift it.
 
 ------------------------------------------------------------------------
 
@@ -925,7 +965,9 @@ Scope:
 
 # 43. BACKEND --- PURPOSE
 
-The backend will transform SOLEN from a highly interactive frontend
+**Status: foundation and authentication LIVE (17 Sep 2026).**
+
+The backend transforms SOLEN from a highly interactive frontend
 application into a persistent full-stack travel product.
 
 It will eventually handle:
@@ -951,9 +993,9 @@ logic.
 
 ------------------------------------------------------------------------
 
-# 44. BACKEND ARCHITECTURE --- PROPOSED SCOPE
+# 44. BACKEND ARCHITECTURE --- IMPLEMENTED
 
-A practical structure:
+The implemented structure (see §2 for the full tree):
 
 ``` text
 SOLEN
@@ -962,72 +1004,74 @@ SOLEN
 │   └── React + Vite
 │
 └── backend/
-    ├── server
-    ├── routes
-    ├── controllers
-    ├── services
-    ├── models
-    ├── middleware
-    ├── config
-    └── database
+    ├── src/server.ts        ← entry point
+    ├── src/routes
+    ├── src/controllers      ← empty; product code lands here
+    ├── src/services         ← empty; will receive the port of
+    │                           frontend/src/engine/*
+    ├── src/models           ← empty
+    ├── src/middleware
+    ├── src/config
+    ├── src/auth             ← Better Auth
+    └── src/database         ← Drizzle schema, connection, migrations
 ```
 
-A beginner-friendly JavaScript backend can use:
+Chosen stack:
 
--   Node.js
--   Express
--   PostgreSQL or another relational database
--   REST APIs
-
-The exact technology choice remains part of backend setup scope.
+-   Node.js 20+ with TypeScript (strict) — Better Auth and Drizzle are
+    TypeScript-first, and the backend was small enough to convert early
+-   Express 5 REST APIs
+-   SQLite via better-sqlite3 + Drizzle ORM for zero-setup local
+    development; the schema stays portable to PostgreSQL (the long-term
+    target) for production
 
 ------------------------------------------------------------------------
 
-# 45. BACKEND FOUNDATION --- REMAINING
+# 45. BACKEND FOUNDATION --- DONE
 
-Estimated time: **1 day**
+**Completed 17 Sep 2026.** Everything in the original scope exists:
 
-Scope:
+-   Backend project — npm workspace with its own package.json/scripts
+-   Server setup — Express 5, TypeScript (`tsx watch` in dev, `tsc`
+    build for production)
+-   Environment configuration — `backend/.env` (documented
+    `.env.example`; auto-created with a generated secret on first run)
+-   API base structure — `/api` router with a health endpoint
+-   Route structure — routes/, controllers/, services/, models/ folders
+-   Error handling — JSON 404 handler + central error middleware
+-   Database configuration — Drizzle ORM + better-sqlite3, migrations
+    auto-applied on server boot
+-   Development/production configuration — NODE_ENV aware
 
--   Backend project
--   Server setup
--   Environment configuration
--   API base structure
--   Route structure
--   Error handling
--   Database configuration
--   Development/production configuration
-
-Conceptual API structure:
+API surface today:
 
 ``` text
 /api
-    /auth
-    /users
-    /destinations
-    /journeys
-    /itineraries
-    /weather
+    /health          GET    live
+    /auth/*                 live (Better Auth: sign-up/email,
+                            sign-in/email, sign-out, get-session)
+    /destinations           planned
+    /journeys               planned
+    /weather                planned
 ```
 
 ------------------------------------------------------------------------
 
-# 46. DATABASE --- REMAINING
+# 46. DATABASE --- PARTIALLY DONE
 
-Estimated time: **1--2 days**
-
-Potential entities:
-
-## Users
+**Foundation complete 17 Sep 2026.** Drizzle ORM over SQLite with
+committed SQL migrations (`backend/drizzle/`), applied automatically on
+boot. The Better Auth tables are live (generated by the official
+tooling, not hand-written):
 
 ``` text
-id
-name
-email
-password_hash
-created_at
-updated_at
+user          ← user records (id, name, email, emailVerified, image…)
+session       ← revocable DB-backed sessions
+account       ← auth accounts (email/password now; OAuth later)
+verification  ← tokens for future email verification
 ```
+
+Remaining entities (target design):
 
 ## User Preferences
 
@@ -1088,22 +1132,29 @@ The schema can evolve as the product becomes more sophisticated.
 
 ------------------------------------------------------------------------
 
-# 47. AUTHENTICATION --- REMAINING
+# 47. AUTHENTICATION --- CORE DONE
 
-Estimated time: **1--2 days**
+**Core complete 17 Sep 2026 with Better Auth:**
 
-Scope:
+-   Sign up — `/api/auth/sign-up/email` (live, tested)
+-   Login — `/api/auth/sign-in/email` (live, tested)
+-   Logout — `/api/auth/sign-out` (live, tested)
+-   Password hashing — handled by Better Auth
+-   Authentication state — database-backed sessions delivered via
+    httpOnly cookies, 30-day expiry, refreshed on activity. No tokens
+    in localStorage — deliberate security decision.
+-   Wrong-credential handling — generic "Invalid email or password"
+    (no user enumeration)
 
--   Sign up
--   Login
--   Logout
--   Password hashing
--   Authentication state
--   Protected API routes
--   User-specific data access
+Remaining:
 
-Public trip planning can remain available without an account, while
-persistent saved journeys can become account-based.
+-   Protected API routes (requireAuth middleware for journey endpoints)
+-   Frontend auth UI (SOLEN-styled sign-up/sign-in, session-aware
+    navbar via the better-auth/react client)
+-   User-specific data access (journey ownership)
+
+Public trip planning remains available without an account, while
+persistent saved journeys become account-based.
 
 ------------------------------------------------------------------------
 
@@ -1200,7 +1251,11 @@ Frontend result page
 ```
 
 The existing frontend personalization logic provides the behavioural
-foundation.
+foundation. Since the 17 Sep 2026 restructure it lives in
+`frontend/src/engine/` as pure, framework-free modules
+(personalization, budget, journey assembly) with all content in
+`frontend/src/data/` — deliberately shaped so the backend services can
+lift-and-shift them.
 
 The backend version would move core decision-making and data retrieval
 into server-side services.
@@ -1293,6 +1348,11 @@ The existing visual route can then become data-driven.
 # 54. DESTINATION DATA API --- REMAINING
 
 Estimated time: **0.5--1 day**
+
+Note (17 Sep 2026): destination content is no longer duplicated across
+components — it is centralized in `frontend/src/data/` (destinations,
+destinationEditorial, globeDestinations, homeContent, plannerOptions).
+Those files become the seed data for this API.
 
 Future architecture:
 
@@ -1519,11 +1579,13 @@ Full end-to-end testing should cover:
 
 ## REMAINING BACKEND
 
--   [ ] Backend project foundation
--   [ ] Database
--   [ ] Database schema
--   [ ] Authentication
--   [ ] User accounts
+-   [x] Backend project foundation (17 Sep 2026)
+-   [x] Database foundation (Drizzle + SQLite, migrations on boot)
+-   [x] Database schema — auth tables (user/session/account/verification)
+-   [x] Authentication core (Better Auth: email/password + sessions)
+-   [x] API error handling (central handler + JSON 404s)
+-   [ ] User accounts UI (sign-up/sign-in pages, session-aware navbar)
+-   [ ] Protected API routes (requireAuth middleware)
 -   [ ] User preference persistence
 -   [ ] Journey CRUD API
 -   [ ] Persistent saved journeys
@@ -1536,8 +1598,7 @@ Full end-to-end testing should cover:
 -   [ ] Weather API integration
 -   [ ] Map/route data integration
 -   [ ] Backend validation
--   [ ] Security
--   [ ] API error handling
+-   [ ] Security hardening
 -   [ ] Frontend/backend integration
 -   [ ] Backend testing
 -   [ ] Production deployment
@@ -1552,30 +1613,30 @@ Full end-to-end testing should cover:
   ----------------------------- ----------------
   Remaining frontend features          3--5 days
   Frontend final polish                1--2 days
-  Backend foundation                       1 day
-  Database                             1--2 days
-  Authentication                       1--2 days
-  Persistent journeys                  1--2 days
+  Backend foundation                       DONE
+  Authentication core                      DONE
+  Auth UI + protected routes           1--2 days
+  Product tables + journey CRUD        1--2 days
   Dynamic itinerary engine             2--3 days
   Weather integration              0.5--1.5 days
   Maps/routes                          1--2 days
-  Shareable journeys                     \~1 day
-  Security/validation                    \~1 day
+  Shareable journeys                     ~1 day
+  Security/validation                    ~1 day
   Integration/testing                  1--2 days
-  Deployment                             \~1 day
+  Deployment                             ~1 day
   Final QA                             1--2 days
 
-**Overall realistic remaining scope: approximately 14--22 focused
-working days.**
+**Overall realistic remaining scope: approximately 11--18 focused
+working days** (was 14--22 before the 17 Sep 2026 backend session).
 
 For a beginner simultaneously learning backend development, a practical
-project window is approximately **3--4 weeks**.
+project window is approximately **2--3 more weeks**.
 
 ------------------------------------------------------------------------
 
 # 62. RECOMMENDED DEVELOPMENT PHASES
 
-## Phase 1 --- Finish frontend product layer
+## Phase 1 --- Finish frontend product layer — not started
 
 **Estimated: 3--5 days**
 
@@ -1588,30 +1649,27 @@ Scope:
 -   Shareable journey UI
 -   Final visual polish
 
-## Phase 2 --- Backend foundation
+## Phase 2 --- Backend foundation — **DONE (17 Sep 2026)**
 
-**Estimated: 2--3 days**
+Delivered ahead of estimate in one session:
 
-Scope:
+-   npm workspace, Express 5 + TypeScript, environment setup
+-   Drizzle ORM + SQLite, committed migrations applied on boot
+-   Base API structure (/api/health) + error middleware
 
--   Node/Express foundation
--   Database
--   Schema
--   Environment setup
--   Base API structure
+## Phase 3 --- Accounts + persistence — **PARTIALLY DONE**
 
-## Phase 3 --- Accounts + persistence
+Done (17 Sep 2026):
 
-**Estimated: 2--3 days**
+-   Authentication core — Better Auth email/password, DB-backed
+    sessions, httpOnly cookies
 
-Scope:
+Remaining (**estimated 2--3 days**):
 
--   Authentication
--   Users
--   User preferences
--   Persistent journeys
--   Journey CRUD
--   Journey Library backend
+-   Auth UI (sign-up/sign-in pages, session-aware navbar)
+-   Protected API routes
+-   journeys + user_preferences tables
+-   Journey CRUD + Journey Library backend
 
 ## Phase 4 --- Intelligent backend planner
 
@@ -1713,7 +1771,8 @@ Itinerary
 
 ## Stage 3 --- Persistent application
 
-**Remaining**
+**In progress** — accounts + database foundation live (Better Auth,
+SQLite, Drizzle); saved journeys remaining
 
 ``` text
 Planner
@@ -1765,14 +1824,15 @@ Production deployment
 
 # 65. OVERALL SOLEN STATUS
 
-Approximate current status:
+Approximate current status (updated 17 Sep 2026):
 
-**Frontend:** \~85--90% complete
+**Frontend:** ~85--90% complete
 
-**Backend:** Early stage / production persistence layer not yet
-implemented
+**Backend:** foundation + authentication complete (roughly 30% of
+backend scope). Persistence, itinerary engine, integrations and
+deployment remain.
 
-**Overall full-stack product:** \~60--65% complete
+**Overall full-stack product:** ~70% complete
 
 The existing frontend already provides the majority of the visible
 product experience. The largest remaining value is not additional
@@ -1789,15 +1849,14 @@ capability.
 
 ## Highest priority
 
-1.  Backend foundation
-2.  Database
-3.  Authentication
-4.  Persistent journeys
-5.  Dynamic itinerary engine
-6.  API integration
-7.  Shareable journeys
-8.  Security
-9.  Deployment
+1.  Auth UI + protected routes (the visible half of accounts)
+2.  Journey CRUD API + ownership (persistent journeys)
+3.  Journey Library UI on top of the API
+4.  Dynamic itinerary engine (port of frontend/src/engine)
+5.  API integration (destinations, weather)
+6.  Shareable journeys
+7.  Security hardening
+8.  Deployment
 
 ## Medium priority
 
@@ -1838,3 +1897,14 @@ The goal is to move SOLEN from:
 to:
 
 **"a complete, persistent, personalized full-stack travel product."**
+
+------------------------------------------------------------------------
+
+# 68. DOCUMENT HISTORY
+
+-   **v2 — 17 Sep 2026:** repository restructured into a monorepo
+    (pages/components/data/engine), backend foundation + Better Auth
+    completed (Phases 2 + auth core of 3), statuses/estimates/priorities
+    updated throughout.
+-   **v1 — initial:** scope as carried over from the original
+    development chat.
