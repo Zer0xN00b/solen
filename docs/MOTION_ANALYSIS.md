@@ -1,135 +1,234 @@
-# Motion Reference Analysis — "inspo" screen recording
+# Motion Reference Analysis (v2) — principles first, evidence second
 
-**Source:** 17.7 s screen recording (1360×684, 30 fps), analyzed frame-by-frame
-with ffmpeg (overview 1 fps + dense passes 8–10 fps on each transition).
-**Date:** 17 Sep 2026.
+**Source:** 17.7 s screen recording (1360×684, 30 fps) of the inspo site,
+analyzed with ffmpeg: overview 1 fps + dense passes at 6–10 fps across
+every transition window (0–1 s, 0.9–2.4 s, 2.2–4.4 s, 4.4–6.4 s,
+7.3–8.9 s, 8.8–10.8 s, 10.6–13.2 s, 13.2–14.6 s, 14.5–17.6 s).
+**Date:** 17 Sep 2026. **Supersedes v1.**
 
-> ⚠️ This document extracts **motion language only** — mechanics, timing,
-> pacing, feel. The reference site's branding, layout, content, typography
-> and palette are NOT to be copied. SOLEN's existing design
-> (oatmeal/plum, Cormorant Garamond + Inter, editorial calm) remains the
-> source of truth. Everything below must be *re-skinned* into SOLEN's
-> voice before use.
-
----
-
-## 1. Overall motion personality
-
-The reference moves like **ink and machinery**: high-contrast
-black/white section flips, brutalist mono display type, particle
-"spray" that behaves like ink in water, and mechanical horizontal
-stepping. The feeling is confident, deliberate, slightly raw.
-
-What makes it feel premium (the part SOLEN wants):
-
-- **One showpiece at a time.** Quiet stretches between big moments.
-- **Fast pushes, long dwells.** Transitions are quick (250–600 ms);
-  content then rests fully still for a beat.
-- **Everything resolves.** No animation is left half-finished on screen.
-- **Scroll drives almost everything** — motion is tied to progress,
-  not to arbitrary timers.
+> ⚠️ Extracts **motion language only**. The reference's branding, layout,
+> copy, palette (black/white/neon pink, brutalist mono) are NOT to be
+> copied. SOLEN's design (oatmeal/plum, Cormorant + Inter, editorial
+> calm) stays the source of truth; mechanics below get re-skinned.
 
 ---
 
-## 2. The mechanics (observed + measured)
+# PART 0 — THE PRINCIPLES BEHIND THE MOTION
 
-Timings measured from 8–10 fps samples; easings inferred from frame
-spacing. Treat as ±15%.
+These are the rules the reference obeys in *every* sequence. Any single
+effect can be re-skinned badly and still feel okay; break these
+principles and no amount of pretty easing saves it.
 
-### M1 — Organic torn-edge section wipe · ~600 ms
-Dark→light section boundary is an **irregular torn/ink silhouette**,
-scroll-driven, with subtle wobble. Not a straight clip — the edge looks
-hand-ripped.
-*SOLEN fit:* between the homepage hero and discovery section, or into
-the footer — re-skinned as a soft oatmeal/plum tear instead of ink.
+**P1 — The user's scroll is the timeline.**
+Nearly all narrative motion is *scrubbed* by scroll position, not fired
+by timers: the headline inks in as you scroll into it and **un-inks if
+you scroll back** (evidence: 2.2–4.4 s window). Timers are reserved for
+ambient life (marquee drift, particle simmer) and short settle
+animations. Result: the visitor feels in control; motion reads as a
+response, never as a cutscene.
 
-### M2 — Ghost→solid "ink-in" headline · ~700–900 ms, scroll-linked
-A huge headline enters at ~25% grey and **inks in to full black** as the
-section settles. The text literally develops, like a print being
-developed in a darkroom.
-*SOLEN fit:* Cormorant display lines (hero, destination titles) —
-plum-ghost to full-ink. Very portable, zero layout risk.
+**P2 — One material metaphor, used everywhere.**
+Everything behaves like *ink and print*: text develops from ghost-grey
+to solid (developing print), section edges tear like paper, particles
+spray like ink off a moving press, words come into focus like a lens.
+A single metaphor is what makes ten different effects feel like one
+language. *(For SOLEN the metaphor should be re-chosen to match the
+brand — e.g. "light, tide and sand": soft fades, slow swells — but the
+discipline of ONE metaphor transfers.)*
 
-### M3 — Per-word blur-in reveal · ~450–600 ms per word, stagger ~150–250 ms
-Words enter **blurred (≈8–12px) + faint**, then focus to sharp, one
-word after another ("What's" → "slowing" → "you" → "down?").
-The reference's signature typography move; reads as the sentence
-*coming into focus*.
-*SOLEN fit:* the journey-result personalized summary line; statement
-lines on the homepage. The single most transferable mechanic.
+**P3 — Contrast choreography: every beat is defined by its opposite.**
+Fast push (250–400 ms) vs long still dwell (1–2 s+). Giant type vs
+6 px mono microcopy. Pure white vs pure black. One showpiece at a time.
+The stillness is not a pause between animations — it is part of the
+animation design.
 
-### M4 — Horizontal pinned stepper · ~250–400 ms per push
-Vertical scroll is translated into a **horizontal slide** between giant
-step words (Discover → Diagnose → …). Behind them, **huge ghost
-numerals** (01, 02…) slide at ~6–8% opacity; the **background tone
-shifts per step** (white → grey → near-black); a **progress rail**
-of dots+line fills along the bottom.
-*SOLEN fit:* the four experiences (THE WILD / THE TABLE / THE SOUL /
-THE ESCAPE) as a stepped showcase — SOLEN's own rhythm, its own palette
-steps (oatmeal → plum shades).
+**P4 — Progressive disclosure, always.**
+Nothing appears all at once. Headlines word-by-word; lists line-by-line;
+footers column-by-column; chips one after another. Hierarchy is
+expressed as *arrival order*.
 
-### M5 — Particle spray trails · continuous, motion-reactive
-A swarm of fine dots **trails moving elements**, densest while things
-move, dissipating at rest — like ink spray off the sliding words.
-*SOLEN fit:* sparingly — around the globe during rotation, or as a
-trail during the journey-crafting loader.
+**P5 — Continuity through persistent layers.**
+Particles, the floating nav pill, the left orb, the progress rail and
+the diagonal marquee survive across section boundaries. Because some
+layers never reset, section changes read as *chapters of one organism*,
+not new pages.
 
-### M6 — Particle torus / galaxy backdrop · assembles ~1.5 s, slow rotation
-For the final statement, thousands of dots form a **rotating ring/galaxy**
-behind the text — pure emotional punctuation.
-*SOLEN fit:* behind a final CTA or the crafting screen, in plum dust.
+**P6 — Energy is injected by movement and decays at rest.**
+Particle bursts fire during a step-push and dissipate after (~1 s);
+blur resolves; counters stop; the page returns to perfect stillness.
+This decay is the site's sense of physics.
 
-### M7 — Diagonal marquee · continuous slow drift, ~-4° tilt
-A giant uppercase ticker crosses the dark section on a slight diagonal,
-scrolling slowly forever.
-*SOLEN fit:* a quiet feelings strip ("disconnect · fall in love · eat
-everything …") — low contrast, slow, elegant.
-
-### M8 — Accent-colour final word · ~300–500 ms colour-in
-The last word of a statement lands in the **accent colour** ("evolve"
-in pink) while the rest stays neutral.
-*SOLEN fit:* the plum accent — e.g. "…deserves to *wander*".
-
-### M9 — Light↔dark inversion rhythm
-Sections alternate light/dark; the flips are part of the drama.
-*SOLEN fit:* already exists structurally (oatmeal vs deep plum sections)
-— M1 can make the flips themselves a designed moment.
-
-### M10 — Progress rail · fills as you pass
-Bottom rail of step labels connected by a line that fills in.
-*SOLEN fit:* the planner's multi-step flow — a quiet plum rail showing
-how far through the journey-building you are.
+**P7 — Motion is information architecture.**
+Animation explains structure: the horizontal stepper IS the 5-step
+method; the filling rail IS your position; the torn edge IS a chapter
+break; the background darkening IS narrative progression ("Evolve"
+arrives in darkness). Nothing moves just to move.
 
 ---
 
-## 3. Pacing philosophy (the real takeaway)
+# PART 1 — THE 22 CHECKLIST ITEMS, WITH EVIDENCE
 
-| Beat type | Reference timing | Rule |
-|---|---|---|
-| Mechanical push/slide | 250–400 ms | quick, decisive |
-| Wipes / flips | ~600 ms | never linger mid-transition |
-| Typographic reveals | 450–900 ms | slow enough to be felt |
-| Dwell | 1–2 s+ fully still | let content breathe after every beat |
+*(Timings from 6–10 fps samples; easings inferred from inter-frame
+spacing; ±15%.)*
 
-Never two showpieces at once. Reveal → rest → next.
+### 1. How sections transition into one another
+Three distinct transition grades:
+- **Torn/ink-edge wipe** (~600 ms, scroll-driven, irregular silhouette
+  with subtle wobble) — used once, dark→light, as *the* chapter break.
+- **Background tone crossfade** (light → grey → charcoal, scrubbed) —
+  inside the method stepper; same chapter, next page.
+- **No transition** (dark stays dark between friction → statement →
+  footer) — when the narrative doesn't change, neither does the light.
+Principle: transitions are *semantic*, graded by how big the change is.
+
+### 2. Scroll-driven animation / motion ↔ scroll position
+Headline ghost→solid is a bidirectional scrub (reverses when scroll
+reverses). Step pushes are scroll-jacked horizontal translation.
+Marquee + particles run on their own clock (ambient). Two clocks,
+clearly separated: **scroll = story, time = atmosphere**.
+
+### 3. Large typography: enter / leave / move / scale / transform
+- Enter: horizontal slide-in from right (stepper words); blur-in
+  per word (statement lines); ghost→solid ink-in (section headline).
+- Leave: slide out left (stepper); scroll-up exit with the section.
+- Scale: essentially none — the reference trusts translate + opacity +
+  blur + colour, never zoom. *(Worth noting: no scaling at all.)*
+- Transform character: mono/typewriter face, hard edges, no rotation
+  except the marquee band (-4°).
+
+### 4. Horizontal and vertical movement
+Vertical = the reader's journey (page scroll, cards rising).
+Horizontal = the narrative's journey (step words, marquee, testimonial
+row drift, logo strip). The two axes never fight: a section is either
+a vertical moment or a horizontal moment.
+
+### 5. Image / graphic reveal techniques
+No photography — graphics only. Techniques used: staggered rise for
+cards/chips/columns; blur→sharp for type; ghost→solid for headlines;
+torn silhouette for the section itself. Reveal = develop, never pop.
+
+### 6. Particle / grain / displacement effects
+- **Spray trails**: fine dot swarms that fire off moving words during
+  a push, densest mid-motion, dissipating ~1 s after rest.
+- **Torus/galaxy**: thousands of dots assembling a slowly rotating ring
+  behind the final statement (~1.5 s assemble).
+- **Orb emissions**: the fixed left orb puffs small bursts on scroll.
+- No film grain or displacement shaders observed; darks are clean.
+
+### 7. Independent speeds (multi-velocity layers)
+Ghost numerals translate slower than the words above them; particles
+drift on their own vector; marquee ignores scroll entirely; body copy
+trails its headline. At least four velocities coexist in one viewport.
+
+### 8. Parallax and depth
+Depth planes, back→front: background tone → ghost numeral → particle
+field → headline/copy → fixed chrome (nav pill, orb, rail). Parallax
+comes from the numeral/text speed difference; depth is *layered
+flatness*, not 3D.
+
+### 9. Overlapping elements and layered composition
+Numerals sit behind and bleed past words; the marquee band overlaps
+section boundaries; nav pill overlaps everything; the statement sits on
+the torus. Overlap is constant but always tonal (ghost opacity), so
+layers never compete for reading order.
+
+### 10. Background and foreground transitions
+Background tone scrubs with step progress; **foreground text colour
+crossfades in counterpoint** (black→white as bg darkens) so contrast is
+preserved at every intermediate frame. Fixed chrome survives all of it.
+
+### 11. Light/dark section transitions
+Rare and therefore meaningful: one torn wipe (dark→light) early, one
+scrubbed darkening (light→dark) mid-page, then dark persists. The site
+treats inversion as punctuation, not decoration.
+
+### 12. Progressive reveal
+Word-level blur stagger for headlines (≈450–600 ms/word, 150–250 ms
+stagger); line-level stagger for lists/subcopy; column-level stagger in
+the footer; chip-level stagger. Hierarchy = arrival order (P4).
+
+### 13. Fixed / sticky elements
+Nav pill (whole page), left orb + right "OPEN" edge label (whole page),
+progress rail (method chapter), marquee band (its chapter). Fixed
+elements are few, small, and persistent — the P5 layers.
+
+### 14. Navigation and progress indicators
+Step rail: labels DISCOVER…EVOLVE as dots+line, filling segment per
+step, final node accent-coloured. Nav pill persistent. Right-edge
+"OPEN". The rail doubles as wayfinding *and* narrative ("you are here
+in the method").
+
+### 15. Hover and cursor interactions
+Captured evidence is thin (recording rarely idles): chip hover flips
+the chip to accent pink (14.5–17.6 s window). Cursor otherwise default;
+a custom cursor is not visible. Honest limit of the source material.
+
+### 16. Button and link micro-interactions
+- Input placeholder **types itself out** char-by-char
+  ("I don't even know my…") — a typewriter micro-copy gag.
+- Counter counts up ("153 frictions diagnosed", ease-out).
+- CTA pill persistent; other hovers not captured. Same honesty limit.
+
+### 17. Timing, easing, acceleration / deceleration
+- Pushes ≈250–400 ms with strong deceleration (entering word arrives
+  fast, settles slow — frame spacing compresses at rest).
+- Blur-ins ≈450–600 ms ease-out on blur+opacity.
+- Wipes/tone shifts ≈600 ms, near-linear because scroll-scrubbed.
+- Ambient marquee: perfectly linear, very slow.
+- Counters: ease-out.
+- No springs/bounces anywhere. The easing personality is
+  **deceleration, never oscillation**.
+
+### 18. Pacing between major visual moments
+Beat map: 0–1 intro settle · ~1–2 torn wipe · 2–4.4 headline + push 1 ·
+4.4–7.3 pushes 2–4 (~1 s each incl. settle) · 7.3–8.9 darkening +
+Evolve · 8.9–11 statement words · 11–13 counter + typewriter input ·
+13–14.6 marquee + torus statement · 14.6–17.6 footer.
+≈ one beat every 1.5–2.5 s, each followed by visible stillness (P3).
+
+### 19. Continuity between separate sections
+P5 in action: particles cross the torn edge; the rail spans all five
+steps; the marquee bridges friction→footer; the orb never leaves.
+Continuity is carried by layers, not by transitions.
+
+### 20. Stillness / whitespace between animated moments
+After every reveal the page holds perfectly still 0.5–2 s; giant words
+float in large empty fields; dark sections are mostly negative space.
+Stillness is compositional — the whitespace *is* the rest note.
+
+### 21. Responsive considerations
+Not observable — the recording is desktop-only. Flag for SOLEN: every
+mechanic adopted needs its own mobile behaviour decision (touch has no
+hover; horizontal steppers become vertical stacks or swipe).
+
+### 22. (See PART 0) Principles
+P1–P7 above are the answer to this item.
 
 ---
 
-## 4. What NOT to import into SOLEN
+# PART 2 — WHAT SOLEN TAKES (mechanic → element, re-skinned)
 
-- Heavy scroll-jacking (luxury keeps the user in control)
-- The brutalist mono identity & neon pink (SOLEN is serif, oatmeal, plum)
-- Aggressive contrast flips without softening (SOLEN softens everything)
+| Mechanic | SOLEN element (suggestion, your call) |
+|---|---|
+| M3 per-word blur-in | journey-summary line; homepage statement lines |
+| M2 ghost→solid ink-in | Cormorant hero + destination titles |
+| M4 horizontal stepper | THE WILD / TABLE / SOUL / ESCAPE showcase; planner step rail (M10) |
+| M1 torn-edge wipe | hero → discovery chapter break, as a soft oatmeal/plum tear |
+| M5/M6 particles | globe ambience + crafting screen, as plum dust |
+| M7 marquee | quiet feelings ticker |
+| M8 accent word | plum accent on the final word of a statement |
+| M16 typewriter placeholder | planner input easter-egg (optional) |
+
+What NOT to import: scroll-jack heaviness (luxury = user in control),
+neon/brutalist identity, hard black/white flips without softening.
 
 ---
 
-## 5. How this feeds the two-way workflow
+# PART 3 — METHOD NOTES
 
-This list is the **menu**. For each element you want animated in SOLEN:
-
-1. You pick a mechanic (M1…M10) + the target element,
-2. You send the CSS (or request a draft to spec),
-3. I implement it in the right file with tokens + reduced-motion guards.
-
-Foundation (tokens, reduced-motion layer, reveal utility) is still
-**unbuilt — waiting for your green light.**
+- Foundation (tokens / reduced-motion / reveal utility): **not built**,
+  awaiting your green light and your taste decisions.
+- Honest limits: no audio; hovers under-sampled; easings inferred;
+  no responsive evidence; timings ±15%.
+- Workflow unchanged: you pick mechanic + element, send CSS (or request
+  a draft), I implement with tokens + guards, you review on your PC.
