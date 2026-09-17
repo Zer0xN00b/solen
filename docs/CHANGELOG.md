@@ -52,13 +52,16 @@ from ghosted/blurred (opacity 0.25, blur 10px, +14px) to sharp and still,
 `--motion-reveal`, `--motion-stagger`, `--reveal-blur`, `--reveal-rise`,
 `--ink-ghost-opacity`, `--ease-decel-soft` — all from `styles/motion.css`.
 
-### Open item for review
+### Layered-entrance decision (resolved)
 
-The locked hero already had `heroContentIn` (container fade + 35px rise,
-1.2 s) on `.hero-content`. Animation 01 currently runs *alongside* it, so
-the headline has two layered entrances for ~1.4 s. Options: keep both,
-retire the container animation, or re-scope it away from the headline.
-Awaiting the user's call.
+The locked hero's `heroContentIn` (fade + 35px rise, 1.2 s) originally ran
+on the whole `.hero-content`, layering a second entrance under Animation 01.
+**Decision (delegated to agent instinct, confirmed against spec P3 — one
+showpiece per beat): re-scope.** The animation values are preserved
+byte-for-byte but now apply only to `.hero-eyebrow`, `.hero-description`,
+`.hero-buttons`; the headline owns its M3 reveal alone. The supporting
+elements look and move exactly as the locked design always did. Also added:
+reduced-motion guard for those supporting elements (R7).
 
 ### Verification
 

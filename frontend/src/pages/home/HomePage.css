@@ -147,7 +147,14 @@
   z-index: 3;
 
   max-width: 920px;
+}
 
+/* The entrance is scoped to the supporting elements only: the headline
+   owns its own reveal via Animation 01 (M3) — one showpiece per beat (P3).
+   Values are the exact ones the locked design always used. */
+.hero-eyebrow,
+.hero-description,
+.hero-buttons {
   animation: heroContentIn 1.2s ease 0.2s both;
 }
 
@@ -1200,5 +1207,11 @@ html.js .hero h1[data-animation='m3-blur-in'] .word:nth-of-type(7) { transition-
     opacity: 1 !important;
     filter: none !important;
     transform: none !important;
+  }
+
+  .hero-eyebrow,
+  .hero-description,
+  .hero-buttons {
+    animation: none;
   }
 }
