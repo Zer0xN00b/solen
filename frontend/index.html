@@ -5,6 +5,12 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SOLEN — Luxury Travel Concierge</title>
+    <!-- Progressive-enhancement flag: set before first paint so animation CSS
+         can key off it. If JS never runs, gated starting states never apply
+         and content stays fully visible. -->
+    <script>
+      document.documentElement.classList.add('js');
+    </script>
   </head>
   <body>
     <div id="root"></div>

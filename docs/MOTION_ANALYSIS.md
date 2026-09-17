@@ -210,7 +210,7 @@ P1–P7 above are the answer to this item.
 
 | Mechanic | SOLEN element (suggestion, your call) |
 |---|---|
-| M3 per-word blur-in | journey-summary line; homepage statement lines |
+| M3 per-word blur-in | journey-summary line; homepage statement lines · **→ implemented as Animation 01 (hero headline)** |
 | M2 ghost→solid ink-in | Cormorant hero + destination titles |
 | M4 horizontal stepper | THE WILD / TABLE / SOUL / ESCAPE showcase; planner step rail (M10) |
 | M1 torn-edge wipe | hero → discovery chapter break, as a soft oatmeal/plum tear |
@@ -226,8 +226,9 @@ neon/brutalist identity, hard black/white flips without softening.
 
 # PART 3 — METHOD NOTES
 
-- Foundation (tokens / reduced-motion / reveal utility): **not built**,
-  awaiting your green light and your taste decisions.
+- Foundation (tokens / reduced-motion / reveal utility): **built** in
+  commit `86f8aec` — see `docs/MOTION_FOUNDATION.md` and
+  `docs/CHANGELOG.md`.
 - Honest limits: no audio; hovers under-sampled; easings inferred;
   no responsive evidence; timings ±15%.
 - Workflow unchanged: you pick mechanic + element, send CSS (or request

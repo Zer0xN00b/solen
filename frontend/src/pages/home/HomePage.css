@@ -1137,3 +1137,68 @@
   line-height: 1;
   display: inline-block;
 }
+
+/* ==========================================================================
+   Animation 01 — Hero headline per-word blur-in (M3)
+   Spec: docs/MOTION_ANALYSIS.md (M3) · Handoff: user prototype, 2026-09-17.
+   Tokens come from styles/motion.css (not redefined here, per R1).
+   Design (typography / colour / layout) untouched.
+   ========================================================================== */
+
+/* Headroom so the 10px blur bleed isn't clipped on the first/last line
+   (.hero has overflow: hidden). The negative margin compensates exactly,
+   so the locked layout does not shift by a single pixel. */
+.hero h1[data-animation='m3-blur-in'] {
+  padding-block: 0.2em;
+  margin-block: -0.2em calc(28px - 0.2em);
+}
+
+/* Default state: fully visible — readable even if JS never confirms. */
+.hero h1[data-animation='m3-blur-in'] .word {
+  display: inline-block;
+
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+/* Ghosted starting state, applied only once JS is confirmed (html.js). */
+html.js .hero h1[data-animation='m3-blur-in'] .word {
+  opacity: var(--ink-ghost-opacity);
+  filter: blur(var(--reveal-blur));
+  transform: translateY(var(--reveal-rise));
+
+  transition:
+    opacity var(--motion-reveal) var(--ease-decel-soft),
+    filter var(--motion-reveal) var(--ease-decel-soft),
+    transform var(--motion-reveal) var(--ease-decel-soft);
+
+  will-change: opacity, filter, transform;
+}
+
+html.js .hero h1[data-animation='m3-blur-in'].is-revealed .word {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
+/* Stagger — one word at a time, derived from --motion-stagger.
+   nth-of-type (not nth-child): the <br> line breaks of the locked layout
+   are sibling elements and would break nth-child word counting. */
+html.js .hero h1[data-animation='m3-blur-in'] .word:nth-of-type(1) { transition-delay: calc(var(--motion-stagger) * 0); }
+html.js .hero h1[data-animation='m3-blur-in'] .word:nth-of-type(2) { transition-delay: calc(var(--motion-stagger) * 1); }
+html.js .hero h1[data-animation='m3-blur-in'] .word:nth-of-type(3) { transition-delay: calc(var(--motion-stagger) * 2); }
+html.js .hero h1[data-animation='m3-blur-in'] .word:nth-of-type(4) { transition-delay: calc(var(--motion-stagger) * 3); }
+html.js .hero h1[data-animation='m3-blur-in'] .word:nth-of-type(5) { transition-delay: calc(var(--motion-stagger) * 4); }
+html.js .hero h1[data-animation='m3-blur-in'] .word:nth-of-type(6) { transition-delay: calc(var(--motion-stagger) * 5); }
+html.js .hero h1[data-animation='m3-blur-in'] .word:nth-of-type(7) { transition-delay: calc(var(--motion-stagger) * 6); }
+
+/* Reduced motion — immediate final state, no exceptions (R7). */
+@media (prefers-reduced-motion: reduce) {
+  html.js .hero h1[data-animation='m3-blur-in'] .word {
+    transition: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+}

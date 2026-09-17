@@ -1,10 +1,17 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
 import { destinations, experiences, feelings } from '../../data/homeContent.js';
 import SolenGlobe from '../../components/globe/SolenGlobe.jsx';
+import { initHeroBlurIn } from './heroBlurIn.js';
 
 function HomePage() {
   const navigate = useNavigate();
+
+  // Animation 01 — hero headline per-word blur-in (M3). Trigger: page ready.
+  useEffect(() => {
+    initHeroBlurIn();
+  }, []);
 
   return (
     <div className="app">
@@ -38,12 +45,15 @@ function HomePage() {
           <div className="hero-content">
             <p className="hero-eyebrow">LUXURY TRAVEL CONCIERGE</p>
 
-            <h1>
-              Some journeys
+            <h1 data-animation="m3-blur-in">
+              <span className="word">Some</span> <span className="word">journeys</span>
               <br />
-              are meant to be
+              <span className="word">are</span> <span className="word">meant</span>{' '}
+              <span className="word">to</span> <span className="word">be</span>
               <br />
-              <em>discovered.</em>
+              <span className="word">
+                <em>discovered.</em>
+              </span>
             </h1>
 
             <p className="hero-description">
