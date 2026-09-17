@@ -7,7 +7,7 @@ the [scope doc](../SOLEN_COMPLETE_SCOPE.md) for feature status.
 ## Commands
 
 ```bash
-npm install       # install dependencies
+npm ci              # install dependencies (lockfile-exact, no rewrites)
 npm run dev       # dev server with HMR
 npm run build     # production build to dist/
 npm run preview   # serve the production build locally

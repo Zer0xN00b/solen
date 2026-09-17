@@ -13,7 +13,8 @@ profiles, a budget engine, and weather-aware itineraries.
 ## Quick start
 
 ```bash
-npm install          # installs frontend + backend (npm workspaces)
+npm ci               # installs frontend + backend (npm workspaces;
+                     # never rewrites package-lock.json, unlike npm install)
 npm run dev          # runs BOTH servers: frontend :5173, API :4000
 ```
 

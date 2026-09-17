@@ -31,9 +31,15 @@ git --version
 # from the folder you extracted (the one containing package.json)
 cd solen
 
-npm install        # installs frontend + backend (a few minutes, once)
+npm ci             # installs frontend + backend (a few minutes, once)
 npm run dev        # starts BOTH servers
 ```
+
+> Use `npm ci` (not `npm install`): it installs exactly what the committed
+> `package-lock.json` pins and never rewrites it, so `git pull` is never
+> blocked by lockfile changes. If a lockfile conflict ever appears anyway,
+> `git restore package-lock.json` and pull again — the committed lockfile
+> is the source of truth.
 
 You should see:
 
@@ -87,10 +93,10 @@ git diff                # review your edits
 
 ## 6. Troubleshooting
 
-**`npm install` fails on `better-sqlite3`**
+**`npm ci` fails on `better-sqlite3`**
 It normally downloads a ready-made binary. If it tries to compile and
 fails, switch to Node 20 or 22 LTS (the project pins Node ≥ 20 in
-`.nvmrc`) and run `npm install` again.
+`.nvmrc`) and run `npm ci` again.
 
 **Port already in use (5173 or 4000)**
 Something else is running on that port — close it, or change the port:
