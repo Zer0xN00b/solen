@@ -1,0 +1,86 @@
+/* ============================================================
+   SOLEN MOTION FOUNDATION
+   Spec: docs/MOTION_ANALYSIS.md (principles P1-P7, timings §17)
+
+   This file is VOCABULARY, not choreography. It defines tokens,
+   one opt-in reveal primitive, and the reduced-motion contract.
+   Individual animations live co-located with their page and must
+   reference these tokens (rule R1 in docs/MOTION_FOUNDATION.md).
+   ============================================================ */
+
+:root {
+  /* --- durations (measured ranges -> single values) --- */
+  --motion-push: 320ms;         /* mechanical pushes/slides      250-400 ms */
+  --motion-wipe: 600ms;         /* section wipes / flips         ~600 ms    */
+  --motion-reveal: 550ms;       /* typographic reveals           450-600 ms */
+  --motion-reveal-slow: 850ms;  /* showpiece reveals             700-900 ms */
+  --motion-stagger: 200ms;      /* arrival-order offsets         150-250 ms */
+
+  /* --- easing: deceleration, never oscillation (§17) --- */
+  --ease-decel: cubic-bezier(0.16, 1, 0.3, 1);       /* strong settle  */
+  --ease-decel-soft: cubic-bezier(0.33, 1, 0.68, 1); /* gentle settle  */
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);      /* smooth transit */
+  --ease-linear: linear;                             /* ambient clock  */
+
+  /* --- reveal material (§5, M2/M3) --- */
+  --reveal-blur: 10px;          /* blur-in amount                 8-12 px   */
+  --reveal-rise: 14px;          /* subtle vertical arrival              */
+  --ink-ghost-opacity: 0.25;    /* ghost state before ink-in       ~25%     */
+}
+
+/* ------------------------------------------------------------
+   REVEAL PRIMITIVE (opt-in; dormant until an element opts in)
+   Usage:  <div data-reveal>          fade + rise
+           <div data-reveal="blur">   fade + rise + focus-in
+           data-reveal-delay="1..6"   arrival-order stagger (P4)
+   JS counterpart: src/utils/reveal.js (initialized in main.jsx)
+   ------------------------------------------------------------ */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(var(--reveal-rise));
+  transition:
+    opacity var(--motion-reveal) var(--ease-decel),
+    transform var(--motion-reveal) var(--ease-decel),
+    filter var(--motion-reveal) var(--ease-decel);
+}
+
+[data-reveal='blur'] {
+  filter: blur(var(--reveal-blur));
+}
+
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+
+[data-reveal-delay='1'] { transition-delay: calc(var(--motion-stagger) * 1); }
+[data-reveal-delay='2'] { transition-delay: calc(var(--motion-stagger) * 2); }
+[data-reveal-delay='3'] { transition-delay: calc(var(--motion-stagger) * 3); }
+[data-reveal-delay='4'] { transition-delay: calc(var(--motion-stagger) * 4); }
+[data-reveal-delay='5'] { transition-delay: calc(var(--motion-stagger) * 5); }
+[data-reveal-delay='6'] { transition-delay: calc(var(--motion-stagger) * 6); }
+
+/* ------------------------------------------------------------
+   REDUCED-MOTION CONTRACT
+   Every token collapses and every reveal becomes static, so any
+   future token-driven animation is automatically neutralized.
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-push: 1ms;
+    --motion-wipe: 1ms;
+    --motion-reveal: 1ms;
+    --motion-reveal-slow: 1ms;
+    --motion-stagger: 0ms;
+    --reveal-blur: 0px;
+    --reveal-rise: 0px;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}
