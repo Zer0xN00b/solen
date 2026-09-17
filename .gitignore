@@ -26,3 +26,5 @@ npm-debug.log*
 
 # Local sync secrets (never commit)
 .sync/
+*.db-shm
+*.db-wal

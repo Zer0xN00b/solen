@@ -28,7 +28,7 @@ npm run format         # Prettier across the repo
 ```
 
 **Stack:** React 19 · Vite · React Router 7 · plain CSS (frontend) —
-Express 5 · SQLite (better-sqlite3) (backend, scaffolded).
+Express 5 · TypeScript · Drizzle ORM · **Better Auth** · SQLite (backend).
 Node **20+** required (see `.nvmrc`).
 
 The frontend dev server proxies `/api/*` to the backend on port 4000,
@@ -84,16 +84,18 @@ solen/
 │           ├── index.css
 │           └── responsive.css
 │
-└── backend/                         ← Express + SQLite (scaffolded, Phase 2+)
+└── backend/                         ← Express + TypeScript + Better Auth (Phase 2–3 merged)
     ├── .env.example
+    ├── drizzle/                     ← generated SQL migrations (committed)
     ├── data/                        ← local SQLite file (git-ignored)
     └── src/
-        ├── server.js / app.js       ← entry point + app assembly
-        ├── config/env.js            ← environment access
-        ├── routes/                  ← /api routes (health check today)
-        ├── controllers/  services/  models/   ← built in Phases 2–4
-        ├── middleware/              ← notFound + errorHandler
-        └── database/connection.js   ← lazy SQLite connection
+        ├── server.ts / app.ts       ← entry point + app assembly (auto-migrates DB)
+        ├── auth/auth.ts             ← Better Auth config (email/password, httpOnly cookies)
+        ├── config/env.ts            ← environment access
+        ├── database/                ← schema.ts (generated), db.ts, migrate.ts
+        ├── routes/                  ← /api routes (health today)
+        ├── controllers/  services/  models/   ← product code lands here
+        └── middleware/              ← notFound + errorHandler
 ```
 
 ### Why `data/` and `engine/` are separate

@@ -13,9 +13,9 @@ router.get('/health', (req, res) => {
 });
 
 // Future route modules mount here (scope doc §45):
-//   router.use('/auth', authRoutes);
 //   router.use('/destinations', destinationRoutes);
 //   router.use('/journeys', journeyRoutes);
 //   router.use('/weather', weatherRoutes);
+// (Auth lives separately at /api/auth — see app.ts.)
 
 export default router;

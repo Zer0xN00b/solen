@@ -3,3 +3,5 @@
 *.db-journal
 *.sqlite
 !.gitignore
+*.db-shm
+*.db-wal
