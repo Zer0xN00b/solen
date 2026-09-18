@@ -1,0 +1,306 @@
+/* ==========================================================================
+   Animation 03 — M4 Horizontal Stepper (pinned, discrete pushes)
+   Spec: docs/MOTION_ANALYSIS.md (M4) · Handoff: user module, 2026-09-18
+   (rubric score 89/100 — see docs/ANIMATION_REVIEW_RUBRIC.md).
+
+   Tokens from styles/motion.css (R1). Structure follows the handoff:
+   1. BASE (no html.js / JS fails): static stacked list, fully readable.
+   2. html.js ENHANCED: 400vh scroll region, sticky 100vh panel, track
+      pushed via --active-index.
+   3. prefers-reduced-motion: forces the BASE back on regardless.
+
+   Integration additions (flagged, judged missing from the handoff):
+   - SOLEN typography & palette on steps (Cormorant titles, Inter body).
+   - Background tone scrub per step (light → plum) with text-colour
+     counterpoint, transitioning in sync with each push.
+   - Ghost numerals travelling the same distance per push but settling
+     over --motion-reveal-slow — the discrete-step analogue of the
+     analysis' "ghost numerals slower than the words" parallax.
+   - Full-bleed via negative margin (section lives inside a 6vw-padded
+     parent); the Discover CTA preserved from the locked card grid.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. BASE — static, stacked, always readable
+   -------------------------------------------------------------------------- */
+
+.m4-stepper {
+  position: static;
+  height: auto;
+
+  margin-inline: calc(6vw * -1); /* full-bleed inside the padded section */
+}
+
+.m4-stepper__sticky {
+  position: static;
+  height: auto;
+}
+
+.m4-stepper__track {
+  display: block;
+  width: 100%;
+}
+
+.m4-stepper__step {
+  width: 100%;
+
+  padding: clamp(2.5rem, 8vw, 5rem) clamp(1.5rem, 6vw, 6rem);
+}
+
+.m4-stepper__index {
+  margin: 0 0 0.75em;
+
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+
+  opacity: 0.6;
+}
+
+.m4-stepper__title {
+  margin: 0 0 0.4em;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 500;
+  line-height: 1.05;
+}
+
+.m4-stepper__line {
+  margin: 0;
+  max-width: 42ch;
+
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.7;
+
+  opacity: 0.8;
+}
+
+.m4-stepper__cta {
+  margin-top: 2.25rem;
+  padding: 0.9em 1.7em;
+
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+
+  color: inherit;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+
+  cursor: pointer;
+
+  transition: opacity var(--motion-push) var(--ease-decel);
+}
+
+.m4-stepper__cta:hover {
+  opacity: 0.6;
+}
+
+/* Ghost numerals & indicator only mean something in the pinned view. */
+.m4-stepper__ghosts,
+.m4-stepper__indicator {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   2. ENHANCED — pinned, one horizontal push at a time
+   -------------------------------------------------------------------------- */
+
+html.js .m4-stepper {
+  position: relative;
+
+  height: 400vh;
+  height: 400dvh; /* dynamic viewport height where supported */
+}
+
+html.js .m4-stepper__sticky {
+  position: sticky;
+  top: 0;
+
+  height: 100vh;
+  height: 100dvh;
+
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  /* Background scrub — step 0 default. Scrubbed further via
+     [data-active] below; each push crossfades background + text colour
+     in sync (--motion-push / --ease-decel), keeping contrast honest. */
+  background-color: #faf7f1;
+  color: #241c1d;
+
+  transition:
+    background-color var(--motion-push) var(--ease-decel),
+    color var(--motion-push) var(--ease-decel);
+}
+
+html.js .m4-stepper[data-active='1'] .m4-stepper__sticky {
+  background-color: #f3ebdd;
+}
+
+html.js .m4-stepper[data-active='2'] .m4-stepper__sticky {
+  background-color: #a78d97; /* fallback for browsers without color-mix */
+  background-color: color-mix(in srgb, #4a1942 45%, #f3ebdd);
+}
+
+html.js .m4-stepper[data-active='3'] .m4-stepper__sticky {
+  background-color: #4a1942;
+  color: #faf7f1; /* text-colour counterpoint on the dark chapter */
+}
+
+/* Ghost numerals — one per step, huge, near-invisible, currentColor so
+   the counterpoint flows through them. Travels the same distance per
+   push as the track but takes --motion-reveal-slow to settle, so the
+   numerals visibly lag the words. */
+html.js .m4-stepper__ghosts {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  display: flex;
+  flex-wrap: nowrap;
+
+  pointer-events: none;
+
+  transform: translateX(calc(var(--active-index, 0) * -100%));
+  transition: transform var(--motion-reveal-slow) var(--ease-decel-soft);
+
+  will-change: transform;
+}
+
+html.js .m4-stepper__ghost {
+  flex: 0 0 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  padding-right: 4vw;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(11rem, 32vw, 28rem);
+  font-weight: 500;
+  line-height: 1;
+
+  color: currentColor;
+  opacity: 0.08;
+
+  user-select: none;
+}
+
+html.js .m4-stepper__track {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  flex-wrap: nowrap;
+
+  width: 100%;
+
+  transform: translateX(calc(var(--active-index, 0) * -100%));
+  transition: transform var(--motion-push) var(--ease-decel);
+
+  will-change: transform;
+}
+
+html.js .m4-stepper__step {
+  flex: 0 0 100%;
+
+  width: 100%;
+
+  padding: 0 clamp(1.5rem, 6vw, 6rem);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+html.js .m4-stepper__indicator {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  gap: 0.6rem;
+
+  padding: 0 clamp(1.5rem, 6vw, 6rem) clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.m4-stepper__dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: currentColor;
+  opacity: 0.3;
+}
+
+.m4-stepper__dot.is-active {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile — the handoff's documented decision (R8): same mechanic,
+   shorter pinned scroll room per step on small screens.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 640px) {
+  html.js .m4-stepper {
+    height: calc(4 * 70vh);
+    height: calc(4 * 70dvh);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. REDUCED MOTION — force the static base, regardless of html.js
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html.js .m4-stepper {
+    position: static !important;
+    height: auto !important;
+  }
+
+  html.js .m4-stepper__sticky {
+    position: static !important;
+    height: auto !important;
+
+    overflow: visible !important;
+
+    display: block !important;
+
+    background: transparent !important;
+    color: inherit !important;
+
+    transition: none !important;
+  }
+
+  html.js .m4-stepper__track {
+    display: block !important;
+    width: 100% !important;
+
+    transform: none !important;
+    transition: none !important;
+  }
+
+  html.js .m4-stepper__step {
+    flex: none !important;
+
+    width: 100% !important;
+
+    display: block !important;
+
+    padding: clamp(2.5rem, 8vw, 5rem) clamp(1.5rem, 6vw, 6rem) !important;
+  }
+
+  html.js .m4-stepper__ghosts,
+  html.js .m4-stepper__indicator {
+    display: none !important;
+  }
+}

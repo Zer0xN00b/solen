@@ -212,7 +212,7 @@ P1–P7 above are the answer to this item.
 |---|---|
 | M3 per-word blur-in | journey-summary line; homepage statement lines · **→ implemented as Animation 01 (hero headline)** |
 | M2 ghost→solid ink-in | Cormorant hero + destination titles · **→ implemented as Animation 02 (destination title, reversible)** |
-| M4 horizontal stepper | THE WILD / TABLE / SOUL / ESCAPE showcase; planner step rail (M10) |
+| M4 horizontal stepper | THE WILD / TABLE / SOUL / ESCAPE showcase · **→ implemented as Animation 03 (user module 89/100 + agent cinematic layers)**; planner step rail (M10) |
 | M1 torn-edge wipe | hero → discovery chapter break, as a soft oatmeal/plum tear |
 | M5/M6 particles | globe ambience + crafting screen, as plum dust |
 | M7 marquee | quiet feelings ticker |

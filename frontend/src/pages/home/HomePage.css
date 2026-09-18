@@ -7,6 +7,7 @@
   background: #f3ebdd;
   color: #241c1d;
   overflow-x: hidden;
+  overflow-x: clip; /* sticky-safe: clip doesn't create a scroll container */
 }
 
 .app a {

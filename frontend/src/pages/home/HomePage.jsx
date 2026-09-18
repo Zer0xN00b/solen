@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
+import './m4Stepper.css';
 import { destinations, experiences, feelings } from '../../data/homeContent.js';
 import SolenGlobe from '../../components/globe/SolenGlobe.jsx';
 import { initHeroBlurIn } from './heroBlurIn.js';
+import { initM4Stepper } from './m4Stepper.js';
 
 function HomePage() {
   const navigate = useNavigate();
@@ -12,6 +14,9 @@ function HomePage() {
   useEffect(() => {
     initHeroBlurIn();
   }, []);
+
+  // Animation 03 — M4 horizontal stepper over the four experiences.
+  useEffect(() => initM4Stepper(), []);
 
   return (
     <div className="app">
@@ -203,27 +208,47 @@ function HomePage() {
             </div>
           </div>
 
-          <div className="experience-grid">
-            {experiences.map((experience) => (
-              <article className="experience-card" key={experience.title}>
-                <div className="experience-image">
-                  <img src={experience.image} alt={experience.title} />
-                </div>
+          <div className="m4-stepper" data-animation="m4-horizontal-stepper">
+            <div className="m4-stepper__sticky">
+              <div className="m4-stepper__ghosts" aria-hidden="true">
+                {experiences.map((experience, i) => (
+                  <span className="m4-stepper__ghost" key={experience.key}>
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                ))}
+              </div>
 
-                <div className="experience-info">
-                  <h3>{experience.title}</h3>
+              <div className="m4-stepper__track">
+                {experiences.map((experience, i) => (
+                  <article className="m4-stepper__step" key={experience.key}>
+                    <p className="m4-stepper__index">
+                      {String(i + 1).padStart(2, '0')} / {String(experiences.length).padStart(2, '0')}
+                    </p>
 
-                  <p>{experience.description}</p>
+                    <h3 className="m4-stepper__title">{experience.title}</h3>
 
-                  <button
-                    type="button"
-                    onClick={() => navigate(`/planner?experience=${experience.key}`)}
-                  >
-                    Discover <span>→</span>
-                  </button>
-                </div>
-              </article>
-            ))}
+                    <p className="m4-stepper__line">{experience.description}</p>
+
+                    <button
+                      type="button"
+                      className="m4-stepper__cta"
+                      onClick={() => navigate(`/planner?experience=${experience.key}`)}
+                    >
+                      Discover <span>→</span>
+                    </button>
+                  </article>
+                ))}
+              </div>
+
+              <div className="m4-stepper__indicator" aria-hidden="true">
+                {experiences.map((experience, i) => (
+                  <span
+                    className={`m4-stepper__dot${i === 0 ? ' is-active' : ''}`}
+                    key={experience.key}
+                  ></span>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
         <SolenGlobe />

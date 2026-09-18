@@ -1,5 +1,96 @@
 # SOLEN Changelog
 
+## Animation 03 — Experiences horizontal stepper (M4) · 2026-09-18
+
+Status: user-supplied module (rubric score **89/100 — PASS**, first use of
+`ANIMATION_REVIEW_RUBRIC.md`) integrated into the homepage experiences
+section, plus the integration-side cinematic additions the rubric flagged
+as missing. The locked experiences **heading is untouched**; the locked
+**card grid is replaced** by the stepper (the approved mapping target),
+with every card's content and its Discover→planner navigation preserved.
+Recoverable with one git revert if ever wanted back.
+
+### The mechanic
+
+Four steps — THE WILD / THE TABLE / THE SOUL / THE ESCAPE — pinned in a
+400vh scroll region (70vh/step on mobile). Each step arrives as one
+320ms horizontal push (`--motion-push` / `--ease-decel`), holds perfectly
+still, and reverses identically on scroll-back. Hysteresis (±0.08) kills
+boundary flicker; scrollbar jumps resolve in one recompute. No
+scroll-jacking: read-only passive listeners, rAF-throttled.
+
+### Files added
+
+- `frontend/src/pages/home/m4Stepper.js` — trigger module (React port of
+  the handoff IIFE): STEP_COUNT derived from DOM, `--active-index` set on
+  the section (so the ghost layer inherits it), `data-active` added to
+  drive the scrub, cleanup on unmount, reduced-motion no-op.
+- `frontend/src/pages/home/m4Stepper.css` — handoff module structure
+  (base → enhanced → reduced-motion) with SOLEN typography/palette and
+  the cinematic additions below.
+
+### Files modified
+
+- `frontend/src/pages/home/HomePage.jsx` — imports + `useEffect(() =>
+  initM4Stepper(), [])`; card-grid JSX replaced by stepper JSX (real
+  `experiences` data, CTA keeps `/planner?experience=<key>`).
+- `frontend/src/pages/home/HomePage.css` — `.app` gains `overflow-x:
+  clip` fallback-anchored on `hidden` (see infrastructure note).
+- `frontend/src/styles/responsive.css` — same clip pair on the
+  `html/body/#root` block and the `.app` media-query block.
+
+### Cinematic additions (the rubric's named tweaks, agent-built)
+
+1. **Background tone scrub + text-colour counterpoint** — the sticky
+   panel crossfades per step, in sync with each push: cream `#faf7f1` →
+   oatmeal `#f3ebdd` → dusty mauve `color-mix(in srgb, #4a1942 45%,
+   #f3ebdd)` (hex fallback provided) → deep plum `#4a1942`, text
+   switching to cream on the final chapter. All four colours are SOLEN's
+   own palette family; contrast checked (≥ 6:1).
+2. **Ghost numerals** — huge Cormorant `01–04` at 8% opacity behind the
+   content, `currentColor` so the counterpoint flows through them.
+   Travels the same distance per push as the track but settles over
+   `--motion-reveal-slow` — the discrete-step analogue of the analysis'
+   "ghost numerals slower than the words" parallax.
+
+### Infrastructure note — the sticky fix
+
+`position: sticky` breaks under ancestors with `overflow-x: hidden`
+(they become scroll containers). SOLEN had three (`.app`, `html/body/
+#root`, responsive `.app`). Each now carries `overflow-x: clip` after
+the `hidden` line: modern browsers get clip (visually identical, no
+scroll container → sticky works); older browsers keep `hidden` and the
+site looks exactly as before. Predicted by the handoff's own README
+warning; verified as necessary.
+
+### Handoff adaptations (documented in the module headers)
+
+IIFE → React module with cleanup; STEP_COUNT derived; `--active-index`
+hoisted to the section; full-bleed via `margin-inline: -6vw` inside the
+padded section; mobile 70vh/step kept from the handoff.
+
+### Uses tokens
+
+`--motion-push`, `--ease-decel`, `--motion-reveal-slow`,
+`--ease-decel-soft` — all from `styles/motion.css`. Step colours are
+design values (palette family), not motion tokens.
+
+### Open item
+
+The locked cards had images; the stepper is typographic (faithful to the
+handoff). Step images as subtle backgrounds remain an option for a later
+pass if wanted.
+
+### Verification
+
+- `npm run lint` clean; `npm run build` clean (CSS 62.27 → 65.72 kB).
+- Dev server: homepage + `m4Stepper.js` serve (200); `js` flag present;
+  step-selection logic previously verified 6/6 in Node (hysteresis,
+  jumps, reverse symmetry).
+- Live scroll test left to the user's machine + preview.
+
+---
+
 ## Animation 02 — Destination title ghost → solid ink-in (M2) · 2026-09-18
 
 Status: user-authored standalone module integrated faithfully onto the

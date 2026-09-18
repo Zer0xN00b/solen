@@ -13,6 +13,7 @@ body,
 #root {
   max-width: 100%;
   overflow-x: hidden;
+  overflow-x: clip; /* sticky-safe: clip doesn't create a scroll container */
 }
 
 img {
@@ -29,6 +30,7 @@ img {
   .app {
     width: 100%;
     overflow-x: hidden;
+    overflow-x: clip; /* sticky-safe: clip doesn't create a scroll container */
   }
 
   /* ---------- NAVIGATION ---------- */
