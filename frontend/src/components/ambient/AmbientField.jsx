@@ -17,19 +17,22 @@ import './AmbientField.css';
  */
 
 const PLUM = '74, 25, 66'; // #4a1942, alpha applied per particle
+const CREAM = '250, 247, 241'; // #faf7f1 — two-tone field: plum motes
+// darken the light chapters, cream motes glow on the dark ones.
 
 function makeParticles(width, height) {
-  const count = Math.min(70, Math.round((width * height) / 26000));
+  const count = Math.min(90, Math.round((width * height) / 15000));
   return Array.from({ length: count }, () => ({
     x: Math.random() * width,
     y: Math.random() * height,
-    r: 0.6 + Math.random() * 1.2,
-    alpha: 0.05 + Math.random() * 0.09,
+    r: 0.8 + Math.random() * 1.6,
+    alpha: 0.16 + Math.random() * 0.22,
     phase: Math.random() * Math.PI * 2,
     twinkle: 0.3 + Math.random() * 0.7,
-    vx: (Math.random() - 0.5) * 0.12,
-    vy: (Math.random() - 0.5) * 0.08,
+    vx: (Math.random() - 0.5) * 0.24,
+    vy: (Math.random() - 0.5) * 0.16,
     depth: 0.3 + Math.random() * 0.7,
+    light: Math.random() < 0.5,
   }));
 }
 
@@ -66,7 +69,7 @@ export default function AmbientField() {
       ctx.clearRect(0, 0, width, height);
       for (const p of particles) {
         ctx.beginPath();
-        ctx.fillStyle = `rgba(${PLUM}, ${p.alpha})`;
+        ctx.fillStyle = `rgba(${p.light ? CREAM : PLUM}, ${p.alpha})`;
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
       }
@@ -82,12 +85,12 @@ export default function AmbientField() {
         p.x = (p.x + p.vx + width) % width;
         p.y = (p.y + p.vy + height) % height;
 
-        // Slow twinkle and a touch of scroll parallax for depth.
-        const alpha = p.alpha * (0.75 + 0.25 * Math.sin(frame * 0.01 * p.twinkle + p.phase));
-        const y = (((p.y - scroll * 0.06 * p.depth) % height) + height) % height;
+        // Twinkle and a touch of scroll parallax for depth.
+        const alpha = p.alpha * (0.6 + 0.4 * Math.sin(frame * 0.01 * p.twinkle + p.phase));
+        const y = (((p.y - scroll * 0.1 * p.depth) % height) + height) % height;
 
         ctx.beginPath();
-        ctx.fillStyle = `rgba(${PLUM}, ${alpha.toFixed(3)})`;
+        ctx.fillStyle = `rgba(${p.light ? CREAM : PLUM}, ${alpha.toFixed(3)})`;
         ctx.arc(p.x, y, p.r, 0, Math.PI * 2);
         ctx.fill();
       }

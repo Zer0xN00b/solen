@@ -16,5 +16,5 @@
   pointer-events: none;
 
   mix-blend-mode: soft-light;
-  opacity: 0.55;
+  opacity: 0.9; /* presence, not confetti — tuned 2026-09-18 after "can't see anything" */
 }
