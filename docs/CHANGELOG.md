@@ -59,6 +59,28 @@ the start frame — invisible restart, no snap, no JS driving the motion.
 `--ease-linear`, `--motion-ambient-loop` (new, promoted by this
 handoff); the toggle's hover borrows `--motion-push` / `--ease-decel`.
 
+### Styling pass — editorial elevation (direction A, user-chosen)
+
+After the user saw the first integration ("so generic"), a styling pass
+re-dressed the same mechanics — tilt, seamless loop, pause, reduced
+motion all untouched:
+
+- Items became **large Cormorant italic** words — clamp(2rem, 5.5vw,
+  4.25rem), plum at 95% — alternating **solid and outlined** (1.5px
+  `-webkit-text-stroke`, soft-tint fallback where unsupported): ink/print
+  rhythm, unmistakably SOLEN, nothing like a template ticker.
+- Small plum **diamond separators** between words (pure CSS).
+- Band taller: clamp(180px, 24vw, 300px) desktop / clamp(140px, 30vw,
+  200px) mobile — presence instead of a thin floating line.
+- Slower current: `calc(var(--motion-ambient-loop) * 1.25)` = 60s, so
+  the larger type reads.
+- Repeat count 4 → 2 per group (items are ~5x wider; loop math
+  unchanged), verified against the handoff's ultrawide note.
+
+Lesson recorded: "quiet" in a spec is not the same as "small" — quiet
+should live in pace and restraint, not in typographic scale. Future
+ambient specs will say "confident but unhurried" instead.
+
 ### Verification
 
 - `npm run lint` clean; `npm run build` clean (CSS 65.72 → 67.36 kB).

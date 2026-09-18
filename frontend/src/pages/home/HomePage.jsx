@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
 import './m4Stepper.css';
@@ -203,15 +203,22 @@ function HomePage() {
             <div className="m7-diagonal-marquee__track">
               {[0, 1].map((group) => (
                 <div className="m7-diagonal-marquee__group" key={group}>
-                  {Array.from({ length: 4 }).flatMap((_, repeat) =>
-                    feelings.map((feeling) => (
-                      <span
-                        className="m7-diagonal-marquee__item"
-                        key={`${group}-${repeat}-${feeling.key}`}
-                      >
-                        {feeling.label}
-                      </span>
-                    )),
+                  {Array.from({ length: 2 }).flatMap((_, repeat) =>
+                    feelings.map((feeling, i) => {
+                      const seq = repeat * feelings.length + i;
+                      return (
+                        <Fragment key={`${group}-${seq}`}>
+                          <span
+                            className={`m7-diagonal-marquee__item${
+                              seq % 2 === 1 ? ' is-outline' : ''
+                            }`}
+                          >
+                            {feeling.label}
+                          </span>
+                          <span className="m7-diagonal-marquee__sep"></span>
+                        </Fragment>
+                      );
+                    }),
                   )}
                 </div>
               ))}

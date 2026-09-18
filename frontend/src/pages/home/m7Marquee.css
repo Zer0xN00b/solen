@@ -23,7 +23,7 @@
   position: relative;
 
   width: 100%;
-  height: clamp(140px, 18vw, 220px);
+  height: clamp(180px, 24vw, 300px);
 
   overflow: hidden;
 
@@ -41,34 +41,67 @@
 
 .m7-diagonal-marquee__track {
   display: flex;
+  align-items: center;
 
   width: max-content;
 
-  animation: m7-drift var(--motion-ambient-loop) var(--ease-linear) infinite;
+  animation: m7-drift calc(var(--motion-ambient-loop) * 1.25) var(--ease-linear)
+    infinite; /* 60s — larger type reads better at a slower current */
 
   will-change: transform;
 }
 
 .m7-diagonal-marquee__group {
   display: flex;
+  align-items: center;
   flex-shrink: 0;
 }
 
+/* Editorial elevation (user-chosen direction A, 2026-09-18): large
+   Cormorant italic words, solid plum and outlined trading places —
+   confident, unmistakably SOLEN, not a template ticker. */
 .m7-diagonal-marquee__item {
   flex-shrink: 0;
 
   margin-right: 3rem;
 
-  font-family: 'Inter', sans-serif;
-  font-size: clamp(0.9rem, 2vw, 1.25rem);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 5.5vw, 4.25rem);
+  font-style: italic;
   font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
   white-space: nowrap;
 
-  /* SOLEN skin: quiet plum drift over the oatmeal ground. */
   color: #4a1942;
-  opacity: 0.45;
+  opacity: 0.95;
+}
+
+/* Outlined alternate words: ink/print rhythm. Fallback (no
+   text-stroke support) is a soft plum tint — never invisible. */
+.m7-diagonal-marquee__item.is-outline {
+  color: rgba(74, 25, 66, 0.28);
+}
+
+@supports (-webkit-text-stroke: 1px #000) {
+  .m7-diagonal-marquee__item.is-outline {
+    -webkit-text-stroke: 1.5px #4a1942;
+    color: transparent;
+  }
+}
+
+/* Small plum diamond between words — pure CSS, no glyph risk. */
+.m7-diagonal-marquee__sep {
+  flex-shrink: 0;
+
+  width: 10px;
+  height: 10px;
+
+  margin-right: 3rem;
+
+  background: #4a1942;
+  opacity: 0.5;
+
+  transform: rotate(45deg);
 }
 
 @keyframes m7-drift {
@@ -121,7 +154,7 @@
    speed; only the band's height scales down to stay proportional. */
 @media (max-width: 640px) {
   .m7-diagonal-marquee {
-    height: clamp(100px, 26vw, 160px);
+    height: clamp(140px, 30vw, 200px);
   }
 }
 
@@ -153,6 +186,10 @@
 
   .m7-diagonal-marquee__item:first-child {
     margin-right: 0;
+  }
+
+  .m7-diagonal-marquee__sep {
+    display: none;
   }
 
   .m7-diagonal-marquee__toggle {
