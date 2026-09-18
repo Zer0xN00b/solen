@@ -1,0 +1,161 @@
+/* ==========================================================================
+   Animation 04 — M7 Diagonal Marquee (quiet feelings ticker)
+   Spec: docs/MOTION_ANALYSIS.md (M7) · Handoff: user module, 2026-09-18.
+
+   Ambient clock, not story clock (P1/R4): pure CSS @keyframes, linear,
+   infinite, zero relationship to scroll or page state. Runs regardless
+   of JS. Tokens from styles/motion.css — --ease-linear read directly;
+   --motion-ambient-loop promoted to the foundation by this handoff.
+
+   Mechanics (from the handoff): a static -4deg rotation on the clipping
+   wrapper — the exact angle documented in the analysis — makes the strip
+   read as diagonal; inside it the animation is a plain translateX
+   0 → -50%. Two identical groups back to back: one loop moves exactly
+   one group's width, so the end frame is pixel-identical to the start
+   frame and the restart is invisible.
+
+   Integration skin: SOLEN colour on the items (quiet plum on oatmeal,
+   sitting between the dark plum feeling-section and the experiences
+   stepper) and full width; everything else is the module unchanged.
+   ========================================================================== */
+
+.m7-diagonal-marquee {
+  position: relative;
+
+  width: 100%;
+  height: clamp(140px, 18vw, 220px);
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+}
+
+.m7-diagonal-marquee__viewport {
+  width: 100%;
+
+  overflow: hidden;
+
+  transform: rotate(-4deg); /* the analysis' documented band angle */
+}
+
+.m7-diagonal-marquee__track {
+  display: flex;
+
+  width: max-content;
+
+  animation: m7-drift var(--motion-ambient-loop) var(--ease-linear) infinite;
+
+  will-change: transform;
+}
+
+.m7-diagonal-marquee__group {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.m7-diagonal-marquee__item {
+  flex-shrink: 0;
+
+  margin-right: 3rem;
+
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(0.9rem, 2vw, 1.25rem);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  /* SOLEN skin: quiet plum drift over the oatmeal ground. */
+  color: #4a1942;
+  opacity: 0.45;
+}
+
+@keyframes m7-drift {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Pause control — WCAG 2.2.2: auto-playing motion lasting more than a
+   few seconds needs a way to stop. Adds no motion of its own; it only
+   gates the loop above via animation-play-state (see m7Marquee.js). */
+.m7-diagonal-marquee__toggle {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  z-index: 1;
+
+  padding: 0.35rem 0.8rem;
+
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: #4a1942;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+
+  opacity: 0.5;
+
+  cursor: pointer;
+
+  transition: opacity var(--motion-push) var(--ease-decel);
+}
+
+.m7-diagonal-marquee__toggle:hover {
+  opacity: 0.9;
+}
+
+.m7-diagonal-marquee__track.is-paused {
+  animation-play-state: paused;
+}
+
+/* Mobile — the handoff's documented decision (R8): same angle, same
+   speed; only the band's height scales down to stay proportional. */
+@media (max-width: 640px) {
+  .m7-diagonal-marquee {
+    height: clamp(100px, 26vw, 160px);
+  }
+}
+
+/* Reduced motion — stop the loop AND straighten the text (a static
+   tilted line is still harder to read than a horizontal one). The
+   duplicate group and extra repeats exist solely to feed the loop;
+   with the loop gone they collapse to one centered instance. The
+   pause button hides — nothing left to pause. */
+@media (prefers-reduced-motion: reduce) {
+  .m7-diagonal-marquee__viewport {
+    transform: none;
+  }
+
+  .m7-diagonal-marquee__track {
+    width: auto;
+
+    justify-content: center;
+
+    animation: none;
+  }
+
+  .m7-diagonal-marquee__group:nth-of-type(2) {
+    display: none;
+  }
+
+  .m7-diagonal-marquee__item:not(:first-child) {
+    display: none;
+  }
+
+  .m7-diagonal-marquee__item:first-child {
+    margin-right: 0;
+  }
+
+  .m7-diagonal-marquee__toggle {
+    display: none;
+  }
+}

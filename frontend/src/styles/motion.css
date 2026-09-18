@@ -16,6 +16,11 @@
   --motion-reveal-slow: 850ms;  /* showpiece reveals             700-900 ms */
   --motion-stagger: 200ms;      /* arrival-order offsets         150-250 ms */
 
+  /* Ambient-clock durations (P1/R4: loops belong here, not to story
+     motion). First promoted by the Animation 04 handoff (M7 marquee) —
+     flagged there as a genuinely missing token, verified as such. */
+  --motion-ambient-loop: 48s;   /* slow continuous ambient loop  */
+
   /* --- easing: deceleration, never oscillation (§17) --- */
   --ease-decel: cubic-bezier(0.16, 1, 0.3, 1);       /* strong settle  */
   --ease-decel-soft: cubic-bezier(0.33, 1, 0.68, 1); /* gentle settle  */

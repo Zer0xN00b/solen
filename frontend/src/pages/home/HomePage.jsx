@@ -2,10 +2,12 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
 import './m4Stepper.css';
+import './m7Marquee.css';
 import { destinations, experiences, feelings } from '../../data/homeContent.js';
 import SolenGlobe from '../../components/globe/SolenGlobe.jsx';
 import { initHeroBlurIn } from './heroBlurIn.js';
 import { initM4Stepper } from './m4Stepper.js';
+import { initM7Marquee } from './m7Marquee.js';
 
 function HomePage() {
   const navigate = useNavigate();
@@ -17,6 +19,10 @@ function HomePage() {
 
   // Animation 03 — M4 horizontal stepper over the four experiences.
   useEffect(() => initM4Stepper(), []);
+
+  // Animation 04 — M7 quiet feelings ticker (pause control only; the
+  // loop itself is pure CSS).
+  useEffect(() => initM7Marquee(), []);
 
   return (
     <div className="app">
@@ -188,6 +194,39 @@ function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Animation 04 — quiet feelings ticker (M7). The ticker itself
+            is decorative (the real feelings are the buttons above), so
+            the strip is aria-hidden; the pause control stays exposed. */}
+        <div className="m7-diagonal-marquee" data-animation="m7-diagonal-marquee">
+          <div className="m7-diagonal-marquee__viewport" aria-hidden="true">
+            <div className="m7-diagonal-marquee__track">
+              {[0, 1].map((group) => (
+                <div className="m7-diagonal-marquee__group" key={group}>
+                  {Array.from({ length: 4 }).flatMap((_, repeat) =>
+                    feelings.map((feeling) => (
+                      <span
+                        className="m7-diagonal-marquee__item"
+                        key={`${group}-${repeat}-${feeling.key}`}
+                      >
+                        {feeling.label}
+                      </span>
+                    )),
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            className="m7-diagonal-marquee__toggle"
+            type="button"
+            aria-pressed="false"
+            aria-label="Pause the feelings ticker"
+          >
+            Pause
+          </button>
+        </div>
 
         {/* EXPERIENCES */}
         <section className="experiences-section" id="experiences">

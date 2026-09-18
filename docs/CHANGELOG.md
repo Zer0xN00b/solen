@@ -1,5 +1,72 @@
 # SOLEN Changelog
 
+## Animation 04 — Quiet feelings ticker (M7 diagonal marquee) · 2026-09-18
+
+Status: user-supplied module integrated between the plum feeling-section
+and the experiences stepper — a quiet ambient seam, exactly the analysis'
+mapped target ("quiet feelings ticker"). The M7 rubric trial applies to
+M4; qualitative verdict here: exemplary handoff — seamless loop math,
+documented -4° angle sourced from the analysis, WCAG 2.2.2 pause control,
+honest flagging of the one genuinely missing token.
+
+### The mechanic
+
+Pure CSS ambient clock (P1/R4 — the deliberate opposite of the
+scroll-driven story mechanics): a static `-4deg` tilt on the clipping
+wrapper (the analysis' documented band angle) + a linear `translateX
+0 → -50%` drift inside it. Two identical groups back to back: one loop
+moves exactly one group's width, so the end frame is pixel-identical to
+the start frame — invisible restart, no snap, no JS driving the motion.
+48s per loop ≈ one phrase every 4–5 s: a slow current, not a ticker.
+
+### Files added
+
+- `frontend/src/pages/home/m7Marquee.css` — handoff module with SOLEN
+  skin: quiet plum items (`#4a1942` at 45% opacity) over the oatmeal
+  ground; full width; toggle styled to match. Mechanics unchanged.
+- `frontend/src/pages/home/m7Marquee.js` — pause control only (React
+  port of the handoff IIFE with cleanup): toggles
+  `animation-play-state` per WCAG 2.2.2, honors mid-session
+  reduced-motion flips. The marquee runs with zero JS; this file only
+  gates it.
+
+### Files modified
+
+- `frontend/src/styles/motion.css` — **`--motion-ambient-loop: 48s`
+  promoted to the foundation** as the first ambient-clock duration
+  token (the handoff flagged it as genuinely missing; verified — all
+  existing duration tokens are narrative-scale 200–850 ms).
+- `frontend/src/pages/home/HomePage.jsx` — imports +
+  `useEffect(() => initM7Marquee(), [])`; marquee JSX with the real
+  `feelings` labels as the ticker content (7 labels × 4 repeats per
+  group — enough width for ultrawide; the `-50%` loop math is
+  repeat-count-agnostic per the handoff's integration notes).
+
+### Integration decisions (documented)
+
+- **Placement:** between feeling-section and experiences-section —
+  dark plum → whispering ticker → cream stepper panel: the ambient
+  breather between the two chapters.
+- **Accessibility:** the strip is decorative (the real feelings are
+  the interactive buttons above), so the viewport is `aria-hidden`;
+  the pause button stays exposed and labelled.
+- **No html.js gating needed** — animation is pure CSS; no-JS shows
+  the full loop, and reduced-motion collapses it to one centered
+  horizontal instance (handoff's CSS, unchanged).
+
+### Uses tokens
+
+`--ease-linear`, `--motion-ambient-loop` (new, promoted by this
+handoff); the toggle's hover borrows `--motion-push` / `--ease-decel`.
+
+### Verification
+
+- `npm run lint` clean; `npm run build` clean (CSS 65.72 → 67.36 kB).
+- Dev server: homepage + `m7Marquee.js` serve (200); marquee markup
+  present in the transformed component.
+
+---
+
 ## Animation 03 — Experiences horizontal stepper (M4) · 2026-09-18
 
 Status: user-supplied module (rubric score **89/100 — PASS**, first use of
