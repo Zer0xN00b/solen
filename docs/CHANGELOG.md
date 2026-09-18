@@ -81,6 +81,25 @@ The locked cards had images; the stepper is typographic (faithful to the
 handoff). Step images as subtle backgrounds remain an option for a later
 pass if wanted.
 
+### Known issue — user-reported jank (2026-09-18), fix deferred
+
+User verdict after first look: "doesn't look all that good, kinda
+janky." Suspects, ranked (to verify one by one when fixing):
+
+1. **Ghost-numeral lag** — the 850ms slow-settle was a discrete stand-in
+   for the reference's *continuous* parallax; a huge element still
+   drifting 530ms after content settles may read as an error, not depth.
+   Candidate fixes: cut the lag to ~150–200ms, or make ghost offset
+   continuous (progress-linked, read-only), or retire the ghost.
+2. **Discrete background colour jumps** — the reference scrubbed
+   continuously with scroll; per-push crossfades (especially the big
+   mauve→plum jump) may feel flickery. Candidates: progress-linked
+   blend, or tone steps closer together, or slower colour transition.
+3. **Pacing/length** — 400vh may feel long; 320ms push possibly too
+   snappy against the luxury register. Candidates: 300–350vh, softer
+   push duration toward --motion-reveal.
+4. Step composition (left content vs right ghost balance) unverified.
+
 ### Verification
 
 - `npm run lint` clean; `npm run build` clean (CSS 62.27 → 65.72 kB).
