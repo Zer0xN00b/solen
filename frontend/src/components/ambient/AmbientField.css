@@ -1,0 +1,20 @@
+/* Stage layer 1 — ambient particle field (M5/M6 as permanent chrome).
+   A fixed, full-viewport whisper of plum dust over every page and
+   every section break (P5: persistent layers are continuity).
+
+   soft-light blending makes the same particles read as a faint plum
+   stain on light grounds and a faint glow on dark grounds — one
+   layer, every chapter. Pointer-events stay off; it is atmosphere,
+   not interface. Under reduced motion the JS draws ONE static frame
+   (grain without drift) — presence without movement. */
+
+.ambient-field {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+
+  pointer-events: none;
+
+  mix-blend-mode: soft-light;
+  opacity: 0.55;
+}

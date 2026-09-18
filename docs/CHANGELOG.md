@@ -1,5 +1,28 @@
 # SOLEN Changelog
 
+## Stage build — Step 1: ambient particle field · 2026-09-18
+
+The "density lesson" put into practice (see MOTION_FOUNDATION.md):
+before any more isolated effects, build the persistent stage.
+
+`frontend/src/components/ambient/AmbientField.jsx` (+ `.css`), mounted
+once in `AppRoutes` so it covers **every** page and survives **every**
+section break (P5). Plum dust (~50–70 particles by area, capped) with
+slow drift, gentle twinkle, and slight scroll parallax for depth.
+`soft-light` blend: the same particles whisper on cream grounds and
+glow faintly on plum ones — one layer, all chapters.
+
+Guards: pointer-events off + aria-hidden (atmosphere, not interface);
+rAF paused while the tab is hidden; DPR capped at 2; plain arcs only;
+reduced motion draws ONE static frame (grain without drift) and a
+mid-session preference flip switches live. Full cleanup on unmount.
+
+Verdict pending: user's eyes on the live preview. Tuning knobs if too
+loud/too quiet: opacity (0.55), particle density (/26000), alpha
+range, parallax factor.
+
+---
+
 ## Animation 04 — Quiet feelings ticker (M7 diagonal marquee) · 2026-09-18
 
 Status: user-supplied module integrated between the plum feeling-section

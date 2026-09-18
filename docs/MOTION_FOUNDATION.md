@@ -63,7 +63,20 @@ animations are implemented yet** — this is vocabulary only.
 
 Nothing else on the site uses it until deliberately opted in.
 
-## Adding the first real animation (the workflow)
+## The density lesson (added 2026-09-18, after M7's retirement)
+
+Isolated effects read as stickers; *vibe* is made of layer density and
+identity coherence. The reference's marquee worked because it sat
+inside a dense, loud composition; the same craft, floating in SOLEN's
+quiet single-layer sections, read generic. Element-level mechanics
+(M2, M3, M4) fit quiet luxury; composition-level patterns demand
+composition-level support around them.
+
+Consequence for build order: before adding more isolated effects,
+build the **persistent layers** — site-wide ambient particles/grain
+(M5/M6 as chrome), the progress rail (M10), chaptering transitions
+(M1) — so every new element lands inside a composed scene, not on an
+empty stage (P5, P7).
 
 1. You pick mechanic (M1–M10 in the analysis) + target element.
 2. You send the CSS (or request a draft to spec).

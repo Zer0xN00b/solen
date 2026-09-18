@@ -4,6 +4,7 @@ import TripPlanner from './pages/planner/TripPlanner.jsx';
 
 import HomePage from './pages/home/HomePage.jsx';
 import DestinationDetail from './pages/destination/DestinationDetail.jsx';
+import AmbientField from './components/ambient/AmbientField.jsx';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -19,6 +20,9 @@ function AppRoutes() {
   return (
     <>
       <ScrollToTop />
+
+      {/* Stage layer 1 — site-wide ambient particle field. */}
+      <AmbientField />
 
       <Routes>
         <Route path="/" element={<HomePage />} />
