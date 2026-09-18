@@ -6,19 +6,36 @@ import './AmbientField.css';
  * Spec: docs/MOTION_ANALYSIS.md (M5/M6, P5) & docs/MOTION_FOUNDATION.md
  * ("The density lesson").
  *
- * Site-wide plum dust drifting on the ambient clock: ~50-70 particles,
- * slow drift + gentle twinkle + a touch of scroll parallax for depth.
- * Pure atmosphere — pointer-events off, aria-hidden, soft-light blend
- * so it whispers on both cream and plum chapters.
+ * Site-wide plum/cream dust on the ambient clock: slow drift, gentle
+ * twinkle, slight scroll parallax for depth. Two-tone so motes read on
+ * cream chapters (plum) and glow on plum ones (cream). Normal
+ * compositing with honest alpha — soft-light blending proved
+ * mathematically invisible (tuning rounds, 2026-09-18).
  *
- * Performance: one canvas, plain arcs (no shadow/blur), rAF paused
- * while the tab is hidden, particle count capped by area, DPR capped
- * at 2. Reduced motion: a single static frame — grain, not drift.
+ * Tiny-improvement pass: motes are pre-rendered radial-gradient
+ * sprites (soft edges, no hard confetti dots) drawn via drawImage —
+ * softer look AND cheaper per frame than live gradients.
+ *
+ * Performance: one canvas, sprites, rAF paused while the tab is
+ * hidden, particle count capped by area, DPR capped at 2.
+ * Reduced motion: ONE static frame — grain, not drift.
  */
 
-const PLUM = '74, 25, 66'; // #4a1942, alpha applied per particle
-const CREAM = '250, 247, 241'; // #faf7f1 — two-tone field: plum motes
-// darken the light chapters, cream motes glow on the dark ones.
+const PLUM = '74, 25, 66'; // #4a1942
+const CREAM = '250, 247, 241'; // #faf7f1
+
+function makeSprite(rgb) {
+  const s = document.createElement('canvas');
+  s.width = s.height = 64;
+  const c = s.getContext('2d');
+  const g = c.createRadialGradient(32, 32, 0, 32, 32, 32);
+  g.addColorStop(0, `rgba(${rgb}, 1)`);
+  g.addColorStop(0.4, `rgba(${rgb}, 0.55)`);
+  g.addColorStop(1, `rgba(${rgb}, 0)`);
+  c.fillStyle = g;
+  c.fillRect(0, 0, 64, 64);
+  return s;
+}
 
 function makeParticles(width, height) {
   const count = Math.min(90, Math.round((width * height) / 15000));
@@ -45,6 +62,7 @@ export default function AmbientField() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return undefined;
 
+    const sprites = { plum: makeSprite(PLUM), cream: makeSprite(CREAM) };
     const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     let particles = [];
     let width = 0;
@@ -53,6 +71,12 @@ export default function AmbientField() {
     let rafId = null;
 
     const dpr = () => Math.min(window.devicePixelRatio || 1, 2);
+
+    function paint(p, alpha, y) {
+      const size = p.r * 5; // soft halo; visible core is the inner ~40%
+      ctx.globalAlpha = alpha;
+      ctx.drawImage(sprites[p.light ? 'cream' : 'plum'], p.x - size / 2, y - size / 2, size, size);
+    }
 
     function resize() {
       width = window.innerWidth;
@@ -67,12 +91,8 @@ export default function AmbientField() {
 
     function drawStatic() {
       ctx.clearRect(0, 0, width, height);
-      for (const p of particles) {
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(${p.light ? CREAM : PLUM}, ${p.alpha})`;
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
+      for (const p of particles) paint(p, p.alpha, p.y);
+      ctx.globalAlpha = 1;
     }
 
     function drawFrame() {
@@ -89,11 +109,9 @@ export default function AmbientField() {
         const alpha = p.alpha * (0.6 + 0.4 * Math.sin(frame * 0.01 * p.twinkle + p.phase));
         const y = (((p.y - scroll * 0.1 * p.depth) % height) + height) % height;
 
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(${p.light ? CREAM : PLUM}, ${alpha.toFixed(3)})`;
-        ctx.arc(p.x, y, p.r, 0, Math.PI * 2);
-        ctx.fill();
+        paint(p, alpha, y);
       }
+      ctx.globalAlpha = 1;
 
       rafId = requestAnimationFrame(drawFrame);
     }

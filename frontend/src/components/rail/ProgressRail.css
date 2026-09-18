@@ -1,0 +1,83 @@
+/* Stage layer 2 — progress rail (M10). Persistent chrome on every
+   page: a hairline that fills as you travel, with one dot per
+   chapter, positioned at the chapter's true place in the document.
+   The rail IS the position (P7: motion is information architecture).
+
+   Colour: the dusty bridge tone #8a6478 — reads on cream grounds and
+   on the deep plum chapters alike, so one rail survives every
+   section break without theme-switching (P5).
+
+   Pure position reflection: no autonomous motion, so it stays
+   meaningful under reduced motion (only the dot pulse is removed). */
+
+.progress-rail {
+  position: fixed;
+  top: 50%;
+  right: clamp(12px, 2vw, 28px);
+  z-index: 60;
+
+  height: 38vh;
+
+  transform: translateY(-50%);
+
+  pointer-events: none;
+}
+
+.progress-rail__line,
+.progress-rail__fill {
+  position: absolute;
+  inset: 0;
+
+  width: 1px;
+}
+
+.progress-rail__line {
+  background: rgba(138, 100, 120, 0.25);
+}
+
+.progress-rail__fill {
+  background: #8a6478;
+
+  transform: scaleY(0);
+  transform-origin: top;
+
+  will-change: transform;
+}
+
+.progress-rail__dot {
+  position: absolute;
+  left: -2.5px;
+
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #8a6478;
+  opacity: 0.35;
+
+  transform: translateY(-50%);
+
+  transition:
+    opacity var(--motion-push) var(--ease-decel),
+    transform var(--motion-push) var(--ease-decel);
+}
+
+.progress-rail__dot.is-active {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.4);
+}
+
+/* Mobile decision (R8): the rail earns nothing on a small screen and
+   steals edge space — hidden there. */
+@media (max-width: 640px) {
+  .progress-rail {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-rail__dot {
+    transition: none;
+  }
+}

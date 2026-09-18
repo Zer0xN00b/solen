@@ -21,6 +21,28 @@ Verdict pending: user's eyes on the live preview. Tuning knobs if too
 loud/too quiet: opacity (0.55), particle density (/26000), alpha
 range, parallax factor.
 
+### Tune 3 + tiny improvement (2026-09-18)
+
+User confirmed presence ("they're here now, looks good"). Improvement
+pass: motes now pre-rendered **radial-gradient sprites** (soft edges —
+no hard confetti dots) drawn via drawImage; softer look, cheaper per
+frame.
+
+## Stage build — Step 2: progress rail (M10) · 2026-09-18
+
+`components/rail/ProgressRail.jsx` (+ `.css`), mounted in AppRoutes —
+persistent on every page. A 38vh hairline at the right edge: track at
+25% bridge tone, fill scaling with scroll (`scaleY`, transform-only),
+one dot per chapter placed at the chapter's TRUE document position
+(hero/about/destinations/feelings/experiences/planner where present),
+active dot pulses at the viewport's middle. Rebuilds dots on route
+change. Read-only passive scroll, rAF-throttled.
+
+Colour: dusty bridge tone `#8a6478` — reads on cream and on deep plum
+without theme-switching. Mobile: hidden ≤640px (documented R8
+decision). Reduced motion: rail stays (position is information, not
+animation); only the dot pulse is removed.
+
 ---
 
 ## Animation 04 — Quiet feelings ticker (M7 diagonal marquee) · 2026-09-18

@@ -5,6 +5,7 @@ import TripPlanner from './pages/planner/TripPlanner.jsx';
 import HomePage from './pages/home/HomePage.jsx';
 import DestinationDetail from './pages/destination/DestinationDetail.jsx';
 import AmbientField from './components/ambient/AmbientField.jsx';
+import ProgressRail from './components/rail/ProgressRail.jsx';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -23,6 +24,9 @@ function AppRoutes() {
 
       {/* Stage layer 1 — site-wide ambient particle field. */}
       <AmbientField />
+
+      {/* Stage layer 2 — persistent progress rail (M10). */}
+      <ProgressRail />
 
       <Routes>
         <Route path="/" element={<HomePage />} />
