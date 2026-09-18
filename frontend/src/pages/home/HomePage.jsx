@@ -4,6 +4,7 @@ import './HomePage.css';
 import './m4Stepper.css';
 import { destinations, experiences, feelings } from '../../data/homeContent.js';
 import SolenGlobe from '../../components/globe/SolenGlobe.jsx';
+import TornEdge from '../../components/edges/TornEdge.jsx';
 import { initHeroBlurIn } from './heroBlurIn.js';
 import { initM4Stepper } from './m4Stepper.js';
 
@@ -83,6 +84,9 @@ function HomePage() {
           </div>
         </section>
 
+        {/* Stage layer 3 — torn edge: hero photo -> oatmeal chapter. */}
+        <TornEdge fill="#f3ebdd" />
+
         {/* INTRO */}
         <section className="intro" id="about">
           <div className="section-label">
@@ -156,6 +160,9 @@ function HomePage() {
           </div>
         </section>
 
+        {/* Stage layer 3 — torn edge into the plum chapter. */}
+        <TornEdge fill="#4a1942" flip />
+
         {/* FEELING */}
         <section className="feeling-section">
           <div className="feeling-background"></div>
@@ -188,6 +195,9 @@ function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Stage layer 3 — torn edge out of the plum chapter. */}
+        <TornEdge fill="#f3ebdd" />
 
         {/* EXPERIENCES */}
         <section className="experiences-section" id="experiences">
@@ -252,6 +262,9 @@ function HomePage() {
           </div>
         </section>
         <SolenGlobe />
+
+        {/* Stage layer 3 — torn edge into the cream planner chapter. */}
+        <TornEdge fill="#faf7f1" flip />
 
         {/* PLANNER CTA */}
         <section className="planner-section" id="planner">

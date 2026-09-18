@@ -28,6 +28,21 @@ pass: motes now pre-rendered **radial-gradient sprites** (soft edges —
 no hard confetti dots) drawn via drawImage; softer look, cheaper per
 frame.
 
+## Stage build — Step 3: torn chapter edges (M1, v1) · 2026-09-18
+
+`components/edges/TornEdge.jsx` (+ `.css`): torn-paper SVG seams at the
+four homepage chapter boundaries — hero→intro (oatmeal tear over the
+photo), destinations→feeling (plum tear), feeling→experiences (oatmeal
+tear out of plum), globe→planner (cream tear). Fill always equals the
+NEXT chapter's ground, so the page reads as one continuous torn
+story (P2: the paper metaphor).
+
+Zero layout shift by construction: height exactly cancelled by the
+negative margin — pure overlay, locked sections keep their geometry.
+Alternating mirror flips for organic variety. Mobile: 56px tears.
+Static in v1, so reduced motion needs no guard; the scroll-driven
+wipe upgrade (M1's full form) is deferred to the polish phase.
+
 ## Stage build — Step 2: progress rail (M10) · 2026-09-18
 
 `components/rail/ProgressRail.jsx` (+ `.css`), mounted in AppRoutes —
