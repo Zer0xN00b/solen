@@ -368,3 +368,59 @@
     font-size: clamp(3.5rem, 16vw, 6rem);
   }
 }
+
+/* ==========================================================================
+   Animation 02 — M2 Ghost → Solid Ink-In
+   Spec: docs/MOTION_ANALYSIS.md (M2) · Handoff: user module, 2026-09-18.
+   Tokens come from styles/motion.css (not redefined here, per R1).
+   One unified title, one transition — no word-splitting (that's M3).
+   Design (typography / colour / layout) untouched.
+   ========================================================================== */
+
+/* Default / fallback: fully visible, no motion — readability never
+   depends on JS succeeding. */
+.m2-title {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+/* Ghosted starting state — applied only once JS is confirmed (html.js,
+   set project-wide in index.html). Blur + grayscale together read as
+   "ghost-grey," the ink/print metaphor of text developing to solid.
+   Grayscale is a filter value, not a token — optional, trivially
+   removable. */
+html.js .m2-title {
+  opacity: var(--ink-ghost-opacity);
+  filter: blur(var(--reveal-blur)) grayscale(1);
+
+  /* Subtle settle, not travel: small scale change, no translation. */
+  transform: scale(0.985);
+  transform-origin: center;
+
+  transition:
+    opacity var(--motion-reveal-slow) var(--ease-decel-soft),
+    filter var(--motion-reveal-slow) var(--ease-decel-soft),
+    transform var(--motion-reveal-slow) var(--ease-decel-soft);
+  will-change: opacity, filter, transform;
+}
+
+/* Solid / materialized end state. Toggled by the observer in
+   m2GhostSolid.js — added on entering view, removed on leaving, so the
+   title un-inks again when scrolled back out ("scroll is the timeline,"
+   principle P1). */
+html.js .m2-title.is-materialized {
+  opacity: 1;
+  filter: blur(0) grayscale(0);
+  transform: scale(1);
+}
+
+/* Reduced motion — immediate final state, no exceptions (R7). */
+@media (prefers-reduced-motion: reduce) {
+  html.js .m2-title {
+    transition: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+}

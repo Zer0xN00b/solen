@@ -1,11 +1,18 @@
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './DestinationDetail.css';
 import { destinationEditorial } from '../../data/destinationEditorial.js';
+import { initM2GhostSolid } from './m2GhostSolid.js';
 
 function DestinationDetail() {
   const { slug } = useParams();
 
   const destination = destinationEditorial[slug] || destinationEditorial.kyoto;
+
+  // Animation 02 — M2 ghost → solid ink-in on the destination title.
+  // Re-initializes per destination so the observer always watches the
+  // live title; cleanup disconnects the observer on unmount/change.
+  useEffect(() => initM2GhostSolid(), [slug]);
 
   return (
     <main className="destination-detail">
@@ -21,7 +28,9 @@ function DestinationDetail() {
         <div className="destination-hero-content">
           <p className="destination-eyebrow">{destination.region}</p>
 
-          <h1>{destination.name}</h1>
+          <h1 className="m2-title" data-animation="m2-ghost-solid">
+            {destination.name}
+          </h1>
 
           <p className="destination-hero-description">{destination.description}</p>
         </div>

@@ -1,5 +1,79 @@
 # SOLEN Changelog
 
+## Animation 02 — Destination title ghost → solid ink-in (M2) · 2026-09-18
+
+Status: user-authored standalone module integrated faithfully onto the
+destination detail page's main title (the analysis' mapped target —
+"Cormorant … destination titles"). One unified title, one 850 ms
+transition: ghost-grey (opacity 0.25 + blur 10px + grayscale + scale
+0.985) develops into solid, crisp type. **Reversible** — the title
+un-inks again when scrolled back out of view (P1: scroll is the
+timeline). No word-splitting, no stagger — that is M3, not this.
+
+### Files added
+
+- `frontend/src/pages/destination/m2GhostSolid.js` — the trigger module
+  (port of the handoff's `m2-ghost-solid.js`): IntersectionObserver
+  toggles `.is-materialized` both directions; deliberately does NOT reuse
+  `reveal.js` (that one is one-shot; M2 is reversible). threshold 0.2 /
+  rootMargin `0px 0px -8% 0px` match `reveal.js` for consistent
+  "in view" semantics. Reduced-motion: no observer attached, titles
+  settled once; mid-session preference flip disconnects and settles.
+
+### Files modified
+
+- `frontend/src/pages/destination/DestinationDetail.jsx` — the hero `<h1>`
+  gains `className="m2-title"` + `data-animation="m2-ghost-solid"` (no
+  inner markup change); `useEffect(() => initM2GhostSolid(), [slug])` —
+  re-initializes per destination, cleanup disconnects the observer.
+- `frontend/src/pages/destination/DestinationDetail.css` — appended the
+  Animation 02 block verbatim from the handoff module: default-visible
+  fallback, `html.js`-gated ghosted state, materialized end state,
+  reduced-motion override.
+
+### Adaptations from the handoff
+
+1. IIFE → exported `initM2GhostSolid()` returning a React cleanup
+   function (observer disconnect on unmount/route change). Behavior
+   otherwise identical.
+2. Preview-only token shim dropped — the real tokens already exist in
+   `styles/motion.css` with exactly the values the handoff assumed
+   (`--motion-reveal-slow: 850ms`, `--ease-decel-soft:
+   cubic-bezier(0.33, 1, 0.68, 1)`, `--reveal-blur`, `--ink-ghost-opacity`).
+3. `html.js` flag already exists project-wide (added with Animation 01).
+4. Preview chrome (spacers, Replay button) not imported — demo only.
+
+### Uses tokens
+
+`--motion-reveal-slow`, `--ease-decel-soft`, `--reveal-blur`,
+`--ink-ghost-opacity` — all from `styles/motion.css`. Grayscale is a
+filter *value* in the ghost state, not a token (handoff's own note —
+trivially removable if unwanted).
+
+### Placement decision (flagged)
+
+The user's module named no target ("representative title … not a real
+SOLEN section"). Placed on the destination hero `<h1>` per the analysis
+mapping ("M2 → Cormorant hero + destination titles"; homepage hero
+already carries M3). **Reversible in one line** — move the class to any
+other title, or extend: the observer handles multiple `.m2-title`
+elements (candidates: `destination-intro` h2, section h2s).
+
+### Handoff's simplification note (preserved)
+
+The trigger is enter/leave threshold toggling, not continuous
+scroll-scrubbing — the 850 ms transition plays on its own clock after
+the boundary crossing. Reversible, scroll-tied, no hijacking. Flagged by
+the handoff as a simplification, not an established SOLEN rule.
+
+### Verification
+
+- `npm run lint` clean; `npm run build` clean (CSS 61.62 → 62.27 kB).
+- Dev server verified: `/destinations/kyoto` serves (200),
+  `m2GhostSolid.js` resolves (200).
+
+---
+
 ## Animation 01 — Hero headline per-word blur-in (M3) · 2026-09-17
 
 Status: user-authored prototype (standalone HTML/CSS/JS handoff) integrated
