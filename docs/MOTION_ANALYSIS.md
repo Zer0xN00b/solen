@@ -215,7 +215,7 @@ P1–P7 above are the answer to this item.
 | M4 horizontal stepper | THE WILD / TABLE / SOUL / ESCAPE showcase · **→ implemented as Animation 03 (user module 89/100 + agent cinematic layers)**; planner step rail (M10) |
 | M1 torn-edge wipe | hero → discovery chapter break, as a soft oatmeal/plum tear |
 | M5/M6 particles | globe ambience + crafting screen, as plum dust |
-| M7 marquee | quiet feelings ticker · **→ implemented as Animation 04 (feelings labels, ambient seam)** |
+| M7 marquee | quiet feelings ticker · implemented as Animation 04, then **retired by user taste** (2026-09-18) — technically sound, didn't belong; lesson in CHANGELOG |
 | M8 accent word | plum accent on the final word of a statement |
 | M16 typewriter placeholder | planner input easter-egg (optional) |
 

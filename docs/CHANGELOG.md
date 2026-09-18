@@ -87,6 +87,21 @@ ambient specs will say "confident but unhurried" instead.
 - Dev server: homepage + `m7Marquee.js` serve (200); marquee markup
   present in the transformed component.
 
+### RETIRED (2026-09-18) — by user taste, after two iterations
+
+The user saw both the quiet version and the editorial-elevation
+version on the live site and rejected both ("still doesn't look
+good"). The only remaining candidate placement (ambient ghost-layer
+inside the dark plum feeling-section) was judged too speculative to
+gamble a third iteration on. **Animation 04 removed entirely:** JSX
+block, `m7Marquee.css`, `m7Marquee.js` deleted; imports and effect
+unwired. `--motion-ambient-loop` stays in the foundation, reserved for
+future ambient work. Recoverable forever via git (commit `cec9d57`).
+
+Lesson recorded: a mechanic can be technically perfect and still not
+belong on a site — taste outranks craft. The rubric scores craft; the
+user scores belonging. Both votes matter, and the user's is final.
+
 ---
 
 ## Animation 03 — Experiences horizontal stepper (M4) · 2026-09-18

@@ -17,8 +17,9 @@
   --motion-stagger: 200ms;      /* arrival-order offsets         150-250 ms */
 
   /* Ambient-clock durations (P1/R4: loops belong here, not to story
-     motion). First promoted by the Animation 04 handoff (M7 marquee) —
-     flagged there as a genuinely missing token, verified as such. */
+     motion). First promoted by the Animation 04 handoff (M7 marquee),
+     which was later retired by user taste decision (see CHANGELOG) —
+     the token stays reserved for future ambient work (particles etc.). */
   --motion-ambient-loop: 48s;   /* slow continuous ambient loop  */
 
   /* --- easing: deceleration, never oscillation (§17) --- */
