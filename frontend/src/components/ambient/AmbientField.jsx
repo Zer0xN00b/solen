@@ -25,8 +25,8 @@ function makeParticles(width, height) {
   return Array.from({ length: count }, () => ({
     x: Math.random() * width,
     y: Math.random() * height,
-    r: 0.8 + Math.random() * 1.6,
-    alpha: 0.16 + Math.random() * 0.22,
+    r: 1 + Math.random() * 1.6,
+    alpha: 0.2 + Math.random() * 0.3,
     phase: Math.random() * Math.PI * 2,
     twinkle: 0.3 + Math.random() * 0.7,
     vx: (Math.random() - 0.5) * 0.24,

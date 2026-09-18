@@ -15,6 +15,8 @@
 
   pointer-events: none;
 
-  mix-blend-mode: soft-light;
-  opacity: 0.9; /* presence, not confetti — tuned 2026-09-18 after "can't see anything" */
+  /* No blending: soft-light proved mathematically too subtle to read
+     (2026-09-18 tuning round 2). Normal compositing with honest alpha
+     — plum motes read on cream chapters, cream motes on plum ones. */
+  opacity: 1;
 }
