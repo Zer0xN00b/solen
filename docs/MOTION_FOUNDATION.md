@@ -83,3 +83,11 @@ empty stage (P5, P7).
 3. I implement: co-located file, tokens per R1, guards per R7/R8,
    verify build + live, commit, you `git pull` and review.
 4. Iterate until it feels right.
+
+## Reporting rule (added 2026-09-19, user request)
+
+Every change, no matter how small, is reported with three parts:
+
+1. **Code where** — exact file(s) and block(s) touched.
+2. **Page where** — exactly where on the live site to look.
+3. **Before → after** — what the eye should compare against memory.
