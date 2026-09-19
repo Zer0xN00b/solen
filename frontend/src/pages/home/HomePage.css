@@ -1216,3 +1216,28 @@ html.js .hero h1[data-animation='m3-blur-in'] .word:nth-of-type(7) { transition-
     animation: none;
   }
 }
+
+/* ==========================================================================
+   Animation 05 — M8 accent word on the intro statement
+   Spec: docs/MOTION_ANALYSIS.md (M8). The statement reveals via the
+   foundation [data-reveal] primitive; the final word ("personal.")
+   blooms to plum AFTER the line settles — the accent lands last.
+   Design (typography/layout) untouched; colour only.
+   ========================================================================== */
+
+.intro h2 em {
+  color: inherit;
+
+  transition: color var(--motion-reveal) var(--ease-decel-soft)
+    calc(var(--motion-stagger) * 2);
+}
+
+.intro h2[data-reveal].is-revealed em {
+  color: #4a1942;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro h2 em {
+    transition: none;
+  }
+}

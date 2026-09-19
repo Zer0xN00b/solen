@@ -28,6 +28,25 @@ pass: motes now pre-rendered **radial-gradient sprites** (soft edges —
 no hard confetti dots) drawn via drawImage; softer look, cheaper per
 frame.
 
+## M4 audit fix — specificity inversion · 2026-09-19
+
+Agent audit (user delegated the verdict) caught one real bug from the
+fix pass: the discrete `[data-active]` background rules carry an
+attribute selector and therefore OUT-SPECIFIED the continuous
+`color-mix` rule — modern browsers kept the jumpy background. Fix:
+discrete rules wrapped in `@supports not (color: color-mix(...))` so
+they exist only as a true fallback. File: `m4Stepper.css`. Audit
+verdict otherwise: ghost parallax, scrub, pacing all behave as
+designed; remaining polish belongs to the user's taste pass.
+
+## Animation 05 — M8 accent word (intro statement) · 2026-09-19
+
+The intro statement "Travel should feel *personal.*" reveals via the
+foundation `[data-reveal]` primitive (`data-reveal` added to the h2 in
+`HomePage.jsx`); the final word blooms ink → plum 400ms after the line
+settles (`HomePage.css`, new Animation 05 block). Colour-only —
+typography and layout untouched. Reduced motion: immediate plum.
+
 ## M4 fix pass (draft, agent) · 2026-09-19
 
 The jank suspects logged after the user's first look, addressed:

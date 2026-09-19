@@ -141,16 +141,22 @@ html.js .m4-stepper__sticky {
   transition: color var(--motion-push) var(--ease-decel);
 }
 
-html.js .m4-stepper[data-active='1'] .m4-stepper__sticky {
-  background-color: #f3ebdd;
-}
+/* Discrete fallback ONLY for browsers without color-mix — wrapped in
+   @supports-not so it can never out-specify the continuous rule above
+   (audit fix 2026-09-19: bare [data-active] rules were winning on
+   specificity and silently re-introducing the per-push jumps). */
+@supports not (color: color-mix(in srgb, #4a1942, #faf7f1)) {
+  html.js .m4-stepper[data-active='1'] .m4-stepper__sticky {
+    background-color: #f3ebdd;
+  }
 
-html.js .m4-stepper[data-active='2'] .m4-stepper__sticky {
-  background-color: #a78d97;
-}
+  html.js .m4-stepper[data-active='2'] .m4-stepper__sticky {
+    background-color: #a78d97;
+  }
 
-html.js .m4-stepper[data-active='3'] .m4-stepper__sticky {
-  background-color: #4a1942;
+  html.js .m4-stepper[data-active='3'] .m4-stepper__sticky {
+    background-color: #4a1942;
+  }
 }
 
 /* Continuous scrub — wins over the discrete fallback above. */

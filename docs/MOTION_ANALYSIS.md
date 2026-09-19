@@ -216,7 +216,7 @@ P1–P7 above are the answer to this item.
 | M1 torn-edge wipe | hero → discovery chapter break, as a soft oatmeal/plum tear |
 | M5/M6 particles | globe ambience + crafting screen, as plum dust |
 | M7 marquee | quiet feelings ticker · implemented as Animation 04, then **retired by user taste** (2026-09-18) — technically sound, didn't belong; lesson in CHANGELOG |
-| M8 accent word | plum accent on the final word of a statement |
+| M8 accent word | plum accent on the final word of a statement · **→ implemented as Animation 05 (intro statement "personal.")** |
 | M16 typewriter placeholder | planner input easter-egg (optional) |
 
 What NOT to import: scroll-jack heaviness (luxury = user in control),

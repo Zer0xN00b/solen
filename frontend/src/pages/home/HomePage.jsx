@@ -95,7 +95,7 @@ function HomePage() {
           </div>
 
           <div className="intro-content">
-            <h2>
+            <h2 data-reveal>
               Travel should feel
               <br />
               <em>personal.</em>
