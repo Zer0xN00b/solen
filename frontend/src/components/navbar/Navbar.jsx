@@ -6,7 +6,7 @@ function Navbar() {
   return (
     <nav className="navbar transparent">
       <div className="logo">
-        <img src="/assets/solen-logo.webp" alt="SOLEN Logo" />
+        <img src="/assets/solen-logo.png" alt="SOLEN Logo" />
       </div>
       <ul className="nav-links">
         <li>

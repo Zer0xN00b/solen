@@ -4,37 +4,37 @@
 export const destinations = [
   {
     name: 'Amalfi Coast',
-    image: '/assets/destinations/amalfi.webp',
+    image: '/assets/destinations/amalfi.png',
     description: 'Cliffside mornings & Mediterranean evenings',
   },
   {
     name: 'Bali',
-    image: '/assets/destinations/bali.webp',
+    image: '/assets/destinations/bali.png',
     description: 'Slow days, hidden temples & tropical calm',
   },
   {
     name: 'Iceland',
-    image: '/assets/destinations/iceland.webp',
+    image: '/assets/destinations/iceland.png',
     description: 'Wild landscapes & endless horizons',
   },
   {
     name: 'Kyoto',
-    image: '/assets/destinations/kyoto.webp',
+    image: '/assets/destinations/kyoto.png',
     description: 'Ancient streets, quiet gardens & ritual',
   },
   {
     name: 'Maldives',
-    image: '/assets/destinations/maldives.webp',
+    image: '/assets/destinations/maldives.png',
     description: 'Barefoot luxury & water without end',
   },
   {
     name: 'Morocco',
-    image: '/assets/destinations/morocco.webp',
+    image: '/assets/destinations/morocco.png',
     description: 'Colour, spice, architecture & discovery',
   },
   {
     name: 'Paris',
-    image: '/assets/destinations/paris.webp',
+    image: '/assets/destinations/paris.png',
     description: 'Art, romance & timeless city energy',
   },
 ];
@@ -43,25 +43,25 @@ export const experiences = [
   {
     key: 'wild',
     title: 'THE WILD',
-    image: '/assets/experiences/wild.webp',
+    image: '/assets/experiences/wild.png',
     description: 'For the moments when you want to feel completely alive.',
   },
   {
     key: 'table',
     title: 'THE TABLE',
-    image: '/assets/experiences/table.webp',
+    image: '/assets/experiences/table.png',
     description: 'For meals that become stories worth remembering.',
   },
   {
     key: 'soul',
     title: 'THE SOUL',
-    image: '/assets/experiences/soul.webp',
+    image: '/assets/experiences/soul.png',
     description: 'For culture, art, history and places with a pulse.',
   },
   {
     key: 'escape',
     title: 'THE ESCAPE',
-    image: '/assets/experiences/escape.webp',
+    image: '/assets/experiences/escape.png',
     description: 'For slowing down, switching off and simply being.',
   },
 ];
