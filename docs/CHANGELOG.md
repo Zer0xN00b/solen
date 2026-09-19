@@ -1,5 +1,65 @@
 # SOLEN Changelog
 
+## Polish batch 1 — site-wide staged reveals + hero parallax · 2026-09-19
+
+Two reference mechanics land site-wide (P4 staged reveals, analysis
+item 8 depth layer), under the full-delegation polish phase.
+
+### 1. Staged reveals (P4) — every section statement enters softly
+
+**Code where:** `data-reveal="blur"` added to the five home section
+h2s in `frontend/src/pages/home/HomePage.jsx` (intro "Travel should
+feel personal.", destinations, feeling, experiences, planner closer)
+and the three h2s in
+`frontend/src/pages/destination/DestinationDetail.jsx` (intro title,
+"Moments worth travelling for.", final CTA). Uses the existing one-shot
+primitive from `frontend/src/utils/reveal.js` + blur variant from
+`frontend/src/styles/motion.css` — no new machinery.
+
+**Page where:** scroll the home page and any destination page; each
+big serif statement starts blurred/transparent and settles in once as
+it enters the viewport.
+
+**Before → after:** h2s were static — sections appeared all-at-once.
+Now every chapter's statement blooms in one beat after its torn edge
+sweeps, giving the whole site the reference's staged cadence.
+
+### 2. Hero image scroll parallax (depth layer)
+
+**Code where:** new co-located module
+`frontend/src/pages/home/heroParallax.js`, mounted by a `useEffect` in
+`HomePage.jsx`; `.hero-image` in `HomePage.css` over-sized
+(`inset: -10% 0`) + `will-change: transform` so the drift never exposes
+an edge. Applied to the WRAPPER, not the img — the img's entrance
+animation is fill-forwards and would permanently override an inline
+transform.
+
+**Page where:** home page, top. Scroll slowly: the hero photo drifts
+at 12% of scroll speed, adding depth between image, M3 headline and
+the content below.
+
+**Before → after:** hero photo scrolled rigidly with the page. Now the
+photo, headline and content move at three different speeds.
+
+Guards: rAF-throttled passive scroll, transform-only (R2), never
+attaches under `prefers-reduced-motion`.
+
+### 3. Checked, no change needed
+
+- Destination card hover (image scale + arrow rotation) and the dark
+  footer closer (`#241c1d`) already exist in the locked design.
+- M16 typewriter has **no host**: the planner's only input is the
+  budget range slider (line 988). Adding a text field would change the
+  locked planner design, so M16 stays deferred until feature work adds
+  a text input.
+
+### Verification
+
+Headless Chromium (puppeteer-core): parallax matrix translateY 60px @
+scrollY 500; all eight h2s start opacity 0 → `is-revealed` opacity 1
+after entering view; hero screenshots at 0/600px show no exposed
+edges. `npm run lint` clean, `npm run build` clean.
+
 ## Stage build — Step 1: ambient particle field · 2026-09-18
 
 The "density lesson" put into practice (see MOTION_FOUNDATION.md):

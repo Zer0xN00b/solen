@@ -7,6 +7,7 @@ import SolenGlobe from '../../components/globe/SolenGlobe.jsx';
 import TornEdge from '../../components/edges/TornEdge.jsx';
 import { initTornWipe } from '../../components/edges/tornWipe.js';
 import { initHeroBlurIn } from './heroBlurIn.js';
+import { initHeroParallax } from './heroParallax.js';
 import { initM4Stepper } from './m4Stepper.js';
 
 function HomePage() {
@@ -15,6 +16,11 @@ function HomePage() {
   // Animation 01 — hero headline per-word blur-in (M3). Trigger: page ready.
   useEffect(() => {
     initHeroBlurIn();
+  }, []);
+
+  // Polish — hero image scroll parallax (depth layer). Trigger: scroll.
+  useEffect(() => {
+    initHeroParallax();
   }, []);
 
   // Animation 03 — M4 horizontal stepper over the four experiences.
@@ -99,7 +105,7 @@ function HomePage() {
           </div>
 
           <div className="intro-content">
-            <h2 data-reveal>
+            <h2 data-reveal="blur">
               Travel should feel
               <br />
               <em>personal.</em>
@@ -125,7 +131,7 @@ function HomePage() {
             </div>
 
             <div>
-              <h2>
+              <h2 data-reveal="blur">
                 Where are you
                 <br />
                 <em>drawn to?</em>
@@ -177,7 +183,7 @@ function HomePage() {
               START WITH A FEELING
             </div>
 
-            <h2>
+            <h2 data-reveal="blur">
               How do you want
               <br />
               to <em>feel?</em>
@@ -212,7 +218,7 @@ function HomePage() {
             </div>
 
             <div>
-              <h2>
+              <h2 data-reveal="blur">
                 Travel beyond
                 <br />
                 <em>the itinerary.</em>
@@ -275,7 +281,7 @@ function HomePage() {
           <div className="planner-inner">
             <p className="planner-eyebrow">YOUR JOURNEY AWAITS</p>
 
-            <h2>
+            <h2 data-reveal="blur">
               Your next story
               <br />
               is <em>waiting.</em>

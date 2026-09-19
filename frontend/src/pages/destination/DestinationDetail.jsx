@@ -47,7 +47,7 @@ function DestinationDetail() {
         </div>
 
         <div className="destination-intro-content">
-          <h2>{destination.introTitle}</h2>
+          <h2 data-reveal="blur">{destination.introTitle}</h2>
 
           <p>{destination.intro}</p>
         </div>
@@ -83,7 +83,7 @@ function DestinationDetail() {
         <div className="destination-experiences-heading">
           <p className="destination-detail-label">SIGNATURE EXPERIENCES</p>
 
-          <h2>Moments worth travelling for.</h2>
+          <h2 data-reveal="blur">Moments worth travelling for.</h2>
         </div>
 
         <div className="destination-experience-list">
@@ -106,7 +106,7 @@ function DestinationDetail() {
       <section className="destination-plan">
         <p className="destination-detail-label">YOUR NEXT STORY</p>
 
-        <h2>
+        <h2 data-reveal="blur">
           Ready to discover
           <br />
           {destination.name}?

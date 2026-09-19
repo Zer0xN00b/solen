@@ -217,7 +217,9 @@ P1–P7 above are the answer to this item.
 | M5/M6 particles | globe ambience + crafting screen, as plum dust |
 | M7 marquee | quiet feelings ticker · implemented as Animation 04, then **retired by user taste** (2026-09-18) — technically sound, didn't belong; lesson in CHANGELOG |
 | M8 accent word | plum accent on the final word of a statement · **→ implemented as Animation 05 (intro statement "personal.")** |
-| M16 typewriter placeholder | planner input easter-egg (optional) |
+| M16 typewriter placeholder | planner input easter-egg (optional) — **deferred**: the locked planner has no text input host (only the budget slider); revisit when feature work adds one |
+| Depth-layer parallax (item 8) | hero image drifting at 12% of scroll · **→ implemented as polish batch 1 (heroParallax.js)** |
+| Staged statement reveals (P4 / item 12) | every section h2 blooms in one beat after its torn edge · **→ implemented as polish batch 1 (`data-reveal="blur"` on all home + destination h2s)** |
 
 What NOT to import: scroll-jack heaviness (luxury = user in control),
 neon/brutalist identity, hard black/white flips without softening.
