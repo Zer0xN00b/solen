@@ -6,7 +6,7 @@
 
 export const itineraryData = {
   'Amalfi Coast': {
-    image: '/assets/destinations/amalfi.webp',
+    image: '/assets/destinations/amalfi.png',
     weather: 'Warm, sunny days with a gentle Mediterranean breeze.',
     accommodation: {
       standard: 'Boutique coastal hotel',
@@ -72,7 +72,7 @@ export const itineraryData = {
   },
 
   Bali: {
-    image: '/assets/destinations/bali.webp',
+    image: '/assets/destinations/bali.png',
     weather: 'Tropical warmth with lush green landscapes and ocean air.',
     accommodation: {
       standard: 'Boutique jungle or beach resort',
@@ -130,7 +130,7 @@ export const itineraryData = {
   },
 
   Iceland: {
-    image: '/assets/destinations/iceland.webp',
+    image: '/assets/destinations/iceland.png',
     weather: 'Cool, crisp air with dramatic landscapes and changing skies.',
     accommodation: {
       standard: 'Design-led countryside lodge',
@@ -187,7 +187,7 @@ export const itineraryData = {
   },
 
   Kyoto: {
-    image: '/assets/destinations/kyoto.webp',
+    image: '/assets/destinations/kyoto.png',
     weather: 'Seasonal, serene, and often beautifully crisp in the mornings.',
     accommodation: {
       standard: 'Traditional Kyoto boutique stay',
@@ -244,7 +244,7 @@ export const itineraryData = {
   },
 
   Maldives: {
-    image: '/assets/destinations/maldives.webp',
+    image: '/assets/destinations/maldives.png',
     weather: 'Warm tropical temperatures, turquoise water, and soft ocean breezes.',
     accommodation: {
       standard: 'Luxury island resort',
@@ -301,7 +301,7 @@ export const itineraryData = {
   },
 
   Morocco: {
-    image: '/assets/destinations/morocco.webp',
+    image: '/assets/destinations/morocco.png',
     weather: 'Warm days, cool evenings, and rich desert landscapes.',
     accommodation: {
       standard: 'Elegant riad',
@@ -358,7 +358,7 @@ export const itineraryData = {
   },
 
   Paris: {
-    image: '/assets/destinations/paris.webp',
+    image: '/assets/destinations/paris.png',
     weather: 'Elegant seasonal weather with cool mornings and golden afternoons.',
     accommodation: {
       standard: 'Parisian boutique hotel',

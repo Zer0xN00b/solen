@@ -6,7 +6,7 @@ export const destinationEditorial = {
   kyoto: {
     name: 'Kyoto',
     region: 'JAPAN · ASIA',
-    image: '/assets/destinations/kyoto.webp',
+    image: '/assets/destinations/kyoto.png',
     description: 'Ancient rituals, quiet gardens, and timeless beauty.',
 
     introTitle: 'A city where time moves differently.',
@@ -28,7 +28,7 @@ export const destinationEditorial = {
   'amalfi-coast': {
     name: 'Amalfi Coast',
     region: 'ITALY · EUROPE',
-    image: '/assets/destinations/amalfi.webp',
+    image: '/assets/destinations/amalfi.png',
     description: 'Cliffside villages, blue waters, and effortless Italian beauty.',
 
     introTitle: 'La dolce vita, above the sea.',
@@ -50,7 +50,7 @@ export const destinationEditorial = {
   bali: {
     name: 'Bali',
     region: 'INDONESIA · ASIA',
-    image: '/assets/destinations/bali.webp',
+    image: '/assets/destinations/bali.png',
     description: 'Tropical stillness, lush landscapes, and soulful escapes.',
 
     introTitle: 'Come for the island. Stay for the feeling.',
@@ -72,7 +72,7 @@ export const destinationEditorial = {
   iceland: {
     name: 'Iceland',
     region: 'ICELAND · EUROPE',
-    image: '/assets/destinations/iceland.webp',
+    image: '/assets/destinations/iceland.png',
     description: 'Wild landscapes, endless skies, and the beauty of the unknown.',
 
     introTitle: 'For those drawn to the wild.',
@@ -94,7 +94,7 @@ export const destinationEditorial = {
   maldives: {
     name: 'Maldives',
     region: 'MALDIVES · ISLANDS',
-    image: '/assets/destinations/maldives.webp',
+    image: '/assets/destinations/maldives.png',
     description: 'Turquoise waters, secluded shores, and complete escape.',
 
     introTitle: 'Nothing to do. Everything to feel.',
@@ -116,7 +116,7 @@ export const destinationEditorial = {
   morocco: {
     name: 'Morocco',
     region: 'MOROCCO · AFRICA',
-    image: '/assets/destinations/morocco.webp',
+    image: '/assets/destinations/morocco.png',
     description: 'Ancient medinas, warm desert light, and unforgettable colour.',
 
     introTitle: 'Where every corner tells a story.',
@@ -138,7 +138,7 @@ export const destinationEditorial = {
   paris: {
     name: 'Paris',
     region: 'FRANCE · EUROPE',
-    image: '/assets/destinations/paris.webp',
+    image: '/assets/destinations/paris.png',
     description: 'Art, intimacy, timeless streets, and the pleasure of lingering.',
 
     introTitle: 'For the pleasure of getting lost.',

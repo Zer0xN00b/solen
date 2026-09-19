@@ -53,7 +53,7 @@ function HomePage() {
       <main>
         <section className="hero">
           <div className="hero-image">
-            <img src="/assets/hero/hero-main.webp" alt="A cinematic travel destination" />
+            <img src="/assets/hero/hero-main.png" alt="A cinematic travel destination" />
           </div>
 
           <div className="hero-overlay"></div>
@@ -302,7 +302,7 @@ function HomePage() {
       {/* FOOTER */}
       <footer className="footer">
         <div className="footer-brand">
-          <img src="/assets/brand/solen-logo.webp" alt="SOLEN" />
+          <img src="/assets/brand/solen-logo.png" alt="SOLEN" />
 
           <p>
             Travel thoughtfully.
