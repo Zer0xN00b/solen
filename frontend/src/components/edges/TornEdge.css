@@ -26,6 +26,10 @@
 
   width: 100%;
   height: 100%;
+
+  /* Scroll-wipe upgrade: JS (tornWipe.js) drives translateY; the flip
+     is recomposed into the same transform string there. */
+  will-change: transform;
 }
 
 .torn-edge--flip svg {

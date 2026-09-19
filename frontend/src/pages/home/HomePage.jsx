@@ -5,6 +5,7 @@ import './m4Stepper.css';
 import { destinations, experiences, feelings } from '../../data/homeContent.js';
 import SolenGlobe from '../../components/globe/SolenGlobe.jsx';
 import TornEdge from '../../components/edges/TornEdge.jsx';
+import { initTornWipe } from '../../components/edges/tornWipe.js';
 import { initHeroBlurIn } from './heroBlurIn.js';
 import { initM4Stepper } from './m4Stepper.js';
 
@@ -18,6 +19,9 @@ function HomePage() {
 
   // Animation 03 — M4 horizontal stepper over the four experiences.
   useEffect(() => initM4Stepper(), []);
+
+  // Stage layer 3 upgrade — torn edges sweep up with scroll (M1).
+  useEffect(() => initTornWipe(), []);
 
   return (
     <div className="app">

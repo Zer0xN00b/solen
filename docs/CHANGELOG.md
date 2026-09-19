@@ -28,6 +28,21 @@ pass: motes now pre-rendered **radial-gradient sprites** (soft edges —
 no hard confetti dots) drawn via drawImage; softer look, cheaper per
 frame.
 
+## Stage layer 3 upgrade — M1 scroll-driven wipe · 2026-09-19
+
+`components/edges/tornWipe.js` (+ `will-change` in TornEdge.css,
+effect in HomePage.jsx): the static tears now sweep UP over the
+previous chapter as their seam enters the viewport — +100px (invisible
+against the next chapter's identical ground) at entry, continuously
+tied to scroll, settling at 0. The next sheet of paper pulling over
+the previous chapter (M1's full form). Read-only passive listener,
+rAF-throttled, transform-only; flip recomposed into the same transform
+string. Reduced motion: never attaches, v1 static tears remain.
+
+Verified in headless Chromium before delivery: seams enter at 100px,
+settle to 0 in order, mid-sweep values continuous (15.6px caught in
+transit).
+
 ## M4 audit fix — specificity inversion · 2026-09-19
 
 Agent audit (user delegated the verdict) caught one real bug from the
