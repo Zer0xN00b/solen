@@ -112,8 +112,9 @@
 html.js .m4-stepper {
   position: relative;
 
-  height: 400vh;
-  height: 400dvh; /* dynamic viewport height where supported */
+  /* Fix pass 2026-09-19: 400vh felt long — tighter chapter. */
+  height: 340vh;
+  height: 340dvh; /* dynamic viewport height where supported */
 }
 
 html.js .m4-stepper__sticky {
@@ -129,15 +130,15 @@ html.js .m4-stepper__sticky {
   flex-direction: column;
   justify-content: center;
 
-  /* Background scrub — step 0 default. Scrubbed further via
-     [data-active] below; each push crossfades background + text colour
-     in sync (--motion-push / --ease-decel), keeping contrast honest. */
+  /* Background scrub. Fallback (no color-mix support): the discrete
+     [data-active] steps below. Where color-mix exists (all modern
+     browsers) the continuous blend wins — the panel develops cream →
+     plum with scroll itself, no per-push crossfade flicker (fix pass
+     2026-09-19, suspect #2). */
   background-color: #faf7f1;
   color: #241c1d;
 
-  transition:
-    background-color var(--motion-push) var(--ease-decel),
-    color var(--motion-push) var(--ease-decel);
+  transition: color var(--motion-push) var(--ease-decel);
 }
 
 html.js .m4-stepper[data-active='1'] .m4-stepper__sticky {
@@ -145,19 +146,34 @@ html.js .m4-stepper[data-active='1'] .m4-stepper__sticky {
 }
 
 html.js .m4-stepper[data-active='2'] .m4-stepper__sticky {
-  background-color: #a78d97; /* fallback for browsers without color-mix */
-  background-color: color-mix(in srgb, #4a1942 45%, #f3ebdd);
+  background-color: #a78d97;
 }
 
 html.js .m4-stepper[data-active='3'] .m4-stepper__sticky {
   background-color: #4a1942;
-  color: #faf7f1; /* text-colour counterpoint on the dark chapter */
+}
+
+/* Continuous scrub — wins over the discrete fallback above. */
+html.js .m4-stepper .m4-stepper__sticky {
+  background-color: color-mix(
+    in srgb,
+    #4a1942 calc(var(--scrub, 0) * 100%),
+    #faf7f1
+  );
+}
+
+/* Text-colour counterpoint: one calm flip when the ground goes dark,
+   not a per-push flicker. */
+html.js .m4-stepper.is-dark .m4-stepper__sticky {
+  color: #faf7f1;
 }
 
 /* Ghost numerals — one per step, huge, near-invisible, currentColor so
-   the counterpoint flows through them. Travels the same distance per
-   push as the track but takes --motion-reveal-slow to settle, so the
-   numerals visibly lag the words. */
+   the counterpoint flows through them. Fix pass 2026-09-19 (suspect
+   #1): now tracks the CONTINUOUS scroll value (3x the panel width over
+   the whole chapter) with no transition — true parallax, creeping
+   with your scroll while the words push discretely. No more
+   after-settle drift. */
 html.js .m4-stepper__ghosts {
   position: absolute;
   inset: 0;
@@ -168,10 +184,7 @@ html.js .m4-stepper__ghosts {
 
   pointer-events: none;
 
-  transform: translateX(calc(var(--active-index, 0) * -100%));
-  transition: transform var(--motion-reveal-slow) var(--ease-decel-soft);
-
-  will-change: transform;
+  transform: translateX(calc(var(--scrub, 0) * -300%));
 }
 
 html.js .m4-stepper__ghost {
@@ -204,7 +217,9 @@ html.js .m4-stepper__track {
   width: 100%;
 
   transform: translateX(calc(var(--active-index, 0) * -100%));
-  transition: transform var(--motion-push) var(--ease-decel);
+  /* Fix pass 2026-09-19 (suspect #3): soft settle reads more
+     luxurious than the strong snap. */
+  transition: transform var(--motion-push) var(--ease-decel-soft);
 
   will-change: transform;
 }
@@ -252,8 +267,8 @@ html.js .m4-stepper__indicator {
 
 @media (max-width: 640px) {
   html.js .m4-stepper {
-    height: calc(4 * 70vh);
-    height: calc(4 * 70dvh);
+    height: calc(4 * 60vh);
+    height: calc(4 * 60dvh);
   }
 }
 

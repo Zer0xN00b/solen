@@ -28,6 +28,28 @@ pass: motes now pre-rendered **radial-gradient sprites** (soft edges —
 no hard confetti dots) drawn via drawImage; softer look, cheaper per
 frame.
 
+## M4 fix pass (draft, agent) · 2026-09-19
+
+The jank suspects logged after the user's first look, addressed:
+
+1. **Ghost numerals** — no longer a slow-settle stand-in. They now track
+   the CONTINUOUS scroll value (`--scrub`, 0–1 per chapter) with no
+   transition: true parallax that creeps with your scroll while the
+   words push discretely. The after-settle drift is gone.
+2. **Background** — discrete per-push colour jumps replaced by a
+   CONTINUOUS cream→plum `color-mix` blend driven by `--scrub` (the
+   discrete steps remain as a no-color-mix fallback). Text counterpoint
+   reduced to ONE calm flip (`.is-dark` at 58% progress) instead of
+   per-push changes.
+3. **Pacing** — chapter tightened 400vh → 340vh (mobile 70 → 60vh per
+   step); push easing softened `--ease-decel` → `--ease-decel-soft`
+   (duration stays in the documented 250–400 ms class).
+
+Status: draft — user polishes to taste next. Suspect #4 (composition)
+left untouched deliberately.
+
+---
+
 ## Stage build — Step 3: torn chapter edges (M1, v1) · 2026-09-18
 
 `components/edges/TornEdge.jsx` (+ `.css`): torn-paper SVG seams at the

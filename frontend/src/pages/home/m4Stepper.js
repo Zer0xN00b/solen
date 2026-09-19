@@ -65,7 +65,15 @@ export function initM4Stepper() {
   }
 
   function update() {
-    const rawFloat = currentProgress() * (STEP_COUNT - 1);
+    const progress = currentProgress();
+    const rawFloat = progress * (STEP_COUNT - 1);
+
+    // Continuous scrub value for the cinematic layers (background
+    // blend + ghost parallax) — set every frame, unlike the discrete
+    // step commit below (fix pass 2026-09-19).
+    section.style.setProperty('--scrub', progress.toFixed(4));
+    section.classList.toggle('is-dark', progress > 0.58);
+
     const lower = currentIndex - 0.5 + HYSTERESIS;
     const upper = currentIndex + 0.5 - HYSTERESIS;
 
