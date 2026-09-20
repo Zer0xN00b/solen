@@ -19,6 +19,14 @@ import './AmbientField.css';
  * Performance: one canvas, sprites, rAF paused while the tab is
  * hidden, particle count capped by area, DPR capped at 2.
  * Reduced motion: ONE static frame — grain, not drift.
+ *
+ * Resize corrections (2026-09-19): the field is PRESERVED across a
+ * resize instead of regenerated. Previously every resize event threw
+ * away all ~90 motes and rolled a fresh random field, so the dust
+ * visibly teleported during a window drag — and did so on every event
+ * of the drag. Now positions are scaled proportionally to the new
+ * viewport, motes are only added or trimmed when the area-derived cap
+ * changes, and the handler is rAF-throttled.
  */
 
 const PLUM = '74, 25, 66'; // #4a1942
@@ -37,8 +45,11 @@ function makeSprite(rgb) {
   return s;
 }
 
-function makeParticles(width, height) {
-  const count = Math.min(90, Math.round((width * height) / 15000));
+function particleCount(width, height) {
+  return Math.min(90, Math.round((width * height) / 15000));
+}
+
+function makeParticles(width, height, count = particleCount(width, height)) {
   return Array.from({ length: count }, () => ({
     x: Math.random() * width,
     y: Math.random() * height,
@@ -69,6 +80,7 @@ export default function AmbientField() {
     let height = 0;
     let frame = 0;
     let rafId = null;
+    let resizeRafId = null;
 
     const dpr = () => Math.min(window.devicePixelRatio || 1, 2);
 
@@ -78,15 +90,50 @@ export default function AmbientField() {
       ctx.drawImage(sprites[p.light ? 'cream' : 'plum'], p.x - size / 2, y - size / 2, size, size);
     }
 
+    function fitParticles(prevWidth, prevHeight) {
+      if (!particles.length) {
+        particles = makeParticles(width, height);
+        return;
+      }
+
+      // Keep the existing field, just move it with the viewport.
+      const scaleX = prevWidth > 0 ? width / prevWidth : 1;
+      const scaleY = prevHeight > 0 ? height / prevHeight : 1;
+      for (const p of particles) {
+        p.x *= scaleX;
+        p.y *= scaleY;
+      }
+
+      const target = particleCount(width, height);
+      if (particles.length > target) {
+        particles.length = target;
+      } else if (particles.length < target) {
+        particles = particles.concat(makeParticles(width, height, target - particles.length));
+      }
+    }
+
     function resize() {
+      const prevWidth = width;
+      const prevHeight = height;
+
       width = window.innerWidth;
       height = window.innerHeight;
       const ratio = dpr();
       canvas.width = Math.round(width * ratio);
       canvas.height = Math.round(height * ratio);
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-      particles = makeParticles(width, height);
+
+      fitParticles(prevWidth, prevHeight);
+
       if (reduceMotionQuery.matches) drawStatic();
+    }
+
+    function requestResize() {
+      if (resizeRafId !== null) return;
+      resizeRafId = requestAnimationFrame(() => {
+        resizeRafId = null;
+        resize();
+      });
     }
 
     function drawStatic() {
@@ -141,7 +188,7 @@ export default function AmbientField() {
     resize();
     start();
 
-    window.addEventListener('resize', resize);
+    window.addEventListener('resize', requestResize, { passive: true });
     document.addEventListener('visibilitychange', onVisibility);
     if (typeof reduceMotionQuery.addEventListener === 'function') {
       reduceMotionQuery.addEventListener('change', onPreferenceChange);
@@ -149,7 +196,8 @@ export default function AmbientField() {
 
     return () => {
       stop();
-      window.removeEventListener('resize', resize);
+      if (resizeRafId !== null) cancelAnimationFrame(resizeRafId);
+      window.removeEventListener('resize', requestResize);
       document.removeEventListener('visibilitychange', onVisibility);
       if (typeof reduceMotionQuery.removeEventListener === 'function') {
         reduceMotionQuery.removeEventListener('change', onPreferenceChange);
