@@ -19,6 +19,12 @@
  *     inherits the same variable.
  *  4. `data-active` is set on the section to drive the background
  *     tone scrub + text-colour counterpoint (integration addition).
+ *
+ * Reduced motion is fully LIVE (2026-09-19). Previously the module
+ * returned early when the preference was already set, which meant it
+ * never attached a change listener — so turning reduced motion OFF
+ * mid-session left the stepper permanently dead. It now always
+ * observes the query and attaches or detaches in both directions.
  */
 
 export function initM4Stepper() {
@@ -34,13 +40,10 @@ export function initM4Stepper() {
   const HYSTERESIS = 0.08; // fraction of one step's span, each side of .5
 
   const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (reduceMotionQuery.matches) {
-    // Reduced motion: the CSS forces the static stacked base regardless
-    // of html.js. Nothing to drive — do not attach listeners.
-    return undefined;
-  }
 
   let currentIndex = 0;
+  let attached = false;
+  let ticking = false;
 
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
@@ -82,7 +85,6 @@ export function initM4Stepper() {
     }
   }
 
-  let ticking = false;
   function requestUpdate() {
     if (ticking) return;
     ticking = true;
@@ -92,30 +94,44 @@ export function initM4Stepper() {
     });
   }
 
-  window.addEventListener('scroll', requestUpdate, { passive: true });
-  window.addEventListener('resize', requestUpdate, { passive: true });
+  function attach() {
+    if (attached) return;
+    attached = true;
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate, { passive: true });
 
-  // Initial paint: commit step 0 state, then read the real scroll
-  // position in case the page loaded already scrolled in.
-  applyStep(0);
-  update();
+    // Initial paint: commit step 0 state, then read the real scroll
+    // position in case the page loaded already scrolled in.
+    applyStep(0);
+    update();
+  }
 
-  // If the OS preference flips mid-session, stop driving; the
-  // reduced-motion CSS block takes over the presentation.
+  function detach() {
+    if (!attached) return;
+    attached = false;
+    window.removeEventListener('scroll', requestUpdate);
+    window.removeEventListener('resize', requestUpdate);
+    // Stop driving; the reduced-motion CSS block owns the static
+    // stacked presentation from here.
+    section.style.removeProperty('--scrub');
+    section.classList.remove('is-dark');
+  }
+
+  // If the OS preference flips mid-session, stop or resume driving.
   const onPreferenceChange = (event) => {
-    if (event.matches) {
-      window.removeEventListener('scroll', requestUpdate);
-      window.removeEventListener('resize', requestUpdate);
-    }
+    if (event.matches) detach();
+    else attach();
   };
+
+  if (!reduceMotionQuery.matches) attach();
+
   if (typeof reduceMotionQuery.addEventListener === 'function') {
     reduceMotionQuery.addEventListener('change', onPreferenceChange);
   }
 
   // React cleanup on unmount.
   return () => {
-    window.removeEventListener('scroll', requestUpdate);
-    window.removeEventListener('resize', requestUpdate);
+    detach();
     if (typeof reduceMotionQuery.removeEventListener === 'function') {
       reduceMotionQuery.removeEventListener('change', onPreferenceChange);
     }

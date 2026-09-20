@@ -8,7 +8,13 @@
  * is fill-forwards and would permanently override an inline transform.
  * The wrapper is over-sized in CSS (inset -10% vertical) so the drift
  * never exposes an edge. Read-only passive scroll, rAF-throttled,
- * transform-only (R2). Reduced motion: never attaches.
+ * transform-only (R2).
+ *
+ * Reduced motion is LIVE (2026-09-19): the preference is no longer read
+ * once at init. Flipping it mid-session detaches the listener and
+ * clears the inline transform so the photo rests in its static
+ * position; flipping back re-attaches. Matches the contract that
+ * reduced motion yields a static, fully visible site at all times.
  */
 
 export function initHeroParallax() {
@@ -16,7 +22,9 @@ export function initHeroParallax() {
   if (!layer) return undefined;
 
   const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (reduceMotionQuery.matches) return undefined;
+
+  let attached = false;
+  let ticking = false;
 
   function update() {
     const y = window.scrollY;
@@ -25,7 +33,6 @@ export function initHeroParallax() {
     }
   }
 
-  let ticking = false;
   function requestUpdate() {
     if (ticking) return;
     ticking = true;
@@ -35,10 +42,36 @@ export function initHeroParallax() {
     });
   }
 
-  window.addEventListener('scroll', requestUpdate, { passive: true });
-  update();
+  function attach() {
+    if (attached) return;
+    attached = true;
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    update();
+  }
+
+  function detach() {
+    if (!attached) return;
+    attached = false;
+    window.removeEventListener('scroll', requestUpdate);
+    // Hand the element back to CSS: no inline drift left behind.
+    layer.style.transform = '';
+  }
+
+  const onPreferenceChange = (event) => {
+    if (event.matches) detach();
+    else attach();
+  };
+
+  if (!reduceMotionQuery.matches) attach();
+
+  if (typeof reduceMotionQuery.addEventListener === 'function') {
+    reduceMotionQuery.addEventListener('change', onPreferenceChange);
+  }
 
   return () => {
-    window.removeEventListener('scroll', requestUpdate);
+    detach();
+    if (typeof reduceMotionQuery.removeEventListener === 'function') {
+      reduceMotionQuery.removeEventListener('change', onPreferenceChange);
+    }
   };
 }
