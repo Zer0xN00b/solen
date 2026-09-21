@@ -1,5 +1,197 @@
 # SOLEN Changelog
 
+## Globe v3 — user-supplied react-globe replaces the night Earth · 2026-09-21
+
+The user brought a packaged `react-globe@5.0.2` globe (blue marble +
+clouds + starfield + glowing markers + tippy tooltips) as "a better
+replacement"; per instruction it now owns the section 05 stage. The
+three-globe night Earth (previous M6) is retired with it.
+
+**Code where:**
+- `frontend/src/components/globe/SolenGlobe.jsx` — rewritten around
+  `<ReactGlobe>`. The seven destinations are markers at real
+  coordinates; `onMouseOverMarker` syncs the info panel + preview
+  image, `onClickMarker` travels to the destination page. Section
+  chrome (heading, list, preview) untouched locked design.
+- Textures vendored at `frontend/public/assets/globe/`
+  (globe.jpg / clouds.png / background.png) and passed as props — the
+  package's default hotlinks GitHub raw URLs; the site stays
+  self-contained.
+- `frontend/src/components/globe/SolenGlobe.css` — the starfield
+  window gets 14px corners + the old sphere's shadow; dead orbit CSS
+  removed.
+- Deps: `react-globe@5.0.2` added; `three-globe` removed; `three`
+  aligned to **0.119.1** via root `overrides` (react-globe's chain
+  needs the removed `Face3` export; nothing else uses three).
+  `package-lock.json` regenerated — **run `npm ci` after pulling**.
+
+**Integration surgery the README couldn't predict:**
+- React StrictMode double-mount: the lib's cleanup removes its canvas
+  (a React-owned node) from the DOM, leaving the second instance
+  rendering into a detached canvas → invisible globe in dev. Fixed by
+  caching the canvas node in a layout effect and re-inserting it.
+- `onGetGlobe` had to be `useCallback`-stable: it sits in the lib's
+  mount-effect deps, so a fresh function per render tore the WebGL
+  globe down on every parent render.
+- Textures are top-level props, not `options` keys.
+
+**Page where:** home, section 05 — starfield window with the blue
+marble spinning; gold markers glow over the seven destinations;
+hover a marker (or a list row) and the info panel + photo follow;
+click travels.
+
+**Before → after:** night Earth with radar rings → the user's chosen
+blue-marble globe with clouds, glow and tooltips; the info panel and
+list behaviours are unchanged.
+
+**Guards:** reduced motion = camera auto-rotate off AND the lib's
+autonomous cloud drift frozen directly on the globe instance
+(`animateClouds` noop via `onGetGlobe`), applied live on preference
+flips; markers/tooltips remain usable. Lazy chunk unchanged.
+
+**Verification:** headless Chromium: globe canvas mounted + connected,
+all three textures 200 from our origin, zero page errors; globe region
+byte-identical over 1.5s under reduced motion (both canvases
+data-identical over time — residual full-page diffs are headless
+compositor noise on will-change layers, not motion). `lint` + `build`
+clean.
+
+## M6 — the real 3D night globe · 2026-09-21
+
+The CSS fake sphere is retired. Section 05 now renders a true 3D
+globe: NASA Black Marble night imagery (accurate continents, glowing
+city lights), topology bump, plum atmosphere — the seven destinations
+at their **real coordinates** with cream radar rings, drag-to-orbit,
+idle auto-spin, and hover-to-fly with an image preview.
+
+**Code where:**
+- `frontend/src/components/globe/SolenGlobe.jsx` — rewritten on
+  `three` + `three-globe`. Custom `MeshPhongMaterial` uses
+  `earth-night.jpg` as map *and* emissive map (cities genuinely glow),
+  `earth-topology.png` as bump. Fly-to uses an exact upright-basis
+  quaternion built from three-globe's own `Polar2Cartesian` convention
+  (`theta = 90 - lng` — any other formula lands on the wrong
+  continent). Lights-fill entrance: emissive intensity ramps 0→1.6
+  when the section scrolls into view. OrbitControls drag; idle spin
+  resumes 6s after interaction; rAF + three-globe paused while the tab
+  is hidden; DPR capped at 2; full dispose on unmount.
+- `frontend/src/data/globeDestinations.js` — screen percentages
+  replaced with real `lat/lng` + preview `image` per destination.
+- `frontend/src/pages/home/HomePage.jsx` — globe is now `React.lazy`
+  (three.js ships in its own chunk; the rest of the site never pays
+  for it) with a Suspense placeholder.
+- Textures committed at `frontend/public/assets/globe/` (the
+  three-globe package does not export its example images).
+- New deps: `three`, `three-globe` (pure JS, no install scripts — no
+  `allowScripts` entry needed).
+
+**Page where:** home, section 05. The globe spins with Africa/Europe
+facing you; hover any destination in the list and the globe flies
+that city to centre (poles upright) while its photo blooms into the
+info panel; click to travel to the destination page; drag to orbit.
+
+**Before → after:** stylised plum CSS orb with fake grid → accurate
+night Earth whose city lights fill in as it enters view; markers sit
+at true geography and pulse rings; the info panel gained a live
+preview image.
+
+**Guards:** reduced motion = no spin, no ring pulses, instant fly-to,
+lights at full from the start — verified pixel-static headless. The
+preference is live mid-session.
+
+**Verification:** headless Chromium (SwiftShader WebGL): zero page
+errors; initial face Africa/Europe with rings over the European
+destinations; Paris hover flies Europe to centre with the Paris
+preview; reduced-motion screenshots byte-identical 1.2s apart.
+`lint` + `build` clean (three chunk lazy, size warning expected).
+
+## Asset migration — PNG → WebP (guest batch 2, completed properly) · 2026-09-21
+
+The guest session had converted every image to WebP on the PC and
+pointed the code at them (commits `ee203af`/`c16f661`/`c2e6e75`), then
+reverted the references (`6e2c9a0`/`3ef470e`) — because the `.webp`
+files were **untracked**, so anywhere else (GitHub, this sandbox) the
+references 404'd. The upload of the PC folder carried the WebP files;
+they are now committed for real and the PNGs removed.
+
+**Code where:** 13 assets added under `frontend/public/assets/**`
+(logo, hero, 7 destinations, 4 experiences) as `.webp`; the 13 `.png`
+counterparts deleted; references re-applied by cherry-picking the
+guest's three reverted commits (`Navbar.jsx`, `homeContent.js`,
+`destinationEditorial.js`, `destinations.js`, `HomePage.jsx`).
+
+**Page where:** every image on the site — hero, navbar logo,
+destination cards, experience cards, destination detail pages.
+
+**Before → after:** `frontend/public/assets` 14 MB → **1.2 MB**,
+visually identical in headless screenshots; zero 404s; `lint` +
+`build` clean.
+
+**On your PC:** your untracked `.webp` copies will collide with the
+now-tracked ones on pull. If `git pull` warns "untracked working tree
+files would be overwritten", run
+`git clean -f frontend/public/assets` (only the WebP conversions sit
+there untracked) and pull again. Also still pending: `del npm` (the
+stray empty file at the repo root).
+
+## Robustness pass on the motion modules (guest session) · 2026-09-20
+
+Three commits made in a second AI session (commits `d3fb96e`,
+`2c85272`, `e4dd5ac`), adopted as-is after review + headless
+verification. Changelog entry written retroactively by the home
+session — the guest session shipped code without one.
+
+### 1. `d3fb96e` — reduced-motion is now LIVE in the scroll modules
+
+**Code where:** `tornWipe.js`, `heroParallax.js`, `m4Stepper.js` —
+each replaced "read the preference once at init" with an
+attach/detach pair listening to the media query's `change` event.
+
+**Page where:** toggle the OS "reduce motion" preference while the
+site is open (no reload). Before: modules that started under reduced
+motion stayed dead after flipping the preference off (m4 stepper
+never re-attached), and ones started animated kept their inline
+transforms after flipping it on. After: flipping either way takes
+effect immediately; detaching clears inline transforms (`--scrub`,
+parallax drift) so the static presentation is truly static, and
+flipped tears keep their `scaleX(-1)` rest pose.
+
+### 2. `2c85272` — ProgressRail resize throttle + dot reuse
+
+**Code where:** `ProgressRail.jsx` — resize handler rAF-throttled;
+`syncDotNodes` reuses dot elements instead of `innerHTML = ''`
+rebuilds; chapter offsets measured once per rebuild and cached, so
+the per-frame scroll update does no chapter layout reads.
+
+**Page where:** drag-resize the window on home; the rail no longer
+tears down/rebuilds on every event of the drag.
+
+### 3. `e4dd5ac` — AmbientField particles preserved across resize
+
+**Code where:** `AmbientField.jsx` — `fitParticles` scales existing
+mote positions proportionally to the new viewport and only
+adds/trims to the area-derived cap; resize rAF-throttled.
+
+**Page where:** drag-resize the window; the dust field moves with the
+viewport instead of teleporting into a fresh random field on every
+resize event.
+
+### Verification (home session)
+
+Headless Chromium with `emulateMediaFeatures` mid-session flips:
+normal → hero `translateY(48px)` + tears driven; reduce → hero inline
+cleared, tears rest (`scaleX(-1)` preserved on flipped seams); back →
+driving resumes. No page errors. `lint` + `build` clean.
+
+### Housekeeping notes
+
+- The guest session also left a stray empty untracked file named
+  `npm` at the repo root on the PC — delete it (`del npm`); it was
+  never committed.
+- Guest commits respected the relay (no force-push) and the house
+  commit style, but skipped this changelog and the where-report —
+  both remain mandatory for every change (§2 contract).
+
 ## Polish batch 1 — site-wide staged reveals + hero parallax · 2026-09-19
 
 Two reference mechanics land site-wide (P4 staged reveals, analysis

@@ -1245,3 +1245,9 @@ html.js .hero h1[data-animation='m3-blur-in'] .word:nth-of-type(7) { transition-
     transition: none;
   }
 }
+
+/* Suspense placeholder while the 3D globe chunk loads (styled here
+   because the globe CSS ships inside the lazy chunk). */
+.solen-globe-suspense {
+  min-height: 650px;
+}
