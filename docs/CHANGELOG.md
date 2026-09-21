@@ -1,5 +1,61 @@
 # SOLEN Changelog
 
+## Globe v3 — user-supplied react-globe replaces the night Earth · 2026-09-21
+
+The user brought a packaged `react-globe@5.0.2` globe (blue marble +
+clouds + starfield + glowing markers + tippy tooltips) as "a better
+replacement"; per instruction it now owns the section 05 stage. The
+three-globe night Earth (previous M6) is retired with it.
+
+**Code where:**
+- `frontend/src/components/globe/SolenGlobe.jsx` — rewritten around
+  `<ReactGlobe>`. The seven destinations are markers at real
+  coordinates; `onMouseOverMarker` syncs the info panel + preview
+  image, `onClickMarker` travels to the destination page. Section
+  chrome (heading, list, preview) untouched locked design.
+- Textures vendored at `frontend/public/assets/globe/`
+  (globe.jpg / clouds.png / background.png) and passed as props — the
+  package's default hotlinks GitHub raw URLs; the site stays
+  self-contained.
+- `frontend/src/components/globe/SolenGlobe.css` — the starfield
+  window gets 14px corners + the old sphere's shadow; dead orbit CSS
+  removed.
+- Deps: `react-globe@5.0.2` added; `three-globe` removed; `three`
+  aligned to **0.119.1** via root `overrides` (react-globe's chain
+  needs the removed `Face3` export; nothing else uses three).
+  `package-lock.json` regenerated — **run `npm ci` after pulling**.
+
+**Integration surgery the README couldn't predict:**
+- React StrictMode double-mount: the lib's cleanup removes its canvas
+  (a React-owned node) from the DOM, leaving the second instance
+  rendering into a detached canvas → invisible globe in dev. Fixed by
+  caching the canvas node in a layout effect and re-inserting it.
+- `onGetGlobe` had to be `useCallback`-stable: it sits in the lib's
+  mount-effect deps, so a fresh function per render tore the WebGL
+  globe down on every parent render.
+- Textures are top-level props, not `options` keys.
+
+**Page where:** home, section 05 — starfield window with the blue
+marble spinning; gold markers glow over the seven destinations;
+hover a marker (or a list row) and the info panel + photo follow;
+click travels.
+
+**Before → after:** night Earth with radar rings → the user's chosen
+blue-marble globe with clouds, glow and tooltips; the info panel and
+list behaviours are unchanged.
+
+**Guards:** reduced motion = camera auto-rotate off AND the lib's
+autonomous cloud drift frozen directly on the globe instance
+(`animateClouds` noop via `onGetGlobe`), applied live on preference
+flips; markers/tooltips remain usable. Lazy chunk unchanged.
+
+**Verification:** headless Chromium: globe canvas mounted + connected,
+all three textures 200 from our origin, zero page errors; globe region
+byte-identical over 1.5s under reduced motion (both canvases
+data-identical over time — residual full-page diffs are headless
+compositor noise on will-change layers, not motion). `lint` + `build`
+clean.
+
 ## M6 — the real 3D night globe · 2026-09-21
 
 The CSS fake sphere is retired. Section 05 now renders a true 3D

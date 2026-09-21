@@ -71,13 +71,20 @@
   justify-content: center;
 }
 
-/* The real 3D globe (three.js). The renderer canvas fills this box. */
+/* The real 3D globe (react-globe). The renderer canvas fills this
+   box; the starfield backdrop gets soft corners + the old sphere's
+   shadow so the window-to-space reads as intentional on oatmeal. */
 .solen-globe-canvas {
   position: relative;
   z-index: 1;
 
   width: min(620px, 78vw);
   aspect-ratio: 1;
+
+  border-radius: 14px;
+  overflow: hidden;
+
+  box-shadow: 0 35px 90px rgba(36, 28, 29, 0.18);
 }
 
 .solen-globe-canvas canvas {
@@ -89,28 +96,6 @@
 
 .solen-globe-canvas canvas:active {
   cursor: grabbing;
-}
-
-/* Decorative orbit ellipses kept from the v1 sphere for continuity. */
-.solen-globe-orbit {
-  position: absolute;
-  z-index: 0;
-
-  width: min(680px, 84vw);
-  aspect-ratio: 1;
-
-  border: 1px solid rgba(74, 25, 66, 0.12);
-  border-radius: 50%;
-
-  pointer-events: none;
-}
-
-.orbit-one {
-  transform: rotate(62deg) scaleY(0.28);
-}
-
-.orbit-two {
-  transform: rotate(-32deg) scaleY(0.28);
 }
 
 .solen-globe-info {
@@ -323,10 +308,6 @@
     width: min(520px, 82vw);
   }
 
-  .solen-globe-orbit {
-    width: min(570px, 88vw);
-  }
-
   .solen-globe-info {
     max-width: 620px;
   }
@@ -351,10 +332,6 @@
 
   .solen-globe-canvas {
     width: 82vw;
-  }
-
-  .solen-globe-orbit {
-    width: 88vw;
   }
 
   .solen-globe-info h3 {
