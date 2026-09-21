@@ -1,5 +1,34 @@
 # SOLEN Changelog
 
+## Asset migration — PNG → WebP (guest batch 2, completed properly) · 2026-09-21
+
+The guest session had converted every image to WebP on the PC and
+pointed the code at them (commits `ee203af`/`c16f661`/`c2e6e75`), then
+reverted the references (`6e2c9a0`/`3ef470e`) — because the `.webp`
+files were **untracked**, so anywhere else (GitHub, this sandbox) the
+references 404'd. The upload of the PC folder carried the WebP files;
+they are now committed for real and the PNGs removed.
+
+**Code where:** 13 assets added under `frontend/public/assets/**`
+(logo, hero, 7 destinations, 4 experiences) as `.webp`; the 13 `.png`
+counterparts deleted; references re-applied by cherry-picking the
+guest's three reverted commits (`Navbar.jsx`, `homeContent.js`,
+`destinationEditorial.js`, `destinations.js`, `HomePage.jsx`).
+
+**Page where:** every image on the site — hero, navbar logo,
+destination cards, experience cards, destination detail pages.
+
+**Before → after:** `frontend/public/assets` 14 MB → **1.2 MB**,
+visually identical in headless screenshots; zero 404s; `lint` +
+`build` clean.
+
+**On your PC:** your untracked `.webp` copies will collide with the
+now-tracked ones on pull. If `git pull` warns "untracked working tree
+files would be overwritten", run
+`git clean -f frontend/public/assets` (only the WebP conversions sit
+there untracked) and pull again. Also still pending: `del npm` (the
+stray empty file at the repo root).
+
 ## Robustness pass on the motion modules (guest session) · 2026-09-20
 
 Three commits made in a second AI session (commits `d3fb96e`,
