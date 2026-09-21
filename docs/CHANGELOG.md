@@ -1,5 +1,63 @@
 # SOLEN Changelog
 
+## Robustness pass on the motion modules (guest session) · 2026-09-20
+
+Three commits made in a second AI session (commits `d3fb96e`,
+`2c85272`, `e4dd5ac`), adopted as-is after review + headless
+verification. Changelog entry written retroactively by the home
+session — the guest session shipped code without one.
+
+### 1. `d3fb96e` — reduced-motion is now LIVE in the scroll modules
+
+**Code where:** `tornWipe.js`, `heroParallax.js`, `m4Stepper.js` —
+each replaced "read the preference once at init" with an
+attach/detach pair listening to the media query's `change` event.
+
+**Page where:** toggle the OS "reduce motion" preference while the
+site is open (no reload). Before: modules that started under reduced
+motion stayed dead after flipping the preference off (m4 stepper
+never re-attached), and ones started animated kept their inline
+transforms after flipping it on. After: flipping either way takes
+effect immediately; detaching clears inline transforms (`--scrub`,
+parallax drift) so the static presentation is truly static, and
+flipped tears keep their `scaleX(-1)` rest pose.
+
+### 2. `2c85272` — ProgressRail resize throttle + dot reuse
+
+**Code where:** `ProgressRail.jsx` — resize handler rAF-throttled;
+`syncDotNodes` reuses dot elements instead of `innerHTML = ''`
+rebuilds; chapter offsets measured once per rebuild and cached, so
+the per-frame scroll update does no chapter layout reads.
+
+**Page where:** drag-resize the window on home; the rail no longer
+tears down/rebuilds on every event of the drag.
+
+### 3. `e4dd5ac` — AmbientField particles preserved across resize
+
+**Code where:** `AmbientField.jsx` — `fitParticles` scales existing
+mote positions proportionally to the new viewport and only
+adds/trims to the area-derived cap; resize rAF-throttled.
+
+**Page where:** drag-resize the window; the dust field moves with the
+viewport instead of teleporting into a fresh random field on every
+resize event.
+
+### Verification (home session)
+
+Headless Chromium with `emulateMediaFeatures` mid-session flips:
+normal → hero `translateY(48px)` + tears driven; reduce → hero inline
+cleared, tears rest (`scaleX(-1)` preserved on flipped seams); back →
+driving resumes. No page errors. `lint` + `build` clean.
+
+### Housekeeping notes
+
+- The guest session also left a stray empty untracked file named
+  `npm` at the repo root on the PC — delete it (`del npm`); it was
+  never committed.
+- Guest commits respected the relay (no force-push) and the house
+  commit style, but skipped this changelog and the where-report —
+  both remain mandatory for every change (§2 contract).
+
 ## Polish batch 1 — site-wide staged reveals + hero parallax · 2026-09-19
 
 Two reference mechanics land site-wide (P4 staged reveals, analysis
