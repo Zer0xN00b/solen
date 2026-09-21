@@ -1,5 +1,47 @@
 # SOLEN Changelog
 
+## Section 05 v4 — the globe is the navigator (Plan B) · 2026-09-21
+
+The destination sidebar is gone; the globe owns the section, per the
+user's vision ("make the globe the sole navigator, type the names of
+the destinations, click opens the destination"). Plan B = the
+globe-first design PLUS a quiet chip row as the scannable / touch /
+keyboard fallback.
+
+**Code where:**
+- `frontend/src/components/globe/SolenGlobe.jsx` — right column
+  (list, info panel, preview) removed. New: HTML destination labels
+  projected through the globe camera every frame (via the instance
+  from `onGetGlobe`), fading out as a city swings to the far side;
+  hover on marker/label/chip pauses the spin and opens a preview card
+  (photo, region, one-liner, "click to explore") at the stage foot;
+  click on marker/label/chip navigates to `/destinations/:slug`;
+  chip/label focus flies the globe via react-globe's `focus` prop
+  (`focusDistanceRadiusScale: 2.4` keeps the globe in view).
+- `frontend/src/components/globe/SolenGlobe.css` — single-column
+  stage, label typography (cream italic Cormorant on starfield),
+  preview card, chip row; old sidebar styles deleted.
+
+**Page where:** home, section 05. Names float at their cities; the
+chip row sits quietly under the globe; everything clicks through to
+the destination pages.
+
+**Before → after:** globe + dashboard sidebar → globe as the sole
+navigator with typed names, hover previews and a quiet fallback row.
+
+**Accessibility:** labels are real focusable buttons (keyboard +
+screen readers) regardless of facing opacity; focusing one flies the
+globe to it. Chips give touch users a visible path.
+
+**Guards:** reduced motion — no spin, frozen clouds, instant focus
+jumps, labels visible and static (verified visually identical; byte
+diffs under headless are compositor noise on will-change layers).
+
+**Verification:** headless Chromium — face-side labels at opacity 1
+with far-side culled; chip hover opens the preview card and flies to
+Iceland; chip click lands on `/destinations/iceland`; zero page
+errors; lint + build clean.
+
 ## Globe v3 — user-supplied react-globe replaces the night Earth · 2026-09-21
 
 The user brought a packaged `react-globe@5.0.2` globe (blue marble +
