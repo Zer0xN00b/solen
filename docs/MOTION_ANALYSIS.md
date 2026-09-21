@@ -214,7 +214,7 @@ P1–P7 above are the answer to this item.
 | M2 ghost→solid ink-in | Cormorant hero + destination titles · **→ implemented as Animation 02 (destination title, reversible)** |
 | M4 horizontal stepper | THE WILD / TABLE / SOUL / ESCAPE showcase · **→ implemented as Animation 03 (user module 89/100 + agent cinematic layers)**; planner step rail (M10) |
 | M1 torn-edge wipe | hero → discovery chapter break, as a soft oatmeal/plum tear |
-| M5/M6 particles | globe ambience + crafting screen, as plum dust |
+| M5/M6 particles | globe ambience + crafting screen, as plum dust · **→ M6 implemented as the real 3D night globe (2026-09-21): NASA Black Marble sphere, city-light emissive ramp, radar rings at true coordinates, fly-to previews** |
 | M7 marquee | quiet feelings ticker · implemented as Animation 04, then **retired by user taste** (2026-09-18) — technically sound, didn't belong; lesson in CHANGELOG |
 | M8 accent word | plum accent on the final word of a statement · **→ implemented as Animation 05 (intro statement "personal.")** |
 | M16 typewriter placeholder | planner input easter-egg (optional) — **deferred**: the locked planner has no text input host (only the budget slider); revisit when feature work adds one |

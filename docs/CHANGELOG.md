@@ -1,5 +1,54 @@
 # SOLEN Changelog
 
+## M6 — the real 3D night globe · 2026-09-21
+
+The CSS fake sphere is retired. Section 05 now renders a true 3D
+globe: NASA Black Marble night imagery (accurate continents, glowing
+city lights), topology bump, plum atmosphere — the seven destinations
+at their **real coordinates** with cream radar rings, drag-to-orbit,
+idle auto-spin, and hover-to-fly with an image preview.
+
+**Code where:**
+- `frontend/src/components/globe/SolenGlobe.jsx` — rewritten on
+  `three` + `three-globe`. Custom `MeshPhongMaterial` uses
+  `earth-night.jpg` as map *and* emissive map (cities genuinely glow),
+  `earth-topology.png` as bump. Fly-to uses an exact upright-basis
+  quaternion built from three-globe's own `Polar2Cartesian` convention
+  (`theta = 90 - lng` — any other formula lands on the wrong
+  continent). Lights-fill entrance: emissive intensity ramps 0→1.6
+  when the section scrolls into view. OrbitControls drag; idle spin
+  resumes 6s after interaction; rAF + three-globe paused while the tab
+  is hidden; DPR capped at 2; full dispose on unmount.
+- `frontend/src/data/globeDestinations.js` — screen percentages
+  replaced with real `lat/lng` + preview `image` per destination.
+- `frontend/src/pages/home/HomePage.jsx` — globe is now `React.lazy`
+  (three.js ships in its own chunk; the rest of the site never pays
+  for it) with a Suspense placeholder.
+- Textures committed at `frontend/public/assets/globe/` (the
+  three-globe package does not export its example images).
+- New deps: `three`, `three-globe` (pure JS, no install scripts — no
+  `allowScripts` entry needed).
+
+**Page where:** home, section 05. The globe spins with Africa/Europe
+facing you; hover any destination in the list and the globe flies
+that city to centre (poles upright) while its photo blooms into the
+info panel; click to travel to the destination page; drag to orbit.
+
+**Before → after:** stylised plum CSS orb with fake grid → accurate
+night Earth whose city lights fill in as it enters view; markers sit
+at true geography and pulse rings; the info panel gained a live
+preview image.
+
+**Guards:** reduced motion = no spin, no ring pulses, instant fly-to,
+lights at full from the start — verified pixel-static headless. The
+preference is live mid-session.
+
+**Verification:** headless Chromium (SwiftShader WebGL): zero page
+errors; initial face Africa/Europe with rings over the European
+destinations; Paris hover flies Europe to centre with the Paris
+preview; reduced-motion screenshots byte-identical 1.2s apart.
+`lint` + `build` clean (three chunk lazy, size warning expected).
+
 ## Asset migration — PNG → WebP (guest batch 2, completed properly) · 2026-09-21
 
 The guest session had converted every image to WebP on the PC and

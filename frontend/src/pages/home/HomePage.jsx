@@ -1,10 +1,13 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
 import './m4Stepper.css';
 import { destinations, experiences, feelings } from '../../data/homeContent.js';
-import SolenGlobe from '../../components/globe/SolenGlobe.jsx';
 import TornEdge from '../../components/edges/TornEdge.jsx';
+
+// The 3D globe pulls in three.js — code-split so the rest of the site
+// never pays for it.
+const SolenGlobe = lazy(() => import('../../components/globe/SolenGlobe.jsx'));
 import { initTornWipe } from '../../components/edges/tornWipe.js';
 import { initHeroBlurIn } from './heroBlurIn.js';
 import { initHeroParallax } from './heroParallax.js';
@@ -271,7 +274,9 @@ function HomePage() {
             </div>
           </div>
         </section>
-        <SolenGlobe />
+        <Suspense fallback={<div className="solen-globe-suspense" aria-hidden="true"></div>}>
+          <SolenGlobe />
+        </Suspense>
 
         {/* Stage layer 3 — torn edge into the cream planner chapter. */}
         <TornEdge fill="#faf7f1" flip />
