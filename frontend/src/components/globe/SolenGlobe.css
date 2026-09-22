@@ -140,10 +140,9 @@
   max-width: 340px;
   padding: 12px;
 
-  background: rgba(20, 12, 20, 0.82);
+  background: rgba(20, 12, 20, 0.88);
   border: 1px solid rgba(250, 247, 241, 0.16);
   border-radius: 10px;
-  backdrop-filter: blur(6px);
 
   animation: solen-preview-in 450ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 

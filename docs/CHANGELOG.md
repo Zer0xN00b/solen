@@ -1,5 +1,38 @@
 # SOLEN Changelog
 
+## Globe spin fix — arc, not jump · 2026-09-21
+
+User report: hovering/clicking a chip made the globe lag and *jump*
+to the destination instead of turning. Three causes, three fixes:
+
+**Code where:** `frontend/src/components/globe/SolenGlobe.jsx` +
+`.css`.
+1. react-globe's built-in `focus` tween lerps the camera through
+   space in a straight chord and zooms in — reads as a jump. Replaced
+   with `spinTo`: an eased 1100ms great-circle arc at the CURRENT
+   radius (nlerp of camera direction), controls locked during the
+   tween, instant under reduced motion. The `focus` prop is gone.
+2. The hover spin-pause was imperative (`controls.autoRotate=false`)
+   but the lib re-applies `options` on every React render,
+   overwriting the pause — spin resumed mid-hover. Now declarative:
+   `enableCameraAutoRotate: !reduced && !preview`, so opening any
+   preview pauses, closing resumes, and renders can't clobber it.
+3. The preview card's `backdrop-filter: blur(6px)` — a classic jank
+   source over a WebGL canvas — replaced with a solid translucent
+   panel.
+
+**Page where:** home, section 05 — hover a chip or label: the spin
+pauses and the globe *turns* the city to face you; leave and it
+resumes drifting.
+
+**Before → after:** lag + teleport → eased spin, stable pause.
+
+**Verification:** headless probe of label projection over time shows
+arrival then a fully stable hold (no resume drift); final framing
+centers the chosen city at unchanged zoom; lint + build clean.
+(SwiftShader's ~3fps rAF can't show arc smoothness headless — the
+easing math is frame-rate independent.)
+
 ## Section 05 v4 — the globe is the navigator (Plan B) · 2026-09-21
 
 The destination sidebar is gone; the globe owns the section, per the

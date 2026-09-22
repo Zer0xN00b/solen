@@ -65,10 +65,10 @@ function SolenGlobe() {
   const globeInstanceRef = useRef(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
   const [preview, setPreview] = useState(null);
-  const [focusCoords, setFocusCoords] = useState(null);
   const [reduced, setReduced] = useState(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
   );
+  const spinRafRef = useRef(null);
 
   useEffect(() => {
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -175,12 +175,61 @@ function SolenGlobe() {
     }
   });
 
-  const setSpin = (on) => {
-    const instance = globeInstanceRef.current;
-    if (instance?.orbitControls && !reduced) {
-      instance.orbitControls.autoRotate = on;
-    }
-  };
+  // Spin the destination to face the camera along a great-circle arc
+  // at the CURRENT radius — react-globe's built-in focus tween lerps
+  // the camera through space in a straight chord (reads as a jump)
+  // and zooms in; this reads as the globe turning. Reduced motion:
+  // jump instantly.
+  const spinTo = useCallback(
+    (destination) => {
+      const globe = globeInstanceRef.current;
+      if (!globe?.camera?.position) return;
+
+      if (spinRafRef.current !== null) cancelAnimationFrame(spinRafRef.current);
+
+      const radius = globe.camera.position.length();
+      const target = new THREE.Vector3(...latLngToScene(destination.lat, destination.lng, 300))
+        .normalize()
+        .multiplyScalar(radius);
+      const from = globe.camera.position.clone();
+
+      if (globe.orbitControls) globe.orbitControls.enabled = false;
+
+      if (reduced) {
+        globe.camera.position.copy(target);
+        if (globe.orbitControls) globe.orbitControls.enabled = true;
+        return;
+      }
+
+      const start = performance.now();
+      const duration = 1100;
+      const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+
+      const step = (now) => {
+        const t = ease(Math.min(1, (now - start) / duration));
+        globe.camera.position
+          .copy(from)
+          .lerp(target, t)
+          .normalize()
+          .multiplyScalar(radius);
+        if (t < 1) {
+          spinRafRef.current = requestAnimationFrame(step);
+        } else {
+          spinRafRef.current = null;
+          if (globe.orbitControls) globe.orbitControls.enabled = true;
+        }
+      };
+      spinRafRef.current = requestAnimationFrame(step);
+    },
+    [reduced]
+  );
+
+  useEffect(
+    () => () => {
+      if (spinRafRef.current !== null) cancelAnimationFrame(spinRafRef.current);
+    },
+    []
+  );
 
   const handleGetGlobe = useCallback(
     (instance) => {
@@ -213,7 +262,7 @@ function SolenGlobe() {
 
   const focusDestination = (destination) => {
     setPreview(destination);
-    setFocusCoords([destination.lat, destination.lng]);
+    spinTo(destination);
   };
 
   return (
@@ -243,15 +292,15 @@ function SolenGlobe() {
               width={size.width}
               height={size.height}
               markers={markers}
-              focus={focusCoords}
               globeTexture="/assets/globe/globe.jpg"
               globeCloudsTexture="/assets/globe/clouds.png"
               globeBackgroundTexture="/assets/globe/background.png"
               options={{
                 ...options,
-                enableCameraAutoRotate: !reduced,
-                focusAnimationDuration: reduced ? 0 : 1000,
-                focusDistanceRadiusScale: 2.4, // keep the globe in view while focused
+                // Declarative: hovering anything (preview open) pauses
+                // the spin; the lib re-applies options every render, so
+                // an imperative pause would be overwritten.
+                enableCameraAutoRotate: !reduced && !preview,
               }}
               onGetGlobe={handleGetGlobe}
               onMouseOverMarker={handleOverMarker}
@@ -270,14 +319,8 @@ function SolenGlobe() {
                   labelElsRef.current[index] = el;
                 }}
                 className="solen-globe-destination-label"
-                onMouseEnter={() => {
-                  setPreview(destination);
-                  setSpin(false);
-                }}
-                onMouseLeave={() => {
-                  setPreview(null);
-                  setSpin(true);
-                }}
+                onMouseEnter={() => setPreview(destination)}
+                onMouseLeave={() => setPreview(null)}
                 onFocus={() => focusDestination(destination)}
                 onClick={() => openDestination(destination)}
               >
@@ -306,14 +349,8 @@ function SolenGlobe() {
             key={destination.name}
             type="button"
             className={preview?.name === destination.name ? 'active' : ''}
-            onMouseEnter={() => {
-              focusDestination(destination);
-              setSpin(false);
-            }}
-            onMouseLeave={() => {
-              setPreview(null);
-              setSpin(true);
-            }}
+            onMouseEnter={() => focusDestination(destination)}
+            onMouseLeave={() => setPreview(null)}
             onFocus={() => focusDestination(destination)}
             onClick={() => openDestination(destination)}
           >
