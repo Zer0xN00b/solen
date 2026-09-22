@@ -19,7 +19,8 @@
  *
  * Carried over from v3: react-globe with vendored textures, StrictMode
  * canvas re-attach, stable callbacks, lazy chunk, live reduced-motion
- * (no spin, frozen clouds, instant focus jumps).
+ * (ambient spin + cloud drift frozen; the user-initiated spin-to still
+ * animates as navigation feedback).
  */
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -178,51 +179,45 @@ function SolenGlobe() {
   // Spin the destination to face the camera along a great-circle arc
   // at the CURRENT radius — react-globe's built-in focus tween lerps
   // the camera through space in a straight chord (reads as a jump)
-  // and zooms in; this reads as the globe turning. Reduced motion:
-  // jump instantly.
-  const spinTo = useCallback(
-    (destination) => {
-      const globe = globeInstanceRef.current;
-      if (!globe?.camera?.position) return;
+  // and zooms in; this reads as the globe turning. The arc animates
+  // for everyone, including prefers-reduced-motion users: it is
+  // user-initiated navigation feedback (an accepted reduced-motion
+  // exception, and explicitly requested); reduced motion still kills
+  // the AUTONOMOUS motion (ambient spin, cloud drift).
+  const spinTo = useCallback((destination) => {
+    const globe = globeInstanceRef.current;
+    if (!globe?.camera?.position) return;
 
-      if (spinRafRef.current !== null) cancelAnimationFrame(spinRafRef.current);
+    if (spinRafRef.current !== null) cancelAnimationFrame(spinRafRef.current);
 
-      const radius = globe.camera.position.length();
-      const target = new THREE.Vector3(...latLngToScene(destination.lat, destination.lng, 300))
+    const radius = globe.camera.position.length();
+    const target = new THREE.Vector3(...latLngToScene(destination.lat, destination.lng, 300))
+      .normalize()
+      .multiplyScalar(radius);
+    const from = globe.camera.position.clone();
+
+    if (globe.orbitControls) globe.orbitControls.enabled = false;
+
+    const start = performance.now();
+    const duration = 1100;
+    const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+
+    const step = (now) => {
+      const t = ease(Math.min(1, (now - start) / duration));
+      globe.camera.position
+        .copy(from)
+        .lerp(target, t)
         .normalize()
         .multiplyScalar(radius);
-      const from = globe.camera.position.clone();
-
-      if (globe.orbitControls) globe.orbitControls.enabled = false;
-
-      if (reduced) {
-        globe.camera.position.copy(target);
+      if (t < 1) {
+        spinRafRef.current = requestAnimationFrame(step);
+      } else {
+        spinRafRef.current = null;
         if (globe.orbitControls) globe.orbitControls.enabled = true;
-        return;
       }
-
-      const start = performance.now();
-      const duration = 1100;
-      const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
-
-      const step = (now) => {
-        const t = ease(Math.min(1, (now - start) / duration));
-        globe.camera.position
-          .copy(from)
-          .lerp(target, t)
-          .normalize()
-          .multiplyScalar(radius);
-        if (t < 1) {
-          spinRafRef.current = requestAnimationFrame(step);
-        } else {
-          spinRafRef.current = null;
-          if (globe.orbitControls) globe.orbitControls.enabled = true;
-        }
-      };
-      spinRafRef.current = requestAnimationFrame(step);
-    },
-    [reduced]
-  );
+    };
+    spinRafRef.current = requestAnimationFrame(step);
+  }, []);
 
   useEffect(
     () => () => {

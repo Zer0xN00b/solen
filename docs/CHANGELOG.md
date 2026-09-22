@@ -1,5 +1,29 @@
 # SOLEN Changelog
 
+## Spin for everyone — reduced motion no longer teleports · 2026-09-21
+
+User report after the spin fix: still teleports on their PC. Prime
+suspect: Windows "show animations" off makes Chrome report
+`prefers-reduced-motion: reduce`, and the reduced branch of `spinTo`
+deliberately jumped instantly.
+
+**Code where:** `frontend/src/components/globe/SolenGlobe.jsx` — the
+instant-jump branch is gone. The spin-to arc now animates for
+everyone: it is user-initiated navigation feedback (an accepted
+reduced-motion exception, and explicitly requested by the user).
+Reduced motion still freezes the autonomous motion only (ambient
+spin, cloud drift).
+
+**Page where:** home section 05, on machines with OS animations
+disabled — hover now turns the globe instead of teleporting.
+
+**Before → after:** reduced-motion hover = instant jump → eased
+1.1s turn.
+
+**Verification:** emulated `prefers-reduced-motion: reduce` headless;
+time-probe shows a still ambient globe, an intermediate frame
+mid-flight, then a stable arrival. Lint + build clean.
+
 ## Globe spin fix — arc, not jump · 2026-09-21
 
 User report: hovering/clicking a chip made the globe lag and *jump*
