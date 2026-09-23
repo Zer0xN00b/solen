@@ -2,17 +2,26 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './DestinationDetail.css';
 import { destinationEditorial } from '../../data/destinationEditorial.js';
+import NotFoundPage from '../notFound/NotFoundPage.jsx';
 import { initM2GhostSolid } from './m2GhostSolid.js';
 
 function DestinationDetail() {
   const { slug } = useParams();
 
-  const destination = destinationEditorial[slug] || destinationEditorial.kyoto;
+  // No fallback object: an unknown slug is a broken route, not Kyoto.
+  const destination = destinationEditorial[slug];
 
   // Animation 02 — M2 ghost → solid ink-in on the destination title.
   // Re-initializes per destination so the observer always watches the
   // live title; cleanup disconnects the observer on unmount/change.
   useEffect(() => initM2GhostSolid(), [slug]);
+
+  // Broken-slug handling (scope §42). This previously served Kyoto's
+  // editorial page for any unknown slug — silently wrong content on a
+  // truthful URL. Kept BELOW the effect so the hook order is stable.
+  if (!destination) {
+    return <NotFoundPage />;
+  }
 
   return (
     <main className="destination-detail">

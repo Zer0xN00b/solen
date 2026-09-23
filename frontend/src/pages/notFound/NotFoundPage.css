@@ -1,0 +1,153 @@
+/* =========================================================
+   SOLEN — 404 / BROKEN ROUTE (scope §42)
+   Additive page. Mirrors the locked pages' brand language
+   (oatmeal ground, plum accent, Cormorant + Inter) instead of
+   importing HomePage.css, so nothing locked is coupled.
+   Button values match the locked `.button` / `.planner-button`
+   rules exactly, including the 300ms hover transitions.
+========================================================= */
+
+.not-found {
+  display: flex;
+  flex-direction: column;
+
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  padding: 26px 6vw 90px;
+
+  background: #f3ebdd;
+}
+
+.not-found-header {
+  flex-shrink: 0;
+}
+
+.not-found-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+
+  color: #4a1942;
+}
+
+.not-found-inner {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.not-found-eyebrow {
+  margin-bottom: 28px;
+
+  color: #8fa8b8;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.not-found h1 {
+  margin-bottom: 28px;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(46px, 8vw, 92px);
+  font-weight: 400;
+  line-height: 0.98;
+
+  color: #241c1d;
+}
+
+.not-found h1 em {
+  color: #4a1942;
+}
+
+.not-found-copy {
+  max-width: 440px;
+
+  margin-bottom: 42px;
+
+  font-size: 15px;
+  line-height: 1.8;
+  font-weight: 300;
+}
+
+.not-found-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+
+  gap: 16px 32px;
+}
+
+.not-found-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 14px;
+
+  min-height: 52px;
+
+  padding: 0 25px;
+
+  border: 1px solid #4a1942;
+
+  background: #4a1942;
+  color: #faf7f1;
+
+  font-size: 11px;
+  font-weight: 500;
+
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+
+  transition:
+    background 300ms ease,
+    color 300ms ease,
+    transform 300ms ease;
+}
+
+.not-found-button:hover {
+  background: transparent;
+  color: #4a1942;
+
+  transform: translateY(-2px);
+}
+
+.not-found-secondary {
+  border-bottom: 1px solid rgba(74, 25, 66, 0.3);
+
+  padding-bottom: 3px;
+
+  color: #4a1942;
+
+  font-size: 12px;
+  letter-spacing: 0.04em;
+
+  transition: border-color 250ms ease;
+}
+
+.not-found-secondary:hover {
+  border-color: #4a1942;
+}
+
+@media (max-width: 700px) {
+  .not-found {
+    padding: 22px 6vw 70px;
+  }
+
+  .not-found h1 {
+    font-size: clamp(40px, 13vw, 60px);
+  }
+}

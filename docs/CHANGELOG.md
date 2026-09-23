@@ -1,5 +1,51 @@
 # SOLEN Changelog
 
+## Hygiene pass 4 — broken-route handling · 2026-09-23
+
+Track A item A6. Two ways to reach nothing:
+
+1. An unknown URL matched no route at all, so the page rendered only the
+   site-wide stage layers (ambient dust + progress rail) — an empty
+   oatmeal page with no heading and no way back.
+2. An unknown destination slug rendered **Kyoto's** editorial page
+   (`destinationEditorial[slug] || destinationEditorial.kyoto`) —
+   confidently wrong content on a truthful URL.
+
+**Code where:**
+- NEW `frontend/src/pages/notFound/NotFoundPage.jsx` + `.css` — an
+  additive page in the brand language (oatmeal ground, plum accent,
+  Cormorant display + Inter copy): SOLEN wordmark top-left, 404 eyebrow,
+  headline, and two ways out (home, planner). Its CSS is co-located and
+  mirrors the locked `.button` / `.planner-button` values rather than
+  importing `HomePage.css` — that cross-page stylesheet import is
+  exactly the coupling that left the old `Navbar.jsx` broken.
+- `frontend/src/AppRoutes.jsx` — `import NotFoundPage` plus a catch-all
+  `<Route path="*" element={<NotFoundPage />} />` after the three real
+  routes.
+- `frontend/src/pages/destination/DestinationDetail.jsx` — the silent
+  Kyoto fallback is gone: the lookup is `destinationEditorial[slug]`,
+  and an unknown slug renders `<NotFoundPage />` **at the same URL** (no
+  redirect, so the URL stays truthful). The early return sits *below*
+  the M2 `useEffect` so hook order stays stable. No locked markup, type
+  or colour was touched for valid slugs.
+
+**Page where:** visit any address that doesn't exist, e.g.
+`/this-page-does-not-exist`, or an unknown slug, e.g.
+`/destinations/nonsense-slug`. Both now show the 404 page with a working
+way back.
+
+**Before → after:** blank page with no navigation → designed 404 with two
+exits; `/destinations/anything` showing Kyoto → a real 404.
+
+**Verification:** headless Chrome DOM dumps of the built preview —
+`/this-page-does-not-exist` renders the not-found page including the
+"Back to SOLEN" and `/planner` links; `/destinations/nonsense-slug`
+renders the not-found page and contains **no** `m2-title` (no Kyoto
+leak); `/destinations/kyoto` still renders the locked editorial page
+(`m2-title` present, four "Kyoto" headings, the "Plan a Journey Here"
+CTA, original intro copy intact). lint + build clean.
+
+
 ## Hygiene pass 3 — one designed keyboard focus ring · 2026-09-23
 
 Track A item A5. Focus styling was almost absent site-wide: grepping the
