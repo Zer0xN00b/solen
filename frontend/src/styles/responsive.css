@@ -66,11 +66,6 @@ img {
 
   /* ---------- DESTINATIONS ---------- */
 
-  .destination-section {
-    padding-left: 6vw;
-    padding-right: 6vw;
-  }
-
   .destination-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 18px;
@@ -81,11 +76,6 @@ img {
   .experiences-section {
     padding-left: 6vw;
     padding-right: 6vw;
-  }
-
-  .experience-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
   }
 
   /* ---------- FEELING ---------- */
@@ -123,14 +113,12 @@ img {
 
   .planner-destinations,
   .planner-durations,
-  .planner-travel-styles,
   .planner-interests {
     width: 100%;
   }
 
   .planner-destination-option,
   .planner-duration-option,
-  .planner-style-option,
   .planner-interest-option {
     min-width: 0;
   }
@@ -212,10 +200,6 @@ img {
 
   /* ---------- DESTINATIONS ---------- */
 
-  .destination-section {
-    padding: 80px 6vw;
-  }
-
   .destination-grid {
     grid-template-columns: 1fr;
     gap: 18px;
@@ -229,11 +213,6 @@ img {
 
   .experiences-section {
     padding: 80px 6vw;
-  }
-
-  .experience-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
   }
 
   /* ---------- FEELING ---------- */
@@ -316,25 +295,11 @@ img {
     min-height: 100px;
   }
 
-  .planner-travel-styles {
-    grid-template-columns: 1fr 1fr;
-  }
-
   .planner-interests {
     grid-template-columns: 1fr 1fr;
   }
 
   /* ---------- BUDGET ---------- */
-
-  .planner-budget {
-    width: 100%;
-  }
-
-  .planner-budget-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 15px;
-  }
 
   .planner-currency {
     width: 100%;
@@ -346,8 +311,7 @@ img {
 
   /* ---------- CONTINUE / CRAFT BUTTONS ---------- */
 
-  .planner-continue,
-  .planner-craft-button {
+  .planner-continue {
     width: 100%;
     min-height: 54px;
   }
@@ -591,7 +555,6 @@ img {
 
   /* ---------- DESTINATIONS ---------- */
 
-  .destination-section,
   .experiences-section,
   .feeling-section,
   .planner-section {
@@ -607,7 +570,6 @@ img {
   }
 
   .planner-durations,
-  .planner-travel-styles,
   .planner-interests {
     grid-template-columns: 1fr;
   }
@@ -635,19 +597,6 @@ img {
 
   .solen-globe-heading-copy h2 {
     font-size: 3rem;
-  }
-
-  .solen-globe {
-    width: 84vw;
-  }
-
-  .solen-globe-orbit {
-    width: 90vw;
-  }
-
-  .solen-globe-destination-list button {
-    grid-template-columns: 28px 1fr auto;
-    font-size: 1rem;
   }
 }
 

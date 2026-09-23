@@ -1,5 +1,43 @@
 # SOLEN Changelog
 
+## Hygiene pass 1 — responsive layer: 10 dead selectors removed · 2026-09-23
+
+Track A (hygiene & correctness) opened. First finding: `responsive.css`
+carried rules whose class names match **no element in the codebase** —
+leftovers from before the M4 stepper, the Section 05 v4 globe rewrite
+and the planner's class renames — plus one genuine typo
+(`.destination-section` vs the real `.destinations-section`).
+
+**Code where:** `frontend/src/styles/responsive.css`. Removed every
+selector that matched nothing (audited against all `*.jsx`/`*.js`):
+`.destination-section` ×3 (typo — never matched), `.experience-grid` ×2
+(superseded by `.m4-stepper`), `.planner-travel-styles` ×3 (step 3
+renders `.planner-durations`), `.planner-style-option`,
+`.planner-budget`, `.planner-budget-row`, `.planner-craft-button` (the
+craft button is `.planner-continue`), `.solen-globe`,
+`.solen-globe-orbit`, `.solen-globe-destination-list` (all three retired
+by the globe v4 sidebar removal).
+
+**Page where:** every route at tablet (≤900px), mobile (≤700px) and
+small-phone (≤480px) widths. Nothing should look different — none of
+the deleted rules could ever have applied.
+
+**Before → after:** identical pixels, 50 fewer lines, main CSS bundle
+60.76 kB → 60.16 kB (gzip 11.27 → 11.17 kB).
+
+**Judgement call — why the typo was deleted, not fixed:** renaming
+`.destination-section` → `.destinations-section` would have newly applied
+`padding: 80px 6vw` at ≤700px and, at ≤650px, overridden `HomePage.css`'s
+own `.destinations-section { padding: 0 6vw 110px }` (responsive.css is
+imported *after* the page CSS, so it wins on equal specificity). That
+would be a silent redesign of a LOCKED page — and the intent is already
+served by `HomePage.css`, so the rule was removed instead.
+
+**Verification:** dead-selector audit re-run → **0 of 60** selectors in
+the file unmatched (was 10); `npm run lint` clean; `npm run build`
+clean. Method: extract `.class` tokens from the file, test each against
+the concatenated JSX/JS sources with word-boundary regexes.
+
 ## Spin for everyone — reduced motion no longer teleports · 2026-09-21
 
 User report after the spin fix: still teleports on their PC. Prime
