@@ -53,7 +53,15 @@ export function initM4Stepper() {
     section.setAttribute('data-active', String(index));
 
     panels.forEach((panel, i) => {
-      panel.setAttribute('aria-hidden', i === index ? 'false' : 'true');
+      const isActive = i === index;
+      panel.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+
+      // `inert` is the half that actually matters. aria-hidden alone hides
+      // the panel from assistive tech but leaves its CTA button in the tab
+      // order, so Tab could land on a button inside an aria-hidden subtree
+      // (an ARIA violation) that is also pushed off-screen.
+      if (isActive) panel.removeAttribute('inert');
+      else panel.setAttribute('inert', '');
     });
     dots.forEach((dot, i) => {
       dot.classList.toggle('is-active', i === index);
@@ -115,6 +123,14 @@ export function initM4Stepper() {
     // stacked presentation from here.
     section.style.removeProperty('--scrub');
     section.classList.remove('is-dark');
+
+    // That static presentation shows every panel at once, so the per-panel
+    // hiding has to go with it — otherwise panels the reduced-motion layout
+    // now displays would stay hidden from assistive tech and inert.
+    panels.forEach((panel) => {
+      panel.removeAttribute('aria-hidden');
+      panel.removeAttribute('inert');
+    });
   }
 
   // If the OS preference flips mid-session, stop or resume driving.

@@ -1,5 +1,43 @@
 # SOLEN Changelog
 
+## Hygiene pass 7 — the M4 stepper no longer hides its own buttons badly · 2026-09-23
+
+Track A item A8. The stepper marked its inactive panels
+`aria-hidden="true"` while those panels still contained a focusable
+`<button class="m4-stepper__cta">Discover</button>` — focusable content
+inside an aria-hidden subtree. Assistive tech was told "ignore this"
+while the keyboard was told "you can tab here", and the buttons were
+pushed off-screen horizontally at the same time.
+
+**Code where:** `frontend/src/pages/home/m4Stepper.js`.
+- `applyStep()` now sets `inert` alongside `aria-hidden` (and removes it
+  from the active panel), so the hidden panels' buttons leave the tab
+  order and stop accepting pointer events.
+- `detach()` — the reduced-motion path — now clears both attributes from
+  every panel. That matters: the reduced-motion CSS stacks all four
+  panels *visibly*, so leaving them hidden from assistive tech and inert
+  would have made the very panels it displays unreachable. Without this
+  line, the fix for the pinned layout would have introduced a worse bug
+  in the calm layout.
+
+**Page where:** homepage, section 04 EXPERIENCES. Tab through it: only the
+visible step's "Discover" button takes focus. With
+`prefers-reduced-motion: reduce`, all four stacked panels are reachable
+again.
+
+**Before → after:** four tab stops for four panels — three of them
+off-screen inside an `aria-hidden` subtree → one tab stop for the visible
+panel, and all four under reduced motion.
+
+**Verification:** headless DOM dump of the built homepage. 4 panels:
+exactly 1 with `aria-hidden="false"` and no `inert`; 3 with
+`aria-hidden="true" inert=""`; **0** with `aria-hidden="true"` and no
+`inert` — the defect pattern is gone. The reduced-motion path was checked
+separately: with the preference forced, the stepper never attaches and no
+panel carries either attribute, so all four remain reachable. lint +
+build clean.
+
+
 ## Hygiene pass 6 — same-app navigation no longer reloads the page · 2026-09-23
 
 Track A item A12. Three internal destinations were plain browser
