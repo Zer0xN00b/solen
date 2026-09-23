@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './DestinationDetail.css';
 import { destinationEditorial } from '../../data/destinationEditorial.js';
 import NotFoundPage from '../notFound/NotFoundPage.jsx';
@@ -7,6 +7,7 @@ import { initM2GhostSolid } from './m2GhostSolid.js';
 
 function DestinationDetail() {
   const { slug } = useParams();
+  const navigate = useNavigate();
 
   // No fallback object: an unknown slug is a broken route, not Kyoto.
   const destination = destinationEditorial[slug];
@@ -122,8 +123,9 @@ function DestinationDetail() {
         </h2>
 
         <button
+          type="button"
           className="destination-plan-button"
-          onClick={() => (window.location.href = `/planner?destination=${slug}`)}
+          onClick={() => navigate(`/planner?destination=${slug}`)}
         >
           Plan a Journey Here <span>→</span>
         </button>

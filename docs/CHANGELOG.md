@@ -1,5 +1,44 @@
 # SOLEN Changelog
 
+## Hygiene pass 6 — same-app navigation no longer reloads the page · 2026-09-23
+
+Track A item A12. Three internal destinations were plain browser
+navigations, so the whole SPA was torn down and rebuilt for a move the
+router could have made in place:
+
+- the homepage planner CTA, `<a href="/planner">`
+- the destination page's "Plan a Journey Here" button
+  (`window.location.href = '/planner?destination=…'`)
+- the homepage wordmark, `<a href="#">`, which also appended a stray `#`
+  to the URL
+
+**Code where:**
+- `frontend/src/pages/home/HomePage.jsx` — the wordmark and the planner
+  CTA are now `<Link to>` (the file already imported `Link` since hygiene
+  pass 2).
+- `frontend/src/pages/destination/DestinationDetail.jsx` — `useNavigate`
+  plus `navigate('/planner?destination=<slug>')` instead of assigning
+  `window.location.href`; the button also gained an explicit
+  `type="button"`.
+
+**Page where:** homepage → "Build My Journey" (or the SOLEN wordmark);
+any destination page → "Plan a Journey Here".
+
+**Before → after:** full document reload (blank flash, the globe chunk
+and 7 MB of textures re-downloaded, in-memory state and scroll lost) →
+instant client-side route change with the wizard pre-filled.
+
+**Verification:** headless Chrome driving a same-origin iframe, with a
+marker planted on the iframe's `window` that a document reload would
+destroy. 404 page → planner Link: marker survived, path `/planner`,
+planner hero rendered. Kyoto page → "Plan a Journey Here": marker
+survived, URL `/planner?destination=kyoto`, and Kyoto is preselected on
+step 1. Homepage DOM check: the wordmark renders as `a.brand[href="/"]`
+and the CTA as `a.button.planner-button[href="/planner"]` (react-router
+`data-discover` present), with no raw `<a href="/planner">` left. lint +
+build clean.
+
+
 ## Hygiene pass 5 — the planner can no longer dead-end · 2026-09-23
 
 Track A item A7. `createJourney()` returns `null` when the chosen

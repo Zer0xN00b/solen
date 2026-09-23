@@ -36,9 +36,9 @@ function HomePage() {
     <div className="app">
       {/* NAVIGATION */}
       <header className="navbar">
-        <a href="#" className="brand">
+        <Link to="/" className="brand">
           <span className="hero-wordmark">SOLEN</span>
-        </a>
+        </Link>
 
         <nav className="nav-links">
           <a href="#destinations">Destinations</a>
@@ -297,9 +297,9 @@ function HomePage() {
               you.
             </p>
 
-            <a href="/planner" className="button planner-button">
+            <Link to="/planner" className="button planner-button">
               Build My Journey <span>→</span>
-            </a>
+            </Link>
           </div>
         </section>
       </main>
