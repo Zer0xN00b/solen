@@ -471,13 +471,24 @@
   line-height: 1.8;
 }
 
+/* Broken-journey recovery (hygiene pass 5). The crafting screen doubles
+   as the error screen, so this is the only new rule it needs. */
+.planner-recovery {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 28px;
+  margin-top: 45px;
+}
+
 .planner-loader {
   display: flex;
   justify-content: center;
   gap: 7px;
   margin-top: 45px;
 }
-
 .planner-loader span {
   width: 5px;
   height: 5px;

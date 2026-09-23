@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import './TripPlanner.css';
 import {
   destinations,
@@ -38,6 +38,12 @@ function TripPlanner() {
   const [shareMessage, setShareMessage] = useState('');
   const [favoriteDays, setFavoriteDays] = useState([]);
   const [regeneratingDay, setRegeneratingDay] = useState(null);
+
+  // Broken-journey state (hygiene pass 5). createJourney() returns null
+  // when a destination has no itinerary data, and the wizard then fell
+  // through to step 6 with no step content at all — a dead end with no
+  // way forward and no explanation.
+  const [craftError, setCraftError] = useState('');
 
   // One-time mount initialization: restore the saved journey flag and apply
   // homepage URL preselection (?destination / ?experience / ?feeling).
@@ -157,20 +163,33 @@ function TripPlanner() {
     };
   };
 
+  // Single place where a crafted journey either lands or explains itself.
+  // Used by both the initial craft and "Regenerate Journey" so a missing
+  // itinerary can never leave the wizard in a wordless dead end.
+  const craftJourneyOrFail = () => {
+    const newJourney = createJourney();
+
+    if (!newJourney) {
+      setCraftError(
+        'This destination doesn’t have itinerary data yet. Choose another place and we’ll craft the journey around it.',
+      );
+    } else {
+      setJourney(newJourney);
+    }
+
+    setIsCrafting(false);
+  };
+
   const handleCraftJourney = () => {
     if (!destination || !duration || !travelStyle || selectedInterests.length === 0) {
       return;
     }
 
+    setCraftError('');
     setStep(6);
     setIsCrafting(true);
 
-    setTimeout(() => {
-      const newJourney = createJourney();
-
-      setJourney(newJourney);
-      setIsCrafting(false);
-    }, 2400);
+    setTimeout(craftJourneyOrFail, 2400);
   };
 
   const handleSaveJourney = () => {
@@ -336,6 +355,7 @@ function TripPlanner() {
 
   const handleEditJourney = () => {
     setJourney(null);
+    setCraftError('');
     setFavoriteDays([]);
     setStep(1);
     setIsCrafting(false);
@@ -352,11 +372,7 @@ function TripPlanner() {
     setStep(6);
     setIsCrafting(true);
 
-    setTimeout(() => {
-      const newJourney = createJourney();
-      setJourney(newJourney);
-      setIsCrafting(false);
-    }, 1800);
+    setTimeout(craftJourneyOrFail, 1800);
   };
 
   const handleRegenerateDay = (dayIndex) => {
@@ -427,6 +443,7 @@ function TripPlanner() {
 
   const handleStartOver = () => {
     setStep(1);
+    setCraftError('');
     setFavoriteDays([]);
     setDestination('');
     setDuration('');
@@ -460,6 +477,39 @@ function TripPlanner() {
             <span></span>
             <span></span>
             <span></span>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  // Broken-journey screen (hygiene pass 5). Reuses the crafting screen's
+  // styles, so it adds an explanation and a way out — not new chrome.
+  if (craftError) {
+    return (
+      <main className="planner-page">
+        <section className="planner-crafting">
+          <p className="planner-eyebrow">SOMETHING WENT WRONG</p>
+
+          <h1>We couldn&apos;t craft that journey.</h1>
+
+          <p>{craftError}</p>
+
+          <div className="planner-recovery">
+            <button
+              type="button"
+              className="planner-continue"
+              onClick={() => {
+                setCraftError('');
+                setStep(1);
+              }}
+            >
+              Choose another destination →
+            </button>
+
+            <Link to="/" className="planner-back">
+              Back to SOLEN
+            </Link>
           </div>
         </section>
       </main>

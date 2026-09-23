@@ -1,5 +1,47 @@
 # SOLEN Changelog
 
+## Hygiene pass 5 — the planner can no longer dead-end · 2026-09-23
+
+Track A item A7. `createJourney()` returns `null` when the chosen
+destination has no itinerary data (`itineraryData[destination]` missing).
+The wizard still advanced to step 6, so the crafting screen finished and
+then rendered **no step content at all** — a "YOUR JOURNEY 5 / 5"
+progress bar above an empty area, with no message and no way out.
+Unreachable today (the planner's destination list and `itineraryData`
+agree), which is precisely the drift a destinations API will introduce
+later — so it was a guard waiting to misfire.
+
+**Code where:**
+- `frontend/src/pages/planner/TripPlanner.jsx` — new `craftError` state;
+  one `craftJourneyOrFail()` helper now owns the outcome for both the
+  initial craft **and** "Regenerate Journey", so neither path can land in
+  a wordless dead end; a new error screen (eyebrow, headline, the reason,
+  and two exits — "Choose another destination" and a router link home)
+  rendered between the crafting screen and the results; `craftError` is
+  cleared on Start Over and Edit Preferences.
+- `frontend/src/pages/planner/TripPlanner.css` — one additive rule,
+  `.planner-recovery`, positioning those two exits. The error screen
+  reuses the existing `.planner-crafting` chrome (glow, centring,
+  entrance fades), so no locked planner styling changed.
+
+**Page where:** `/planner`. Completing the wizard normally is unchanged;
+if a destination ever lacks itinerary data, `/planner` now explains why
+instead of going blank.
+
+**Before → after:** crafting ends → empty step area under "YOUR JOURNEY
+5 / 5"; crafting ends → a named error with the reason and two ways
+forward.
+
+**Verification:** real end-to-end runs against the built preview, driving
+the actual planner through a same-origin iframe and reading the result
+out of the DOM (headless Chrome DOM dumps). Happy path: five steps
+selected → 7 day-cards rendered, no error screen, total estimate present.
+Error path: a temporary eighth destination with no itinerary data → the
+error screen renders with the exact heading and copy and **no** results.
+The temporary data change was reverted (working tree clean). lint + build
+clean.
+
+
 ## Hygiene pass 4 — broken-route handling · 2026-09-23
 
 Track A item A6. Two ways to reach nothing:
