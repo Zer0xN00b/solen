@@ -37,3 +37,26 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+/* ------------------------------------------------------------
+   KEYBOARD FOCUS — one designed ring for every interactive element.
+   Was missing site-wide (only the globe labels/chips and the planner
+   currency select had focus styling), so native UA outlines were the
+   only keyboard affordance. `:focus-visible` keeps it off mouse
+   clicks. outline never affects layout.
+
+   Dark grounds need a cream ring — a plum ring on plum/dark is
+   invisible: the feelings chapter, the footer, the globe stage, and
+   the M4 stepper once its ground goes dark.
+   ------------------------------------------------------------ */
+:focus-visible {
+  outline: 2px solid #4a1942;
+  outline-offset: 3px;
+}
+
+.feeling-section :focus-visible,
+.footer :focus-visible,
+.solen-globe-stage :focus-visible,
+.m4-stepper.is-dark :focus-visible {
+  outline-color: #faf7f1;
+}

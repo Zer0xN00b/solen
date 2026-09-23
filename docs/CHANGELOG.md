@@ -1,5 +1,35 @@
 # SOLEN Changelog
 
+## Hygiene pass 3 — one designed keyboard focus ring · 2026-09-23
+
+Track A item A5. Focus styling was almost absent site-wide: grepping the
+frontend found only five `:focus` rules — the globe labels/chips
+(`SolenGlobe.css`) and the planner currency `<select>`. Every button,
+card, nav link, chip and route stop leaned on the browser's default UA
+outline, and on the dark chapters even that was invisible.
+
+**Code where:** `frontend/src/styles/index.css` — one global
+`:focus-visible` rule (2px `#4a1942` plum, 3px offset) plus a cream-ring
+override for dark grounds: `.feeling-section`, `.footer`,
+`.solen-globe-stage`, and `.m4-stepper.is-dark` (the stepper's ground
+goes dark past ~58% progress, where a plum ring would disappear).
+
+**Page where:** everywhere. Tab through any route — homepage nav, the
+seven destination cards, the feelings list, the M4 stepper CTA, the
+globe chips, the planner options, the journey action buttons.
+
+**Before → after:** browser-default outline (on plum chapters, an
+invisible one) → one intentional plum ring that flips to cream on dark
+grounds.
+
+**Verification:** computed styles read from the built bundle in headless
+Chrome using `focus({ focusVisible: true })` — a plain button reports
+`rgb(74, 25, 66) | 2px | 3px`; a button inside `.feeling-section`
+reports `rgb(250, 247, 241) | 2px | 3px`; a button inside
+`.m4-stepper.is-dark` reports the same cream. lint + build clean;
+main CSS bundle +0.21 kB.
+
+
 ## Hygiene pass 2 — destination cards are real links · 2026-09-23
 
 Track A item A4. The homepage's seven destination cards were
