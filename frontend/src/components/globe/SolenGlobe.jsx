@@ -27,8 +27,6 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 import ReactGlobe from 'react-globe';
-import 'tippy.js/dist/tippy.css';
-import 'tippy.js/animations/scale.css';
 import './SolenGlobe.css';
 import { globeDestinations } from '../../data/globeDestinations.js';
 
@@ -55,8 +53,13 @@ function latLngToScene(lat, lng, radius) {
   ];
 }
 
+// Markers carry our own HTML labels and preview card instead of the
+// library's tooltips. With tooltips off, react-globe's two tippy
+// stylesheets styled nothing that exists — and `tippy.js` is not a
+// declared dependency of the frontend, only a transitive one via
+// react-globe — so they are no longer imported.
 const options = {
-  enableMarkerTooltip: false, // our labels + preview card replace tippy
+  enableMarkerTooltip: false,
 };
 
 function SolenGlobe() {
