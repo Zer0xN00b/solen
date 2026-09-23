@@ -1,5 +1,40 @@
 # SOLEN Changelog
 
+## Hygiene pass 2 — destination cards are real links · 2026-09-23
+
+Track A item A4. The homepage's seven destination cards were
+`<article onClick={…}>` — navigation only a mouse could reach: no link
+role, no focus target, nothing for a screen reader to announce, and no
+href for anything that doesn't run React.
+
+**Code where:** `frontend/src/pages/home/HomePage.jsx`.
+- `<article>` → `<Link to={…}>` (react-router) keeping the identical
+  `destination-card destination-N` class list and identical inner markup,
+  so every locked style rule still applies: `.destination-N` grid
+  placement, `.destination-card:hover` image scale and arrow rotation.
+  An `<a>` that is a grid child is blockified, so the layout is untouched.
+- The decorative `↗` arrow is now `aria-hidden="true"` — it was being
+  announced as a stray "north-east arrow" inside every card.
+- Import line: `useNavigate` → `{ Link, useNavigate }`. `navigate` is
+  still used by the feelings list and the M4 stepper CTA.
+
+**Page where:** homepage, section 02 DESTINATIONS. Tab through the page:
+the seven cards now take focus in order and Enter opens them. They also
+carry real hrefs, so they degrade gracefully without JavaScript.
+
+**Before → after:** mouse-only `<article>` → focusable, Enter-activatable
+router link with a real `/destinations/<slug>` href. No visual change —
+only the browser's default focus ring now appears on focus (a designed
+ring is the next commit).
+
+**Verification:** headless Chrome DOM dump of the built preview — 7
+`destination-card` elements render as `<a>`; hrefs resolve to
+`/destinations/amalfi-coast`, `/bali`, `/iceland`, `/kyoto`,
+`/maldives`, `/morocco`, `/paris`; no card `<article>` remains (the only
+`<article>`s left in the DOM are the M4 stepper panels). lint + build
+clean.
+
+
 ## Hygiene pass 1 — responsive layer: 10 dead selectors removed · 2026-09-23
 
 Track A (hygiene & correctness) opened. First finding: `responsive.css`

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './HomePage.css';
 import './m4Stepper.css';
 import { destinations, experiences, feelings } from '../../data/homeContent.js';
@@ -146,12 +146,10 @@ function HomePage() {
 
           <div className="destination-grid">
             {destinations.map((destination, index) => (
-              <article
+              <Link
+                to={`/destinations/${destination.name.toLowerCase().replace(/\s+/g, '-')}`}
                 className={`destination-card destination-${index + 1}`}
                 key={destination.name}
-                onClick={() =>
-                  navigate(`/destinations/${destination.name.toLowerCase().replace(/\s+/g, '-')}`)
-                }
               >
                 <div className="destination-image">
                   <img src={destination.image} alt={destination.name} />
@@ -166,9 +164,11 @@ function HomePage() {
                     <p>{destination.description}</p>
                   </div>
 
-                  <span className="destination-arrow">↗</span>
+                  <span className="destination-arrow" aria-hidden="true">
+                    ↗
+                  </span>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         </section>
