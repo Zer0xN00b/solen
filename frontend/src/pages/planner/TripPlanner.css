@@ -348,9 +348,10 @@
   color: #8fa8b8;
 }
 
+/* Full track/thumb paint lives in the BUDGET SLIDER block further down;
+   accent-color here would re-introduce UA-drawn chrome. */
 .planner-budget-slider {
   width: 100%;
-  accent-color: #4a1942;
   cursor: pointer;
 }
 
@@ -436,14 +437,51 @@
 
 .planner-currency select {
   min-width: 240px;
+
   border: 1px solid rgba(74, 25, 66, 0.2);
   background: transparent;
   color: #241c1d;
   padding: 11px 14px;
   outline: none;
+
+  /* The closed control was the one element on this page rendering in
+     the browser's default UI font — it sets no font-family, so it fell
+     back to the UA stack and read as OS chrome inside an editorial
+     layout (SKILL.md §1.5: no default-looking controls). */
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  letter-spacing: 0.01em;
+
+  /* Drop the OS arrow and draw our own hairline chevron, so the control
+     matches the 1px rules used everywhere else. The popup list itself
+     stays OS-rendered — that is not styleable — but the closed state
+     (what the page actually shows) is fully ours now. */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  padding-right: 42px;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%234a1942' stroke-width='1.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+
+  cursor: pointer;
+
+  transition: border-color 200ms ease;
 }
 
-.planner-currency select:focus {
+.planner-currency select:hover {
+  border-color: rgba(74, 25, 66, 0.35);
+}
+
+.planner-currency option {
+  font-family: 'Inter', sans-serif;
+  background: #faf7f1;
+  color: #241c1d;
+}
+
+.planner-currency select:focus-visible {
   border-color: #4a1942;
 }
 
@@ -793,6 +831,20 @@
 .journey-secondary-button:hover {
   background: #4a1942;
   color: #faf7f1;
+}
+
+/* Save is now an async API call, so the button disables briefly while the
+   request is in flight. Without this the :hover rule above would still
+   fill the button during that window, implying a live control that
+   cannot be pressed. */
+.journey-save-button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.journey-save-button:disabled:hover {
+  background: transparent;
+  color: #4a1942;
 }
 
 .journey-start-over {
@@ -2037,11 +2089,64 @@
    BUDGET SLIDER
 ========================================================= */
 
+/* =========================================================
+   BUDGET SLIDER
+   Replaces accent-color: the UA track and thumb were OS-drawn
+   chrome, the other default-looking control on this page
+   (SKILL.md 1.5). Now a 1px hairline rail with a plum dot,
+   matching the hairline-over-shadow rule (1.2).
+   ========================================================= */
+
 .planner-budget-slider {
+  width: 100%;
   cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  height: 18px; /* hit target stays generous even though the rail is 1px */
+  background: transparent;
+}
+
+/* Rail. Chrome draws its own above this, so both pseudo-elements
+   are reset explicitly rather than left to the UA default. */
+.planner-budget-slider::-webkit-slider-runnable-track {
+  height: 1px;
+  border: 0;
+  background: rgba(74, 25, 66, 0.22);
+}
+
+.planner-budget-slider::-moz-range-track {
+  height: 1px;
+  border: 0;
+  background: rgba(74, 25, 66, 0.22);
 }
 
 .planner-budget-slider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 14px;
+  height: 14px;
+  margin-top: -6.5px; /* centres the dot on the 1px rail */
+
+  border: 0;
+  border-radius: 50%;
+  background: #4a1942;
+
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms ease;
+}
+
+.planner-budget-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 0;
+  border-radius: 50%;
+  background: #4a1942;
+
   transition:
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 220ms ease;
@@ -2052,14 +2157,19 @@
   box-shadow: 0 0 0 7px rgba(74, 25, 66, 0.08);
 }
 
-.planner-budget-slider::-moz-range-thumb {
-  transition:
-    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 220ms ease;
-}
-
 .planner-budget-slider:hover::-moz-range-thumb {
   transform: scale(1.12);
+  box-shadow: 0 0 0 7px rgba(74, 25, 66, 0.08);
+}
+
+.planner-budget-slider:active::-webkit-slider-thumb {
+  transform: scale(1.18);
+  box-shadow: 0 0 0 9px rgba(74, 25, 66, 0.1);
+}
+
+.planner-budget-slider:active::-moz-range-thumb {
+  transform: scale(1.18);
+  box-shadow: 0 0 0 9px rgba(74, 25, 66, 0.1);
 }
 
 /* =========================================================

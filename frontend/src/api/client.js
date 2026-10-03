@@ -1,0 +1,105 @@
+/**
+ * SOLEN API client.
+ *
+ * Thin, dependency-free wrapper over the backend. Every call goes to a
+ * relative `/api/...` URL so the Vite dev server proxies it to
+ * localhost:4000 (see vite.config.js) — that keeps the browser on one
+ * origin, which is what lets the httpOnly session cookie just work with
+ * no CORS setup and no token in JS.
+ *
+ * `credentials: 'include'` is required on every request. Without it the
+ * session cookie is not attached and the user silently reads as signed
+ * out — the single most confusing failure mode in an httpOnly-cookie
+ * setup, so it is set centrally here rather than at each call site.
+ */
+
+const API_BASE = '/api';
+
+async function request(path, { method = 'GET', body } = {}) {
+  const response = await fetch(`${API_BASE}${path}`, {
+    method,
+    credentials: 'include',
+    headers: body ? { 'Content-Type': 'application/json' } : undefined,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+
+  // 204 and other empty responses have no JSON to parse.
+  const text = await response.text();
+  const payload = text ? JSON.parse(text) : null;
+
+  if (!response.ok) {
+    throw new ApiError(payload?.error || payload?.message || 'Something went wrong', response.status, payload);
+  }
+
+  return payload;
+}
+
+export class ApiError extends Error {
+  constructor(message, status, payload) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.payload = payload;
+  }
+}
+
+/* ---------------------------------------------------------------- auth */
+
+export const auth = {
+  /** Current session, or null when signed out. */
+  getSession: () => request('/auth/get-session').catch(() => null),
+
+  signUp: ({ name, email, password }) =>
+    request('/auth/sign-up/email', { method: 'POST', body: { name, email, password } }),
+
+  signIn: ({ email, password }) =>
+    request('/auth/sign-in/email', { method: 'POST', body: { email, password } }),
+
+  signOut: () => request('/auth/sign-out', { method: 'POST' }),
+};
+
+/* ------------------------------------------------------------ journeys */
+
+export const journeys = {
+  list: () => request('/journeys'),
+
+  get: (id) => request(`/journeys/${id}`),
+
+  create: (payload) => request('/journeys', { method: 'POST', body: payload }),
+
+  update: (id, payload) => request(`/journeys/${id}`, { method: 'PUT', body: payload }),
+
+  remove: (id) => request(`/journeys/${id}`, { method: 'DELETE' }),
+
+  /**
+   * Adopts this browser's anonymous saved journeys for the signed-in
+   * account. Safe to call on every sign-in — it matches nothing the
+   * second time. Returns how many rows moved.
+   */
+  claim: () => request('/journeys/claim', { method: 'POST' }),
+};
+
+/* -------------------------------------------------- destination content */
+
+/**
+ * Curated destination content — public, read-only, no ownership.
+ *
+ * Kept separate from `journeys` because these reads are not user data: they
+ * are identical for every visitor and never carry a session.
+ */
+export const content = {
+  /** List projection: slug, name, region, image, both descriptions, lat/lng. */
+  destinations: () => request('/destinations'),
+
+  /**
+   * Every destination at full depth, with day blocks, in one response.
+   *
+   * Preferred over `destinations()` plus a `destination()` per entry: the
+   * shared content cache needs all of them anyway, so the per-slug fan-out
+   * was pure overhead on the critical path.
+   */
+  allDestinations: () => request('/destinations/all'),
+
+  /** Full record plus its curated day blocks. 404s on an unknown slug. */
+  destination: (slug) => request(`/destinations/${encodeURIComponent(slug)}`),
+};

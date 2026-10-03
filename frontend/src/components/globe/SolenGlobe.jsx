@@ -23,24 +23,46 @@
  * animates as navigation feedback).
  */
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 import ReactGlobe from 'react-globe';
 import './SolenGlobe.css';
-import { globeDestinations } from '../../data/globeDestinations.js';
+import {
+  getGlobeDestinations,
+  loadDestinationContent,
+  subscribe,
+} from '../../data/destinationSource.js';
 
 const MARKER_COLOR = '#ffd9a0';
 
-const markers = globeDestinations.map((destination, index) => ({
-  id: index + 1,
-  city: destination.name,
-  region: destination.region,
-  slug: destination.slug,
-  coordinates: [destination.lat, destination.lng],
-  color: MARKER_COLOR,
-  value: 0,
-}));
+/**
+ * Built from the data-source module rather than the raw JS file, and inside
+ * the component (memoised) rather than at module scope — the module's cache
+ * is replaced when the API answers, and a module-level const would be frozen
+ * at import time and never pick that up.
+ *
+ * `id` stays `index + 1` and the source array keeps its original order, so
+ * marker identity and the label/chip rows are unchanged.
+ */
+function buildMarkers(destinations) {
+  return destinations.map((destination, index) => ({
+    id: index + 1,
+    city: destination.name,
+    region: destination.region,
+    slug: destination.slug,
+    coordinates: [destination.lat, destination.lng],
+    color: MARKER_COLOR,
+    value: 0,
+  }));
+}
 
 // react-globe's exact lat/lng -> scene-space formula (radius 300 globe).
 function latLngToScene(lat, lng, radius) {
@@ -73,6 +95,31 @@ function SolenGlobe() {
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
   );
   const spinRafRef = useRef(null);
+
+  // Refresh destination content from the API. Not a gate: the data-source
+  // module is already serving the bundled values, so the globe renders fully
+  // on the first frame and nothing waits on this.
+  useEffect(() => {
+    loadDestinationContent();
+  }, []);
+
+  // Re-render once the API response replaces the cache. Reading the module's
+  // accessor during render is not enough on its own — a module variable
+  // changing does not re-render anything by itself. The value is never read;
+  // only the setter is needed, to trigger the render that re-reads the cache.
+  const [, setContentVersion] = useState(0);
+  useEffect(() => subscribe(setContentVersion), []);
+
+  // Labels, chips and the preview card all read the same ordered array the
+  // markers were built from, so the three surfaces can never disagree. Named
+  // `globeEntries` because `globe` is already the three.js instance inside
+  // the rAF loop below.
+  const globeEntries = getGlobeDestinations();
+
+  // Memoised on the array itself: the source module keeps a stable reference
+  // until the API response replaces the whole cache, at which point this
+  // component re-renders (via `contentVersion`) and picks up the new array.
+  const markers = useMemo(() => buildMarkers(globeEntries), [globeEntries]);
 
   useEffect(() => {
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -139,10 +186,14 @@ function SolenGlobe() {
 
       camDir.copy(globe.camera.position).normalize();
 
-      for (let i = 0; i < globeDestinations.length; i += 1) {
+      // Read the current array inside the loop rather than closing over a
+      // render-scope value: this runs every frame, and it must see the API
+      // data once it lands without the effect being torn down and re-registered.
+      const entries = getGlobeDestinations();
+      for (let i = 0; i < entries.length; i += 1) {
         const el = labelElsRef.current[i];
         if (!el) continue;
-        const d = globeDestinations[i];
+        const d = entries[i];
         world.set(...latLngToScene(d.lat, d.lng, 300)).normalize();
         const facing = world.dot(camDir);
 
@@ -241,7 +292,9 @@ function SolenGlobe() {
   );
 
   const handleOverMarker = useCallback((marker) => {
-    const destination = globeDestinations.find((d) => d.name === marker.city);
+    const destination = getGlobeDestinations().find(
+      (d) => d.name === marker.city,
+    );
     if (destination) setPreview(destination);
   }, []);
 
@@ -267,7 +320,7 @@ function SolenGlobe() {
     <section className="solen-globe-section">
       <div className="solen-globe-heading">
         <div className="solen-globe-label">
-          <span>05</span>
+          <span>02</span>
           THE WORLD, CURATED
         </div>
 
@@ -309,7 +362,7 @@ function SolenGlobe() {
 
           {/* Typed destination names, projected onto the globe. */}
           <div className="solen-globe-labels" aria-hidden="false">
-            {globeDestinations.map((destination, index) => (
+            {globeEntries.map((destination, index) => (
               <button
                 key={destination.name}
                 type="button"
@@ -342,7 +395,7 @@ function SolenGlobe() {
 
       {/* Quiet scannable / touch / keyboard fallback row. */}
       <div className="solen-globe-chips">
-        {globeDestinations.map((destination) => (
+        {globeEntries.map((destination) => (
           <button
             key={destination.name}
             type="button"
