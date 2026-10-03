@@ -26,7 +26,15 @@ import './ProgressRail.css';
  *     (it previously measured every chapter on every frame).
  */
 
-const CHAPTERS = ['.hero', '#about', '#destinations', '.feeling-section', '#experiences', '#planner'];
+const CHAPTERS = [
+  '.hero',
+  '.solen-globe-section',
+  '#about',
+  '#destinations',
+  '.feeling-section',
+  '#experiences',
+  '#planner',
+];
 
 export default function ProgressRail() {
   const railRef = useRef(null);

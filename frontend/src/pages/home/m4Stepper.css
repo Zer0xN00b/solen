@@ -239,6 +239,7 @@ html.js .m4-stepper__step {
 
   display: flex;
   flex-direction: column;
+  align-items: flex-start; /* stops the CTA stretching to the step's full width */
   justify-content: center;
 }
 

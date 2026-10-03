@@ -60,9 +60,15 @@ img {
   }
 
   .hero-content {
-    padding-left: 7vw;
-    padding-right: 7vw;
+    padding-left: 6vw;
+    padding-right: 6vw;
   }
+
+  /* ---------- SECTION RHYTHM ----------
+     Vertical rhythm comes from the --section-* tokens, whose clamp() ranges
+     collapse on their own, so no breakpoint needs to re-state each section's
+     block padding. The 5vw/6vw gutters below are the deliberate exception:
+     they tighten the horizontal measure on narrow screens. */
 
   /* ---------- DESTINATIONS ---------- */
 
@@ -157,6 +163,15 @@ img {
     min-width: 0;
   }
 
+  /* ---------- PER-LINE REVEAL (R8) ----------
+     A three-step stagger on a phone reads as lag rather than
+     choreography: the last line lands well after the eye has
+     finished reading the first. Collapse to a single beat. The
+     split itself still happens, the lines just arrive together. */
+  [data-reveal-lines] .reveal-line {
+    transition-delay: 0ms;
+  }
+
   /* ---------- NAVIGATION ---------- */
 
   .navbar {
@@ -177,6 +192,20 @@ img {
 
   .brand {
     flex-shrink: 0;
+  }
+
+  /* Two utility links now share the bar once .nav-links is gone. At 11px
+     uppercase with a 22px gap they crowd a 70px bar and can collide with
+     the CTA, so the gap and type step down here rather than wrapping the
+     nav into two rows. */
+  .nav-account,
+  .nav-library {
+    margin-left: 12px;
+
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+
+    padding-bottom: 5px;
   }
 
   /* ---------- HERO ---------- */
@@ -209,22 +238,33 @@ img {
     min-height: 390px;
   }
 
+  /* ---------- SECTION RHYTHM ----------
+
+     80px/85px/80px were each picked independently, so the three chapters
+     answered at slightly different depths. One override of the shared
+     tokens gives mobile a single, even beat. */
+
+  :root {
+    --section-pad-block: 80px;
+    --section-pad-block-lg: 85px;
+    --section-pad-inline: 6vw;
+  }
+
   /* ---------- EXPERIENCES ---------- */
 
   .experiences-section {
-    padding: 80px 6vw;
+    padding-left: 6vw;
+    padding-right: 6vw;
   }
 
   /* ---------- FEELING ---------- */
 
   .feeling-section {
     min-height: auto;
-    padding: 85px 6vw;
   }
 
   .feeling-content {
     width: 100%;
-    padding: 0;
   }
 
   .feeling-list button {
@@ -236,7 +276,8 @@ img {
   /* ---------- PLANNER CTA ---------- */
 
   .planner-section {
-    padding: 80px 6vw;
+    padding-left: 6vw;
+    padding-right: 6vw;
   }
 
   /* ---------- PLANNER HERO ---------- */

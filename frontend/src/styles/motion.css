@@ -16,6 +16,15 @@
   --motion-reveal-slow: 850ms;  /* showpiece reveals             700-900 ms */
   --motion-stagger: 200ms;      /* arrival-order offsets         150-250 ms */
 
+  /* Per-line staged reveal (P4: progressive disclosure).
+     Adapted from the motion reference analysed in
+     .ui-shots/subscrr.css (its rise-blur mechanic), re-skinned
+     onto SOLEN tokens rather than its own 120ms (R1 — tokens
+     only, no magic numbers). Kept separate from
+     --motion-stagger so the line cadence can be tuned without
+     moving every other arrival offset on the site. */
+  --reveal-line-stagger: 200ms;
+
   /* Ambient-clock durations (P1/R4: loops belong here, not to story
      motion). First promoted by the Animation 04 handoff (M7 marquee),
      which was later retired by user taste decision (see CHANGELOG) —
@@ -68,6 +77,58 @@
 [data-reveal-delay='6'] { transition-delay: calc(var(--motion-stagger) * 6); }
 
 /* ------------------------------------------------------------
+   PER-LINE REVEAL VARIANT (opt-in; additive, opt-in per element)
+
+   Usage:  <h2 data-reveal="blur" data-reveal-lines>Line one<br />Line two</h2>
+
+   A heading split on its <br> boundaries reveals line by line
+   instead of arriving as one block, so the eye is walked down
+   the statement in reading order (P4: progressive disclosure,
+   "headlines word-by-word; lists line-by-line").
+
+   The whole-block fade is switched OFF for opted-in elements —
+   otherwise the heading and its lines would animate together and
+   read as a double exposure.
+
+   JS counterpart: splitLines() in src/utils/reveal.js wraps each
+   run of child nodes in a .reveal-line span BEFORE the element is
+   observed. The padding/margin pair it sets cancels the blur's
+   vertical bleed, so splitting never reflows the heading.
+
+   Stagger steps cover three lines, which is the most any heading
+   on the site uses. A longer heading still reveals correctly —
+   the extra lines simply arrive together.
+   ------------------------------------------------------------ */
+[data-reveal-lines] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+[data-reveal-lines] .reveal-line {
+  display: block;
+
+  opacity: 0;
+  transform: translateY(var(--reveal-rise));
+  filter: blur(var(--reveal-blur));
+
+  transition:
+    opacity var(--motion-reveal-slow) var(--ease-decel),
+    transform var(--motion-reveal-slow) var(--ease-decel),
+    filter var(--motion-reveal-slow) var(--ease-decel);
+}
+
+[data-reveal-lines].is-revealed .reveal-line {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+
+[data-reveal-lines] .reveal-line:nth-child(1) { transition-delay: 0ms; }
+[data-reveal-lines] .reveal-line:nth-child(2) { transition-delay: calc(var(--reveal-line-stagger) * 1); }
+[data-reveal-lines] .reveal-line:nth-child(3) { transition-delay: calc(var(--reveal-line-stagger) * 2); }
+
+/* ------------------------------------------------------------
    REDUCED-MOTION CONTRACT
    Every token collapses and every reveal becomes static, so any
    future token-driven animation is automatically neutralized.
@@ -79,11 +140,23 @@
     --motion-reveal: 1ms;
     --motion-reveal-slow: 1ms;
     --motion-stagger: 0ms;
+    --reveal-line-stagger: 0ms;
     --reveal-blur: 0px;
     --reveal-rise: 0px;
   }
 
   [data-reveal] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+
+  /* A split heading's .reveal-line boxes are not [data-reveal]
+     themselves, so they need their own collapse here — without it
+     a two-line statement would sit at opacity 0 for exactly the
+     visitors who asked for calm. */
+  [data-reveal-lines] .reveal-line {
     opacity: 1;
     transform: none;
     filter: none;
