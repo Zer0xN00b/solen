@@ -1,0 +1,38 @@
+# Keep the build context small and, more importantly, deterministic. Anything
+# listed here cannot affect the image — so a stray local .env, a dev
+# database, or a previous dist/ can never silently end up inside a deploy.
+
+node_modules
+**/node_modules
+
+# Local secrets and databases — must never be baked into an image.
+.env
+**/.env
+.env.*
+!**/.env.example
+**/*.db
+**/*.db-journal
+**/*.db-shm
+**/*.db-wal
+
+# Build output. The image builds these itself; copying local ones in would
+# mean shipping whatever happened to be on this machine.
+dist
+**/dist
+backend/dist
+
+# VCS and tooling
+.git
+.gitignore
+.vscode
+.idea
+
+# Screenshots and docs — not needed at runtime.
+.ui-shots
+**/*.md
+docs
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+*.log
