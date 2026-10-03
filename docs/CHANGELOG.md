@@ -1,5 +1,532 @@
 # SOLEN Changelog
 
+## A signed-in state, a locked-down API, and a way to deploy it · 2026-10-03
+
+The "make it real" track of `docs/BACKEND_UPGRADE_PLAN.md` — four items that
+turn a working local prototype into something deployable.
+
+### Sign-out was a correctness bug, not a missing feature
+
+`/auth` always rendered the sign-in form. A visitor who signed in and later
+came back had **no way to sign out at all** — `auth.signOut()` existed in the
+API client and nothing called it. The app looked like it had accounts, with no
+exit from one.
+
+The page now checks the session on mount and shows a signed-in panel instead.
+The editorial aside changes too: it used to say "Sign in to gather the
+journeys you have designed", which is a small lie to someone already signed in.
+It now says "Welcome back."
+
+### Rate limiting where it mattered
+
+Auth had unlimited login attempts. Two limiters now sit in front of the router,
+deliberately different in strength:
+
+- **auth** — 10 per 15 minutes, counting only *failed* attempts, so signing in
+  normally never spends budget.
+- **api** — 120 per minute, a loose ceiling against scripted amplification.
+
+Keys are normalised with `ipKeyGenerator` so an attacker rotating IPv6
+addresses inside one allocation cannot walk past the limit. `TRUST_PROXY` was
+added because behind a real reverse proxy every visitor otherwise shares the
+proxy's IP — meaning one person's burst eventually locks out everyone. Helmet
+goes on in production for CSP, HSTS and `nosniff`.
+
+This added `helmet` and `express-rate-limit` as dependencies — a deliberate
+exception to the dependency-free rule that governs `journeyValidation.ts`.
+Writing a correct rate limiter is exactly where that rule should yield.
+
+### One container, not two
+
+`Dockerfile`, `docker-compose.yml` and `.dockerignore` are new. The image
+builds the frontend, builds the backend, and serves **both** from one Express
+process — so the browser sees a single origin and the httpOnly session cookie
+keeps working with no CORS and no token in JS, the same property the Vite dev
+proxy provides locally.
+
+That rules out serverless, and it is stated plainly in `docs/DEPLOYMENT.md`:
+SQLite needs a persistent volume, so this targets Fly/Render/Railway/VPS.
+
+### Three defects that passed lint and build
+
+1. `app.get('*')` is a **syntax error in Express 5** — path-to-regexp v8 wants
+   a named wildcard. The server refused to boot; nothing static caught it.
+2. The SPA path resolved one level too high, pointing at
+   `C:/Users/Admin/PROJECTS/frontend/dist`. Caught in the startup log.
+3. `border-bottom` on a `<button>` does **not** clear the user-agent border —
+   the other three sides survived and the sign-out control rendered as default
+   OS chrome. Caught in a screenshot.
+
+### A caching bug that would have bitten quietly
+
+`frontend/public/**` images keep their filenames through the Vite build, so
+marking them `immutable` for a year meant a replaced hero photo could never
+reach anyone. Now only fingerprinted bundles (`index-BDnBSupJ.js`) get the
+long cache; public assets revalidate hourly and `index.html` is `no-cache`.
+
+### Honest gaps
+
+The container image has **never been built** — Docker was unavailable here. The
+code it runs was verified in production mode route by route: client routes
+return HTML, `/api/*` returns JSON, unknown `/api/*` returns a JSON 404 rather
+than an HTML page, and cache headers match the table above. The `Dockerfile`
+itself is unexercised. Graceful shutdown is wired but unproven, because
+Windows does not deliver signals to another process. Both are recorded in
+`docs/DEPLOYMENT.md` §7.
+## A journey library you can actually open and delete · 2026-09-30
+
+Phase 2 Steps 1–2 of `docs/BACKEND_UPGRADE_PLAN.md`. The journeys API was
+finished and the planner wrote to it — but no screen anywhere listed a saved
+journey, so "save" ended at a toast nobody could return to.
+
+### Why Open is a deep link, not a resume call
+
+The obvious wiring is to point Open at the planner's existing resume path. That
+is wrong: `loadLatestJourney()` returns `rows[0]`, always the **newest**
+journey. Every row except the first would open the wrong trip — invisible in a
+demo with one journey, wrong for anyone with a few.
+
+Open now navigates to `/planner?journey=<id>`. This matches the preselection
+the planner already supports (`?destination=`, `?experience=`), and because the
+id is in the URL it survives a reload and can be linked to. `loadJourneyById()`
+deliberately returns nothing rather than falling back to localStorage: a caller
+naming one row wants that row or nothing, and quietly handing back a different
+journey is how a page ends up confidently showing the wrong trip.
+
+`applyJourney()` was pulled out of `handleResumeJourney` so both resume paths
+share one block of setters and cannot drift. While a deep-linked journey is
+open, the generic "Resume saved journey" button is hidden — it loads the
+newest journey, which is a *different* one from the screen.
+
+### Deleting a journey that could come back
+
+The offline fallback keeps a copy in localStorage, and resume falls back to
+it. Delete the row and the journey could quietly reappear. The local copy
+stores no id, so there is nothing exact to match on: `deleteJourneyById()`
+compares a coarse signature — destination, duration, travel style — and clears
+the local copy only when it matches.
+
+That is a heuristic and is documented as one. Two journeys to the same
+destination with the same length and style are treated as the same journey,
+which is the right way round to be wrong: it may clear a local copy that did
+not need clearing, rather than leave a deleted journey alive. Deleting from
+the library deliberately does **not** call `clearSavedJourney`, which wipes
+localStorage outright and would destroy a different journey's fallback.
+
+### A journey saved only here
+
+`hasLocalPending()` existed but was never called. The library now says so
+plainly when a journey is stored in this browser only and never reached the
+account — otherwise the traveller believes it is saved, clears their browser,
+and loses it. The planner already told the truth per save; this is the same
+truth about a journey that is already gone from the list.
+
+### Two bugs a screenshot caught and the compiler did not
+
+Disc bullets rendered beside every journey title, because a `<ul>` needs its
+list-style reset. And a saved Maldives trip read "Maldives — **to** days":
+the API had correctly returned "10 days", but Cormorant's oldstyle figures
+render `1` like a `t`. The heading now shows the destination and the numbers
+live in the facts row in Inter, where digits are unambiguous. A journey with
+a real custom title still keeps it.
+
+### Not done
+
+Nothing links to `/journeys` yet, so it is reachable by URL only. The obvious
+home is beside "Sign in" in the navbar — but that is a locked surface, and
+per the design skill any change there has to be proven by re-shooting the
+affected baselines. Left as a separate, screenshot-gated step rather than
+bundled in here.
+
+## Destination content loads in one request · 2026-09-30
+
+Completes Phase 1 of `docs/BACKEND_UPGRADE_PLAN.md`: the travel content
+now lives in the database, and the pages that render it read it from the API
+instead of importing JavaScript bundles directly.
+
+### The fan-out this removes
+
+The homepage, the globe, the planner and the destination detail page all need
+the same underlying data, so `destinationSource.js` fetched a list and then
+issued **one request per destination** — eight round trips before anything
+rendered. `GET /api/destinations/all` returns every destination with its day
+blocks in a single response (18.8 KB uncompressed), and the client makes
+exactly **one** request.
+
+The database work is unchanged in kind and much better behaved: `destination`
+rows are read once, then all day blocks are fetched in a single grouped
+`inArray` query and grouped by destination id. That is two queries total,
+regardless of how many destinations exist.
+
+### Why the fallback is narrow on purpose
+
+`destinationSource.js` still retries the old per-destination reads, but **only
+when `/destinations/all` returns 404 specifically**. That is the signature of a
+frontend newer than the backend — a deploy-skew state, where the retry is
+correct. Any other failure (500, network down, malformed body) rethrows to the
+bundled data instead, because silently masking a server fault is how a cache
+ends up serving confidently wrong content on a page that looks fine.
+
+Verified by stubbing `fetch`: one request on the happy path, and a clean
+degradation to the eight-request path when the aggregate is 404'd.
+
+### The Amalfi Coast marker no longer 404s
+
+`globeDestinations.js` shipped the slug `amalfi` while the detail route is keyed
+`amalfi-coast`, so clicking the Amalfi Coast marker on the globe landed on the
+not-found page. Both sides now resolve legacy slugs through an alias table, so
+existing links keep working and the globe marker lands on real content.
+
+### Serialization cannot drift
+
+The aggregate endpoint and the single-destination endpoint share one
+serializer in `destinationController.ts`. They were byte-identical when
+verified, and there is now no code path where they could disagree.
+
+### Content still has a fallback, deliberately
+
+The four JavaScript bundles are still shipped. They are the payload the client
+falls back to, so removing them would remove the ability to render the site
+when the API is unreachable. That is a real trade — a single source of truth
+versus offline resilience — and it deserves a deliberate decision rather than
+being settled by tidying up files nobody remembers the reason for.
+
+`plannerOptions.js` was never part of this migration: it holds durations,
+styles, interests and currencies rather than destination content, so the
+database has no home for it and `TripPlanner.jsx` and `engine/personalization.js`
+still import it directly.
+
+## Planner saves now hit the API — localStorage becomes the fallback · 2026-09-27
+
+Closes the loop opened by the journeys API and the auth page: the planner
+was still writing exclusively to `localStorage`, so a signed-in
+traveller's journey did not follow them to another browser, and signing
+in had nothing to attach.
+
+### The storage decision
+
+`frontend/src/api/journeyStorage.js` is the only module that touches
+localStorage now. The API is the source of truth; localStorage is a
+fallback so a ten-minute wizard session is never lost to a 502. §47
+keeps public planning usable without an account, and that obligation
+outweighs the tidiness of a single storage path.
+
+The fallback is **one-way per session and not replayed** later. Once a
+save lands locally we cannot know whether the API row it would duplicate
+already exists, so replaying risks duplicates; keeping a local save
+risks nothing the traveller cannot redo. Deliberate, not an oversight.
+
+The localStorage key is unchanged, so anyone who saved a journey before
+this change keeps it.
+
+### Honest confirmation copy
+
+The button used to say "Saved to this browser ✓" unconditionally. It now
+reports where the save actually landed — *"Saved to your library ✓"* on
+the API path, *"Saved to this browser ✓"* on the fallback. Claiming a
+cloud save that didn't happen is the kind of small lie that erodes trust
+in a save button permanently.
+
+### Idempotence and double-save
+
+Save is now an async round trip, so two fast clicks could fire two
+`POST`s and create duplicate rows. `isSaving` disables the button for the
+duration, and the disabled style cancels the `:hover` fill that would
+otherwise imply a live control (`.journey-save-button:disabled:hover`).
+
+`handleClearSavedJourney` now deletes the API row via the stored
+`savedJourneyId`. Without that id it would have cleared the browser copy
+while leaving the journey in the account — "Remove saved journey" that
+doesn't remove it.
+
+### Two lint issues, both worth noting
+
+- **The import shadowed state.** `import { hasSavedJourney }` collided
+  with the existing `const [hasSavedJourney, setHasSavedJourney]`, which
+  is why the name is now aliased `hasAnySavedJourney`.
+- **A suppression moved rather than disappeared.** The old
+  `eslint-disable-next-line react-hooks/set-state-in-effect` covered the
+  synchronous `setHasSavedJourney(Boolean(saved))`. Making that call
+  async (inside a promise callback) left the directive suppressing
+  nothing, and the rule then fired on the next `setState` in the effect —
+  a pre-existing line, not a new problem. The directive moved to where
+  the rule actually reports.
+
+### Verified
+
+ESLint clean, Vite build clean (282 modules, main chunk 331 kB). In a
+real browser against the real proxy, exercising the actual module the
+page imports: `saveJourney` returned `target: "api"` with a row id, the
+row was confirmed in `solen.db` (correct columns, `data` snapshot
+180 bytes, cookie-scoped as designed), `loadLatestJourney` returned
+`Kyoto` with `isPremiumPlus: true` and `favoriteDays: [1, 3]`, and the
+resume button appeared after a full page reload. With the API stopped,
+`saveJourney` returned `target: "local"`, wrote to localStorage, and
+still resumed. Test rows removed; API restarted.
+
+## Sign in / create account page — the first screen a visitor can actually reach · 2026-09-27
+
+The auth API and journeys endpoints existed, but nothing in the product
+linked to them: the journey data was still `localStorage`-only and there
+was no sign-in UI at all (scope §47 listed "Frontend auth UI" as
+remaining). This adds the page, and an entry point in the nav.
+
+### Design
+
+One page, two modes, rather than `/login` and `/register`. A traveller
+who arrives to sign in and is then bounced to another URL to register is
+friction for no benefit on a form this small, and it halves the surface
+to keep in step.
+
+Mirrors the house language rather than importing `HomePage.css` — same
+call `NotFoundPage` made, for the same reason (importing a locked page's
+stylesheet is what left the old `Navbar` broken):
+
+- oatmeal ground, plum accent, Cormorant Garamond display + Inter copy
+- hairlines, not shadows; square corners, no `border-radius`
+- inputs copy the `.planner-currency` rules exactly, including an
+  explicit `font-family` — a bare `<input>` falls back to the UA font,
+  which is the same defect that made the currency select read as OS
+  chrome
+- the tab underline grows from the left, the same restrained move the M4
+  stepper uses for its active step
+- asymmetric two-column layout: an editorial counterpoint ("Every
+  journey you craft, *kept*.") beside the form, so the page doesn't read
+  as a centered SaaS login box
+
+### The one deliberate omission
+
+No `better-auth/react` client. It would add a session store and context
+provider for what is currently two POSTs and a session check — and it
+would put a copy of the session token in the JS bundle, cutting against
+the httpOnly-cookie decision the backend already made. `api/client.js`
+calls the same endpoints directly. Revisit if session state genuinely
+needs to be shared across the tree.
+
+### Error copy
+
+Failed sign-in reads *"That email and password combination did not match
+an account."* — deliberately vague, because distinguishing "no such
+email" from "wrong password" would let anyone enumerate which addresses
+have accounts. The backend returns one generic string for that reason and
+the UI must not undo it. Status codes and raw upstream strings never
+reach the user; `authErrors.js` maps to sentences instead.
+
+### Two bugs the screenshot caught
+
+- **A missing closing brace.** An edit truncated the `.auth-field input`
+  rule, so `.auth-submit` and everything after it were parsed as
+  declarations *inside* that rule. ESLint and the build both passed
+  cleanly — the CSS is valid, just semantically wrong. The tell was
+  visual: the submit button rendered as a **default blue browser
+  button** and the "Create an account" link lost its border. Found only
+  by looking at a screenshot, which is the argument for taking them.
+- **A duplicated CSS tail.** The recovery edit re-appended 36 lines that
+  already existed, leaving the file with an unmatched brace. Caught by
+  counting braces (46 open / 47 close) rather than by eye.
+
+### Mobile
+
+`--window-size=390` on headless Chrome does **not** give a 390px
+viewport — it clamps to 500px, which produced a screenshot that looked
+like the form was cut off. It wasn't. Verified properly with
+`Emulation.setDeviceMetricsOverride`: no horizontal overflow at 360 /
+390 / 768 / 1440, and the aside is hidden below 900px as intended.
+
+### Verified
+
+ESLint clean, `tsc --noEmit` clean, Vite build clean (281 modules, main
+chunk 324.5 → 330.5 kB). Signup exercised through the Vite proxy
+(`POST localhost:5199/api/auth/sign-up/email` → 200). Both tabs, the
+error state, and the mobile layout captured and inspected. Test accounts
+and rows removed from the dev database; temp scripts and screenshots
+deleted; API server stopped.
+
+## Journeys API + the dev-port/Origin bug that would have broken sign-in · 2026-09-27
+
+First backend product work. New `journey` table + five endpoints, built so
+the frontend can switch from `localStorage` to the API without reshaping
+anything. **No new dependencies** — hand-rolled validation rather than
+pulling in Zod, so that stays a deliberate choice.
+
+### 1. Sign-in would have failed on the first attempt (the real find)
+
+`auth.ts` hardcoded `trustedOrigins: ['http://localhost:5173', …]`, but
+the frontend dev server runs on **5199** (`strictPort` now pinned, see
+below). Better Auth validates the browser's `Origin` header against that
+list as CSRF protection, so the first sign-in would have been rejected —
+presenting as a confusing origin/CSRF error rather than the config typo it
+actually was. The comment above that line even explained *why* the list
+existed; it had just never been exercised, because the frontend had never
+made a single API call.
+
+- `frontend/vite.config.js` — pinned `port: 5199` + `strictPort: true`, so
+  the port can't silently drift back to Vite's default.
+- `backend/src/config/env.ts` — `FRONTEND_PORT` (default 5199) builds the
+  origin list; `TRUSTED_ORIGINS_EXTRA` appends any others.
+- `backend/src/auth/auth.ts` — reads `env.trustedOrigins`.
+
+Verified: signup from `Origin: http://localhost:5199` → `200`; a foreign
+origin is still refused.
+
+### 2. Anonymous saves, because §47 keeps planning open without an account
+
+§47 requires public trip planning to work signed-out, so `journey.user_id`
+is **nullable** and anonymous rows are scoped to a random `solen_owner`
+httpOnly cookie. The token is a per-browser handle, not a credential — it
+grants no account access. `POST /api/journeys/claim` adopts those rows at
+sign-in, so a journey saved before signup isn't lost.
+
+Every query goes through one `ownedBy()` predicate; there is deliberately
+no "fetch by id and return it" path, which is the usual source of IDOR
+bugs. A signed-in user **never** falls back to their cookie token, so they
+cannot read a stranger's cookie-scoped row. Non-owners get `404` (not
+`403`) on read, write and delete, so the API never confirms that someone
+else's journey exists.
+
+### 3. Storage shape
+
+The journey object is deeply nested, so the request body is stored
+verbatim as JSON in `data` — returned under `data`, unchanged, so
+save→resume round-trips with no client reshape. The fields worth
+filtering or sorting on are promoted to real columns
+(`title`, `destination`, `duration`, `travelStyle`, `budget`, `currency`,
+`isPremiumPlus`) with a `(user_id, created_at)` index, since listing is
+always "this owner's, newest first".
+
+Accepts both a flat journey object and the planner's existing
+`{ journey, isPremiumPlus, favoriteDays }` envelope.
+
+### Two bugs caught by testing, not by the compiler
+
+Both were invisible in the types and wrong on the wire:
+
+- The snapshot read `source.journey` *after* `stripReserved()` had
+  removed that key, so every save silently stored the bare envelope
+  instead of the journey. Found by asserting on a round-trip, not by
+  reading the code.
+- The same strip was also dropping `isPremiumPlus` from the envelope
+  override, so premium saves came back `false`. Column values now come
+  from the journey object with envelope fields layered on top, while the
+  snapshot keeps the whole body.
+
+### ⚠️ `schema.ts` is now two zones
+
+The Better Auth CLI **rewrites** `schema.ts` wholesale and would delete
+the hand-written `journey` table. The file now carries a prominent
+warning and a `JOURNEY ZONE` marker. Before running
+`auth:generate-schema`, copy the journey section out and paste it back.
+Flagged in `backend/README.md` too.
+
+### Verified
+
+`tsc --noEmit` and ESLint clean on both packages; frontend build
+unchanged (324.67 kB main). Against a live server: anonymous create →
+list → resume, cross-browser read blocked, second account sees 0 rows and
+gets 404 on foreign GET/DELETE, foreign DELETE leaves the row intact,
+claim returns 1 then 0 (idempotent), PUT updates columns, DELETE → 204,
+bad `duration` → 400. Deleting a test user cascaded its claimed journeys.
+All test rows and accounts removed from the dev database afterwards.
+
+## Visual polish pass — the two OS-drawn controls, the clipped scroll hint, and a nav that survives the scroll · 2026-09-26
+
+No new dependencies, no shadcn, no Tailwind. Everything below is
+hand-rolled on the existing CSS and motion tokens.
+
+### 1. The budget slider was OS chrome, not SOLEN
+
+`TripPlanner.css` gave the slider `accent-color: #4a1942` and stopped
+there. That paints the track and thumb from the UA's own slider
+rendering — the one control on the page that could not be made to match
+the hairline editorial system. Replaced with an explicit 1px rail and a
+14px plum dot, cross-browser:
+
+- `::-webkit-slider-runnable-track` / `::-moz-range-track` — the 1px
+  rail, with `border: 0` because Chrome draws its own above this.
+- `::-webkit-slider-thumb` — `margin-top: -6.5px` centres the dot on
+  the 1px rail; without it the thumb sits visibly low.
+- `appearance: none` on the input and on the WebKit thumb, plus an
+  explicit 18px height so the *hit target* stays generous even though the
+  rail is 1px. A 1px-tall range input is a touch-target failure, so the
+  rail is drawn thin but the element is not.
+- `accent-color` removed from the first `.planner-budget-slider` block;
+  leaving it would have re-introduced the UA paint the later block exists
+  to replace.
+- hover *and* `:active` states on both pseudo-elements (the previous
+  hover rules covered only the pseudo-element, so the pressed state had
+  no feedback at all).
+
+**Page where:** planner, step 5 "What would you like to spend?".
+
+### 2. The currency select was the only element not using Inter
+
+`.planner-currency select` set `border`, `background`, `color` and
+`padding` but **no `font-family`** — so the control rendered in the
+browser's default UI font while every other glyph on the page was
+Inter. This is the defect that made the planner read as "generic UI
+bolted onto an editorial page"; the missing font was the clearest part
+of it. Fixed by setting the family explicitly, dropping the OS arrow via
+`appearance: none`, and drawing a hairline chevron as a background SVG
+so the closed control matches the 1px rules used everywhere else.
+
+**Honest limit:** the *popup list* is still rendered by the OS and
+cannot be styled — `appearance: none` only changes the closed state,
+which is what the page actually shows. Turning the select into a custom
+listbox would be the fuller fix, but that is real behaviour work
+(roving tabindex, `aria-activedescendant`, typeahead, outside-click,
+Escape) and it is not a "little visual improvement". Flagged for the
+backend phase, not faked here.
+
+`.planner-currency select:focus` became `:focus-visible` so a
+mouse click on the control no longer leaves a focus ring parked on it.
+
+### 3. The hero's "Scroll to discover" label was clipped off-screen
+
+`transform: rotate(-90deg)` with `transform-origin: right bottom`
+rotated the label *below* its own anchor point. The hairline happened to
+land in view and the text ran off the bottom edge, so the hero showed a
+stranded "…VER" in the corner — visible in every screenshot of the
+homepage hero.
+
+Fixed by not rotating the box at all. The element stays in normal flow
+(asymmetric `right`/`bottom` offsets now mean what they say), the label
+itself goes `writing-mode: vertical-rl` + `rotate(180deg)` to read
+bottom-to-top, and the rule becomes a 1px × 45px vertical hairline. The
+flex direction is `column-reverse` so the line sits above the label,
+matching the original left-to-right reading order once rotated.
+
+**Page where:** homepage hero, right edge.
+
+### 4. The nav scrolled away and then, on some pages, was unreadable
+
+`.navbar` was `position: absolute`, so it was gone the moment you left
+the hero. Made it `fixed` with a scroll-state swap, toggled at 40px:
+
+- `HomePage.jsx` — a `useRef` on the `<header>` plus a passive,
+  rAF-throttled scroll listener that toggles `.is-solid`. Matches the
+  `ProgressRail` pattern already in the codebase (passive listener,
+  rAF throttle, class toggle rather than inline styles).
+- `HomePage.css` — `.navbar.is-solid` sets a cream `rgba(250,247,241,.92)`
+  ground with a blur, a 1px `rgba(74,25,66,.08)` rule (hairline over
+  shadow), and flips `color` to ink. `background-color`, `box-shadow` and
+  `color` all transition, so the swap is never a hard cut.
+- `.hero-wordmark` — was hardcoded `color: var(--cream)`; now inherits
+  so it tracks the swap. Its `text-shadow` (a legibility scrim for the
+  transparent-over-photo state) is removed in the solid state, where it
+  would read as a smudge on cream.
+- `.nav-cta` — `border-bottom` was hardcoded `rgba(250,247,241,.65)`;
+  now `1px solid currentColor` at 0.85 opacity, so the rule tracks the
+  colour too.
+
+`position: fixed` is a real change and worth naming: the bar now persists
+over *every* section, so it had to be readable on all of them. Cream
+links on a cream page would have been invisible, which is exactly why the
+ink swap is part of this rather than an afterthought.
+
+**Verified:** hero at `scrollY` 0 (transparent, cream type over the
+photo) and scrolled past the hero (solid cream bar, ink type, hairline
+rule).
+
 ## Hygiene pass 7 — the M4 stepper no longer hides its own buttons badly · 2026-09-23
 
 Track A item A8. The stepper marked its inactive panels

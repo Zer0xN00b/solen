@@ -28,3 +28,6 @@ npm-debug.log*
 .sync/
 *.db-shm
 *.db-wal
+
+# UI screenshot workspace
+.ui-shots/
