@@ -5,7 +5,8 @@
 > is not, the phase order, the open decisions, and the environment
 > gotchas that will otherwise be rediscovered painfully.
 >
-> Written 2026-09-27. **Updated 2026-09-30: Phase 1 is COMPLETE** — see §5.1.
+> Written 2026-09-27. **Updated 2026-10-04: Phase 3 is COMPLETE**
+> (API + UI) — see §5.1 and the Phase 3 section.
 > Update it whenever state changes.
 >
 > Companion files: `docs/CHANGELOG.md` (what was done and why),
@@ -16,9 +17,9 @@
 
 # 1. TL;DR
 
-**9 scope items. 6 done, 3 not.** Everything in the original upgrade scope is
-complete except the three deferred items: the server-side itinerary engine
-(6), external APIs (7), and shareable journeys (8).
+**9 scope items. 7 done, 2 not.** Everything in the original upgrade scope is
+complete except the two deferred items: the server-side itinerary engine (6)
+and external APIs (7).
 
 | # | Item | Status |
 |---|------|--------|
@@ -37,7 +38,8 @@ buildable as a container, but **the image has never actually been built** —
 Docker was unavailable in this environment. See Phase 6 and
 `docs/DEPLOYMENT.md` §7.
 
-**Next: a real first deployment**, then the decision on Phase 4.
+**Next: Phase 5 (weather, via Open-Meteo) before Phase 4.** See §11 for why the
+order matters — open decision #1 gates the engine.
 
 ---
 
@@ -62,9 +64,10 @@ SOLEN/                          npm workspaces
 │       ├── data/               ← 5 data files, see §4
 │       ├── engine/             pure, portable generation logic
 │       ├── api/                client.js, journeyStorage.js
-│       └── pages/              home, planner, destination, auth, notFound
+│       └── pages/              home, planner, destination, auth,
+                                 journeys, notFound
 └── backend/                    Express 5 + TS + Drizzle + SQLite (port 4000)
-    ├── drizzle/                migrations 0000–0003
+    ├── drizzle/                migrations 0000–0004
     ├── data/solen.db           gitignored
     └── src/
         ├── auth/auth.ts        Better Auth config
@@ -387,11 +390,19 @@ stranger's attempt leaves the link live; unshare returns 204 and the old slug
 then 404s; re-sharing mints a different slug; re-sharing while already
 shared is idempotent.
 
-### Still open
+### Share UI — DONE 2026-10-04
 
-- **Share UI.** The API is complete; the library page has no Share button and
-  there is no `/shared/:slug` page. Both follow the JourneysPage precedent —
-  own CSS, own route, no locked page touched.
+Closed in commit `88f27e7`. The library has Share / Stop sharing per row, and
+`/shared/:slug` is a read-only public page.
+
+- Sharing is **not optimistic** — it waits for the server and surfaces failure.
+  A share response with no slug is treated as a failure, not a success.
+- One row in flight at a time, mirroring `deletingId`, so a failure restores
+  only the row it touched.
+- The public route is deliberately separate from `/journeys` so the anonymous
+  view cannot inherit owner chrome.
+- Verified through the real buttons in headless Chrome (9 click-path
+  assertions), not only against the API.
 
 ## Phase 4 — Server-side itinerary engine (2–3 DAYS) — the big one
 `POST /api/itinerary/generate`. Move the three pure engine files to
@@ -574,21 +585,19 @@ check called green. Only a screenshot caught it.
 
 # 10. GIT STATE
 
-**Nothing committed.** Working tree has three unrelated bodies of work
-mixed together:
+**Clean, everything pushed.** Branch `SOLEN-Phase-2` at `88f27e7`; working tree
+clean and in sync with `origin/SOLEN-Phase-2`. `main` is untouched at `9aaa7e9`.
 
-1. Frontend visual polish (~15 files)
-2. `package-lock.json` churn (+2307, likely the shadcn devDependency)
-3. Backend: journeys API, auth UI, planner→API wiring, **plus all of
-   Phase 1** (destination schema/seed/API, `destinationSource.js`)
+Recent commits on the branch:
 
-**Recommend splitting into commits** when committing is wanted — Phase 1
-should be its own, since it is a self-contained "content now lives in the
-database" change with a revert that is easy to reason about.
+| Commit | What |
+|--------|------|
+| `88f27e7` | Share controls in the library, and the public `/shared/:slug` page |
+| `147f6c9` | Shareable journeys: owner-scoped writes, an allowlisted public read |
+| `566cf66` | Add a test suite, and the two crashes it found immediately |
 
-Verified green at time of writing: ESLint (both packages), `tsc --noEmit`,
-Vite build (282 modules, main chunk 331 kB, globe chunk 771 kB),
-`git diff --check`.
+Green at time of writing: 50/50 tests, ESLint (both packages), `tsc --noEmit`,
+Vite build, `git diff --check`.
 
 ---
 
@@ -598,17 +607,24 @@ If you are reading this cold, here is exactly what to do:
 
 1. Read §3 (schema hazard) and §4 (data duplication) before touching
    anything.
-2. **Phases 1, 2 and 6 are COMPLETE** (§5.1, §5 Phase 2, §5 Phase 6). Do not
-   re-run them. If a step below says "not started", those sections supersede it.
-3. **Next is a real first deployment** — `docs/DEPLOYMENT.md`. The image has
-   never been built; Docker was unavailable. Do that before adding features.
-4. Then **Phase 3 (shareable journeys, ~2–3h)** — the last cheap item, and the
-   first endpoint that serves data to unauthenticated callers, so it carries a
-   real security caveat.
-5. Do NOT jump to Phase 4 / item 6. It is 2–3 days and open decision #1
-   (curated-first vs pure generation) is still unanswered — that decision
-   determines whether the engine makes the product better or worse.
-4. §9 will save you an hour of failed commands.
-5. §8 explains why screenshots matter more than green checks here.
+2. **Phases 1, 2, 3 and 6 are COMPLETE** (§5.1, §5 Phase 2, §5 Phase 3,
+   §5 Phase 6). Do not re-run them. If a step below says "not started", those
+   sections supersede it.
+3. **Next is Phase 5 — weather via Open-Meteo** (~8h). It needs **no API key**
+   and is free, so it is the cheapest half of item 7. Keep the curated
+   `weatherSummary` as the fallback so a third-party outage cannot fail the
+   planner.
+4. **Then settle open decision #1** (curated-first vs pure generation) before
+   touching Phase 4 / item 6. That decision determines whether the 2–3 day
+   engine build makes the product better or worse, so it needs live weather
+   to evaluate honestly — building the engine against stubbed weather means
+   building it twice.
+5. **Maps is the blocker, not weather.** It needs a key and a billing
+   decision. That is the owner's call, not an implementation detail.
+6. **Deployment is config-only and unexercised** (`docs/DEPLOYMENT.md` §7).
+   The image has never actually been built — Docker was unavailable here. Do
+   it before real users, not before the next feature.
+7. §9 will save you an hour of failed commands.
+8. §8 explains why screenshots matter more than green checks here.
 
 ---

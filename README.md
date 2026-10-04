@@ -122,24 +122,34 @@ Everything in `engine/` is **pure functions** and everything in `data/` is
 | `/`                   | `HomePage`          | Design LOCKED (scope §5)                             |
 | `/destinations/:slug` | `DestinationDetail` | Design LOCKED (scope §7)                             |
 | `/planner`            | `TripPlanner`       | Accepts `?destination=`, `?experience=`, `?feeling=` |
+| `/auth`               | `AuthPage`          | Sign-up / sign-in tabs                               |
+| `/journeys`           | `JourneysPage`      | Owner library: open, delete, share                   |
+| `/shared/:slug`       | `SharedJourneyPage` | **Public, read-only.** No auth, no owner chrome      |
 
 ---
 
 ## Status at a glance
 
-- **Frontend:** ~85–90% — homepage, destination pages, globe and planner are
-  done and locked. Remaining: packing list, logistics, Journey Library UI,
-  shareable journey view, accessibility & final polish (scope §42).
-- **Backend:** not started — foundation, database, auth, persistent journeys,
-  itinerary engine, sharing, deployment (scope §43–58).
-- **Overall:** ~60–65% of the full-stack product.
+- **Frontend:** ~90% — homepage, destination pages, globe and planner are
+  done and locked. Accounts, the journey library and the public shared-journey
+  page have shipped. Remaining: packing list, logistics, accessibility and
+  final polish (scope §42).
+- **Backend:** substantially complete — foundation, database, auth, journey
+  CRUD, library, validation, security hardening, and public sharing are all
+  built and tested. **Not started:** the server-side itinerary engine and any
+  external weather/maps API (scope §43–58).
+- **Overall:** ~80% of the full-stack product.
 
-Recommended next phases — see scope §62:
+Where the original plan stands — phases 2, 3, 5 and 6 are **done**:
 
-1. **Phase 1** — finish the frontend product layer (packing, logistics,
-   cost transparency, Journey Library UI, shareable journey UI).
-2. **Phase 2** — backend foundation (Node/Express, database, schema).
-3. **Phase 3** — accounts + persistent journeys.
-4. **Phase 4** — intelligent backend planner (port `src/engine/` + `src/data/`).
-5. **Phase 5** — shareable journeys.
-6. **Phase 6** — security, testing, deployment.
+1. **Phase 1** — frontend product layer: Journey Library UI ✅ and shareable
+   journey UI ✅ shipped; packing, logistics and cost transparency remain.
+2. **Phase 2** — backend foundation ✅ (17 Sep 2026).
+3. **Phase 3** — accounts + persistent journeys ✅.
+4. **Phase 4** — intelligent backend planner ❌ **not started**.
+5. **Phase 5** — product-level sharing ✅.
+6. **Phase 6** — security ✅, API tests ✅ (50 passing); deployment is
+   **config only — the image has never been built.**
+
+Recommended next: live weather via Open-Meteo (free, no API key), which
+unblocks the itinerary-engine decision. See `docs/BACKEND_UPGRADE_PLAN.md` §11.

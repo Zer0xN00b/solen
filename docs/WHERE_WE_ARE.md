@@ -1,7 +1,7 @@
 # SOLEN — Where We Are
 
 *Read this whenever the project feels foggy. One page, no jargon.*
-*Last updated 2026-09-19.*
+*Last updated 2026-10-04.*
 
 ## The goal, in one sentence
 
@@ -47,10 +47,30 @@ every piece is one git revert away from undo.
 
 ## What we deliberately have NOT done yet
 
-- **Polish pass** — you've rightly called the stage layers "prototypes
-  needing tweaks." That's next, and it's taste-work, yours to lead.
-- **Real product features** — the planner doesn't save journeys yet;
-  there's no sign-in. Parked on purpose until the feel was right.
+*(Updated 2026-10-04. This section was written on 19 Sep and described the
+project accurately then; the product layer has since caught up.)*
+
+- **Live weather and maps.** The planner's weather notes read curated copy
+  stored in the database. No third-party forecast or mapping API is integrated
+  yet — so "weather-aware" is honestly *conditions-aware*, not *forecast-aware*.
+- **Server-side itinerary generation.** Generation still runs in the browser
+  (`frontend/src/engine/`). There is no generate endpoint.
+- **Polish pass** — the stage layers are still prototype-quality in your eyes.
+  That's taste-work, yours to lead.
+
+## What did land since then
+
+- **Accounts** — sign-up, sign-in, sign-out, and a session-aware navbar.
+- **Persistent journeys** — the planner saves to the database; no longer
+  localStorage-only.
+- **Journey Library** — `/journeys`, list, open, delete.
+- **Shareable journeys** — a Share control per journey and a public, read-only
+  `/shared/:slug` page.
+- **50 tests**, and a deployment config.
+
+Still open from the original scope: packing list, travel logistics, the
+accessibility and responsive QA passes, live weather, and the server-side
+itinerary engine.
 
 ## How we work (the deal)
 

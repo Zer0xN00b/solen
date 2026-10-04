@@ -20,18 +20,23 @@ complete part of the application; the remaining scope is finishing the
 frontend product layer and turning the planner into a persistent,
 data-driven full-stack experience.
 
-### Status snapshot — 17 September 2026
+### Status snapshot — updated 4 October 2026
+
+> The snapshot below originally read 17 September 2026 and was accurate then.
+> Backend foundation, authentication, journey persistence, the journey library,
+> security hardening and shareable journeys have all landed since.
 
 -   The repository was restructured into a clean monorepo
-    (`frontend/` + `backend/` npm workspaces) and lives on GitHub with
-    automated two-way sync (auto-push from the build workspace).
--   The backend is now real: Express 5 + TypeScript + Drizzle ORM over
+    (`frontend/` + `backend/` npm workspaces) and lives on GitHub on the
+    `SOLEN-Phase-2` branch.
+-   The backend is real: Express 5 + TypeScript + Drizzle ORM over
     SQLite, with Better Auth providing email/password authentication
     and database-backed sessions via httpOnly cookies (no localStorage
     tokens, by design).
--   Backend foundation (Phase 2) and authentication core (part of
-    Phase 3) are DONE. Next: auth UI, journey persistence, then the
-    Phase 1 frontend product features.
+-   Destination content, journeys, the journey library and public sharing
+    are all complete and tested. **Two scope items remain open:** the
+    server-side itinerary engine and external weather/maps APIs.
+-   See `docs/BACKEND_UPGRADE_PLAN.md` for the authoritative current state.
 
 ------------------------------------------------------------------------
 
@@ -54,8 +59,8 @@ Frontend stack:
 -   JavaScript / JSX
 -   CSS
 -   Google Fonts
--   Browser local storage (legacy journey saving — to be replaced by
-    account-based persistence)
+-   Browser local storage (legacy journey saving — the API is now the
+    source of truth; local storage remains an offline fallback)
 -   Browser Web Share API
 -   Clipboard API
 -   Browser print/PDF functionality
@@ -1569,13 +1574,14 @@ Full end-to-end testing should cover:
 -   [ ] Destination-aware packing list
 -   [ ] Travel logistics section
 -   [ ] Enhanced cost transparency
--   [ ] Journey Library UI
--   [ ] Shareable journey page
+-   [x] Journey Library UI
+-   [x] Shareable journey page
 -   [ ] Full accessibility pass
 -   [ ] Final responsive QA
 -   [ ] Final performance polish
 -   [ ] Final visual consistency pass
--   [ ] Empty/error/loading states where required
+-   [~] Empty/error/loading states where required — done for journeys/auth;
+      not audited page-wide
 
 ## REMAINING BACKEND
 
@@ -1584,25 +1590,25 @@ Full end-to-end testing should cover:
 -   [x] Database schema — auth tables (user/session/account/verification)
 -   [x] Authentication core (Better Auth: email/password + sessions)
 -   [x] API error handling (central handler + JSON 404s)
--   [ ] User accounts UI (sign-up/sign-in pages, session-aware navbar)
--   [ ] Protected API routes (requireAuth middleware)
--   [ ] User preference persistence
--   [ ] Journey CRUD API
--   [ ] Persistent saved journeys
--   [ ] Journey Library backend
--   [ ] Public/shareable journey IDs
--   [ ] Public journey API
--   [ ] Destination API
--   [ ] Structured itinerary data
--   [ ] Dynamic itinerary engine
--   [ ] Weather API integration
--   [ ] Map/route data integration
--   [ ] Backend validation
--   [ ] Security hardening
--   [ ] Frontend/backend integration
--   [ ] Backend testing
--   [ ] Production deployment
--   [ ] Production database
+-   [x] User accounts UI (sign-up/sign-in pages, session-aware navbar)
+-   [x] Protected API routes (requireAuth middleware)
+-   [ ] User preference persistence — no `user_preferences` table exists
+-   [x] Journey CRUD API
+-   [x] Persistent saved journeys
+-   [x] Journey Library backend
+-   [x] Public/shareable journey IDs
+-   [x] Public journey API
+-   [x] Destination API
+-   [x] Structured itinerary data
+-   [ ] Dynamic itinerary engine — still in `frontend/src/engine/`
+-   [ ] Weather API integration — curated copy only, no provider
+-   [ ] Map/route data integration — no mapping library in the project
+-   [x] Backend validation
+-   [x] Security hardening (rate limiting + helmet)
+-   [x] Frontend/backend integration
+-   [x] Backend testing (50 tests)
+-   [~] Production deployment — config complete; **image never built**
+-   [~] Production database — volume defined; never deployed to
 -   [ ] End-to-end testing
 
 ------------------------------------------------------------------------
@@ -1636,17 +1642,21 @@ project window is approximately **2--3 more weeks**.
 
 # 62. RECOMMENDED DEVELOPMENT PHASES
 
-## Phase 1 --- Finish frontend product layer — not started
+## Phase 1 --- Finish frontend product layer — MOSTLY DONE
 
-**Estimated: 3--5 days**
+**Originally estimated 3--5 days**
 
-Scope:
+Shipped:
+
+-   Journey Library UI
+-   Shareable journey UI (public `/shared/:slug`)
+-   Accounts + library share controls (delivered under Phases 3 and 5)
+
+Remaining:
 
 -   Packing
 -   Logistics
 -   Cost transparency
--   Journey Library UI
--   Shareable journey UI
 -   Final visual polish
 
 ## Phase 2 --- Backend foundation — **DONE (17 Sep 2026)**
@@ -1657,19 +1667,19 @@ Delivered ahead of estimate in one session:
 -   Drizzle ORM + SQLite, committed migrations applied on boot
 -   Base API structure (/api/health) + error middleware
 
-## Phase 3 --- Accounts + persistence — **PARTIALLY DONE**
+## Phase 3 --- Accounts + persistence — **DONE**
 
-Done (17 Sep 2026):
+Done (17--30 Sep 2026):
 
 -   Authentication core — Better Auth email/password, DB-backed
     sessions, httpOnly cookies
-
-Remaining (**estimated 2--3 days**):
-
--   Auth UI (sign-up/sign-in pages, session-aware navbar)
--   Protected API routes
--   journeys + user_preferences tables
+-   Auth UI (sign-up/sign-in pages, session-aware navbar, sign-out)
+-   Protected API routes (`requireAuth`)
+-   `journeys` + `itinerary_days` tables
 -   Journey CRUD + Journey Library backend
+
+Still open, tracked separately: `user_preferences` persistence --- no such
+table exists yet.
 
 ## Phase 4 --- Intelligent backend planner
 
@@ -1684,30 +1694,28 @@ Scope:
 -   Route/location data
 -   Dynamic itinerary response
 
-## Phase 5 --- Product-level sharing
+## Phase 5 --- Product-level sharing --- **DONE**
 
-**Estimated: 1--2 days**
+**Originally estimated: 1--2 days**
 
-Scope:
+-   [x] Public journey IDs (`share_slug`, a v4 UUID, never sequential)
+-   [x] Shareable journey URLs (`/shared/:slug`, public, no auth)
+-   [x] Public journey rendering (read-only page)
+-   [x] Privacy/public controls (Share / Stop sharing per journey)
 
--   Public journey IDs
--   Shareable journey URLs
--   Public journey rendering
--   Privacy/public controls
+## Phase 6 --- Security + production --- MOSTLY DONE
 
-## Phase 6 --- Security + production
+**Originally estimated: 2--3 days**
 
-**Estimated: 2--3 days**
-
-Scope:
-
--   Validation
--   Security
--   API testing
--   Deployment
--   Database deployment
--   Production configuration
--   End-to-end QA
+-   [x] Validation (`journeyValidation.ts`)
+-   [x] Security (rate limiting + helmet; the public read is an explicit
+    field allowlist)
+-   [x] API testing (50 tests passing)
+-   [~] Deployment --- Dockerfile and compose written, but **the image has
+    never been built**, as Docker was unavailable in this environment
+-   [~] Database deployment --- volume defined, never deployed to
+-   [ ] End-to-end QA
+-   [ ] CI (builds and typechecks run locally only)
 
 ------------------------------------------------------------------------
 
