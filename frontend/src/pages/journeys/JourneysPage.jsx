@@ -87,6 +87,58 @@ function JourneysPage() {
     navigate(`/planner?journey=${encodeURIComponent(journey.id)}`);
   };
 
+  // Which row's share request is in flight, or null. Same reasoning as
+  // `deletingId`: two rows must never both look busy, and a failure has to
+  // restore only the row it affected.
+  const [sharingId, setSharingId] = useState(null);
+
+  const handleShare = async (journey) => {
+    if (!journey.id || sharingId) return;
+
+    setSharingId(journey.id);
+    setActionError('');
+
+    // Snapshot the previous state so a failed call restores the button to the
+    // label it had, rather than leaving a row that claims to be shared when
+    // the server disagrees.
+    const wasPublic = Boolean(journey.isPublic);
+
+    try {
+      if (wasPublic) {
+        await journeys.unshare(journey.id);
+
+        setRows((current) =>
+          current.map((row) =>
+            row.id === journey.id ? { ...row, isPublic: false, shareSlug: null } : row,
+          ),
+        );
+
+        setLocalNote('Sharing stopped. The link no longer opens for anyone.');
+      } else {
+        const response = await journeys.share(journey.id);
+        const slug = response?.journey?.shareSlug ?? null;
+
+        if (!slug) {
+          // No slug came back, so nothing was actually published. Saying
+          // otherwise would be the small lie this project keeps refusing.
+          throw new Error('The server did not return a share link.');
+        }
+
+        setRows((current) =>
+          current.map((row) =>
+            row.id === journey.id ? { ...row, isPublic: true, shareSlug: slug } : row,
+          ),
+        );
+
+        setLocalNote('Shared. Anyone with the link can read this journey.');
+      }
+    } catch (err) {
+      setActionError(err?.message || 'We could not change sharing for that journey.');
+    } finally {
+      setSharingId(null);
+    }
+  };
+
   useEffect(() => {
     const controller = new AbortController();
 
@@ -273,8 +325,40 @@ function JourneysPage() {
                           {headingFor(journey)} journey from your library
                         </span>
                       </button>
+{/* Share / Stop sharing. The server mints the slug and
+                            is idempotent, so this never has to generate or
+                            guess one locally — it only reports what came
+                            back. */}
+                        <button
+                          type="button"
+                          className="journeys-item-action journeys-item-share"
+                          onClick={() => handleShare(journey)}
+                          disabled={!journey.id || sharingId !== null || deletingId !== null}
+                        >
+                          {sharingId === journey.id
+                            ? '…'
+                            : journey.isPublic
+                              ? 'Stop sharing'
+                              : 'Share'}
+                          <span className="sr-only">
+                            {journey.isPublic ? 'Stop sharing ' : 'Share '}
+                            {headingFor(journey)} journey
+                          </span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
+
+                    {/* The public link sits on its own line below the row, not
+                        inside `.journeys-item-side`. That column is
+                        `flex-shrink: 0`, so a full URL inside it forces the
+                        column wide and squeezes the destination title into a
+                        narrow wrap. */}
+                    {journey.shareSlug && (
+                      <p className="journeys-share-url">
+                        <span className="sr-only">Public link: </span>
+                        {`${window.location.origin}/shared/${journey.shareSlug}`}
+                      </p>
+                    )}
                 </li>
               );
             })}

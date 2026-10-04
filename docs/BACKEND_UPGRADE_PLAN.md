@@ -29,7 +29,7 @@ complete except the three deferred items: the server-side itinerary engine
 | 5 | Journey API | ✅ done + library UI (Phase 2) |
 | 6 | Dynamic itinerary engine | ❌ **not started** — 2–3 days, deliberately last |
 | 7 | External APIs (weather/maps) | ❌ nothing integrated |
-| 8 | Shareable journeys | ❌ not started |
+| 8 | Shareable journeys | ✅ done — API + library/public UI (Phase 3) |
 | 9 | Validation + security | ✅ done — rate limiting + helmet + deployment |
 
 **Also landed, outside the numbered scope:** deployment (A4). The app is now
@@ -37,8 +37,7 @@ buildable as a container, but **the image has never actually been built** —
 Docker was unavailable in this environment. See Phase 6 and
 `docs/DEPLOYMENT.md` §7.
 
-**Next: a real first deployment**, then Phase 3 (shareable journeys), then the
-decision on Phase 4.
+**Next: a real first deployment**, then the decision on Phase 4.
 
 ---
 
@@ -353,7 +352,7 @@ Phase 6 — see that section for the defects it surfaced.
 
 Design skill §8 requires re-shooting affected baselines after any CSS change.
 
-## Phase 3 — Shareable journeys (✅ API COMPLETE, UI pending · 2026-10-03)
+## Phase 3 — Shareable journeys (✅ COMPLETE · 2026-10-03, UI closed 2026-10-04)
 
 `share_slug` (v4 UUID, **not** sequential) + `is_public` on `journey`.
 `POST/DELETE /api/journeys/:id/share` → slug. `GET /api/shared/:slug` →

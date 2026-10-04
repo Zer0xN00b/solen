@@ -402,6 +402,40 @@
   clip-path: none;
 }
 
+.journeys-item-share {
+  margin-left: 12px;
+
+  /* Quiet by default so three controls in a row don't shout; it fills on
+     hover like Open does. */
+  border-color: rgba(74, 25, 66, 0.3);
+
+  color: #4a1942;
+}
+
+.journeys-item-share:hover:not(:disabled) {
+  background: #4a1942;
+  border-color: #4a1942;
+  color: #faf7f1;
+}
+
+/* The public link wraps under its own row rather than sitting beside the
+   controls. `max-width` matches `.journeys-item-inner` so the link starts on
+   the same left edge as the destination title; the negative top margin pulls
+   it back under the row's own bottom padding. */
+.journeys-share-url {
+  max-width: 760px;
+
+  margin: -4px 0 24px;
+
+  overflow-wrap: anywhere;
+
+  color: #8fa8b8;
+
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
 .journeys-note {
   min-height: 20px;
 

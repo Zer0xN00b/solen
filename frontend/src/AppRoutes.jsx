@@ -7,6 +7,7 @@ import DestinationDetail from './pages/destination/DestinationDetail.jsx';
 import NotFoundPage from './pages/notFound/NotFoundPage.jsx';
 import AuthPage from './pages/auth/AuthPage.jsx';
 import JourneysPage from './pages/journeys/JourneysPage.jsx';
+import SharedJourneyPage from './pages/journeys/SharedJourneyPage.jsx';
 import AmbientField from './components/ambient/AmbientField.jsx';
 import ProgressRail from './components/rail/ProgressRail.jsx';
 
@@ -43,6 +44,11 @@ function AppRoutes() {
             already complete but had no screen listing it. Its own header
             carries the way out, so the page can't dead-end. */}
         <Route path="/journeys" element={<JourneysPage />} />
+
+        {/* A shared journey, opened by someone who has no account and no
+            cookies. Kept separate from /journeys so the public, read-only
+            view never inherits owner chrome. */}
+        <Route path="/shared/:slug" element={<SharedJourneyPage />} />
 
         {/* Broken-route handling (scope §42): unknown URLs used to render
             only the stage layers — an empty page with no way back. */}

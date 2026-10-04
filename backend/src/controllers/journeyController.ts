@@ -76,6 +76,12 @@ function serialize(row: Awaited<ReturnType<typeof getJourney>>) {
     budget: row.budget,
     currency: row.currency,
     isPremiumPlus: row.isPremiumPlus,
+// Share state belongs here because this serializer is only ever used on
+    // OWNER-scoped reads. Without it the library has to guess whether a row is
+    // already shared, and guessing means either a broken button or a second
+    // request per row.
+    shareSlug: row.shareSlug,
+    isPublic: row.isPublic,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
     data,

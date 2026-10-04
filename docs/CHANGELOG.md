@@ -1,4 +1,64 @@
 # SOLEN Changelog
+
+## Share controls and the public page · 2026-10-04
+
+Closes the UI half of Phase 3. The API existed; nothing in the app could reach
+it. Now the library can share, and `/shared/:slug` renders for a visitor who
+has no account and no cookies.
+
+### The public page is a separate route on purpose
+
+`/shared/:slug` is deliberately not `/journeys/:id` in disguise. It is
+registered as its own route so the anonymous view cannot inherit owner chrome
+by accident — no account menu, no delete, no planner controls. It is read-only
+by construction: there is no save, regenerate, or favourite affordance on it
+at all, rather than one that is hidden on the owner's account.
+
+The only way onward from the page is `Craft your own`, which points at the
+planner. A stranger who likes the trip can start their own; they cannot take
+someone else's.
+
+### A revoked link says so plainly
+
+`GET /api/shared/:slug` answers `404` once sharing stops, and the page renders
+that as *"This journey is no longer shared."* — naming both likely causes, that
+the owner stopped sharing it and that the link was copied incompletely. It
+does not pretend the trip is still there, and it does not blame the visitor for
+a link the owner burned.
+
+`404` is treated as an ordinary outcome rather than an error, so it gets its
+own calm state instead of a retry button. A genuine network failure still gets
+the retry.
+
+### Sharing is never optimistic
+
+The button waits for the server and reports what came back. It does not flip to
+"Stop sharing" and then quietly fail. If `POST /share` returns no slug, the
+handler treats that as a failure rather than claiming success — a row that says
+it is shared when the server disagrees is the kind of small lie this codebase
+has kept refusing elsewhere.
+
+One row is in flight at a time (`sharingId`), mirroring `deletingId`. Two rows
+must never both look busy, and a failure has to restore only the row it
+affected rather than the whole list.
+
+### The public link sits outside the controls column
+
+`.journeys-item-side` is `flex-shrink: 0`. A full URL rendered inside it forced
+that column wide and squeezed the destination title into a narrow two-line wrap
+— caught in the first screenshot pass. The link now renders on its own line
+below the row, sharing the 760px measure of `.journeys-item-inner` so it still
+starts on the same left edge as the title.
+
+### Verified live
+
+Nine click-path assertions driven through headless Chrome against the real
+buttons, not the API: Share flips to Stop sharing, the link appears, Stop
+sharing withdraws it, the withdrawn slug then `404`s, re-sharing mints a fresh
+slug and restores the link, and the untouched row never changes. Plus the
+public page rendered with no cookies at 1440px and 390px. `npm test` 50/50,
+both linters, both builds, and backend `tsc --noEmit` all green.
+
 ## Shareable journeys, and the first public endpoint · 2026-10-03
 
 Completes item 8 of the backend upgrade. `POST/DELETE /api/journeys/:id/share`
