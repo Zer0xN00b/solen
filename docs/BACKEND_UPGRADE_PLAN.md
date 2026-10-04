@@ -16,10 +16,9 @@
 
 # 1. TL;DR
 
-**9 scope items. 7 done, 2 not.** Everything in the original upgrade scope is
-complete except the two genuinely deferred items — the server-side itinerary
-engine (6) and external APIs (7) — plus shareable journeys (8), which sits
-between them in size.
+**9 scope items. 6 done, 3 not.** Everything in the original upgrade scope is
+complete except the three deferred items: the server-side itinerary engine
+(6), external APIs (7), and shareable journeys (8).
 
 | # | Item | Status |
 |---|------|--------|
@@ -354,15 +353,46 @@ Phase 6 — see that section for the defects it surfaced.
 
 Design skill §8 requires re-shooting affected baselines after any CSS change.
 
-## Phase 3 — Shareable journeys (~2–3h)
-`share_slug` (UUID, **not sequential**) + `is_public` on `journey`.
-`POST /api/journeys/:id/share` → URL. `GET /api/shared/:slug` → public
-read, no auth. Plus a share page.
+## Phase 3 — Shareable journeys (✅ API COMPLETE, UI pending · 2026-10-03)
 
-**Security caveat:** first endpoint serving data to unauthenticated
-callers. Must expose a **curated subset** only — never `isPremiumPlus`,
-`userId`, or `ownerToken`. An earlier hygiene pass was specifically about
-not leaking via hardcoded routes; don't reintroduce that class of bug.
+`share_slug` (v4 UUID, **not** sequential) + `is_public` on `journey`.
+`POST/DELETE /api/journeys/:id/share` → slug. `GET /api/shared/:slug` →
+public read, no auth. Migration `0004`; both columns are additive with safe
+defaults, so existing rows are unshared rather than accidentally published.
+
+**Why a UUID and not a counter:** a public share URL is enumerable by
+construction. `/shared/1`, `/shared/2` … would hand every anonymous visitor
+someone else's trip. A v4 UUID has no ordering to walk.
+
+**The security caveat, and how it is enforced.** This is the first endpoint
+that serves journey data to a caller with **no session and no owner cookie**.
+Two rules follow, and both are enforced in code rather than left to review:
+
+1. **Every share write goes through `ownedBy(owner)`.** Sharing is an owner
+   action; without the predicate any caller could publish anyone's trip by
+   guessing a row id.
+2. **`getSharedJourney` is the only read that skips ownership**, and it
+   filters on `isPublic` *and* the slug — a slug alone is not consent. The
+   serializer is an explicit allowlist: `title`, `destination`, `duration`,
+   `travelStyle`, `budget`, `currency`, `createdAt`, `data`. Never `userId`,
+   `ownerToken`, `isPremiumPlus` or the owner's row `id`.
+
+Revocation clears the slug rather than rotating it, so the old URL dies
+immediately and a later re-share mints a fresh one — a burned slug never
+comes back to life.
+
+Verified against a live server, 13 cases: anonymous read works; exactly the 8
+allowlisted fields and nothing else; a stranger gets **404 not 403** when
+sharing or unsharing someone else's journey (existence never confirmed); the
+stranger's attempt leaves the link live; unshare returns 204 and the old slug
+then 404s; re-sharing mints a different slug; re-sharing while already
+shared is idempotent.
+
+### Still open
+
+- **Share UI.** The API is complete; the library page has no Share button and
+  there is no `/shared/:slug` page. Both follow the JourneysPage precedent —
+  own CSS, own route, no locked page touched.
 
 ## Phase 4 — Server-side itinerary engine (2–3 DAYS) — the big one
 `POST /api/itinerary/generate`. Move the three pure engine files to
