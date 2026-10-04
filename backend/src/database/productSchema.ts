@@ -51,6 +51,18 @@ export const journey = sqliteTable(
     isPremiumPlus: integer("is_premium_plus", { mode: "boolean" })
       .default(false)
       .notNull(),
+// ---- sharing (scope doc §48) ----
+    //
+    // Deliberately NOT a sequential counter and NOT the row id. A public share
+    // URL is enumerable by construction: /shared/1, /shared/2, ... would hand
+    // every anonymous visitor someone else's trip. A v4 UUID has no ordering
+    // to walk, so guessing one is as hard as guessing a session token.
+    //
+    // Null means "not shared", and nothing infers consent from a value being
+    // present — `isPublic` is the explicit owner decision, kept separate so a
+    // half-finished write can never publish anything.
+    shareSlug: text("share_slug"),
+    isPublic: integer("is_public", { mode: "boolean" }).default(false).notNull(),
 
     // Full journey snapshot: itinerary days, experience, personalized
     // summary, budget breakdown. Serialized as JSON text — SQLite has no

@@ -5,7 +5,10 @@ import {
   createJourney,
   deleteJourney,
   getJourney,
+  getSharedJourney,
   listJourneys,
+  shareJourney,
+  unshareJourney,
   updateJourney,
   type Owner,
 } from '../models/journeyModel.js';
@@ -135,6 +138,95 @@ export async function deleteJourneyHandler(req: Request, res: Response): Promise
   }
 
   res.status(204).send();
+}
+
+/**
+ * POST /api/journeys/:id/share
+ * DELETE /api/journeys/:id/share
+ *
+ * Owner-scoped. Returns the slug so the client can build the public URL.
+ */
+export async function shareJourneyHandler(req: Request, res: Response): Promise<void> {
+  const typed = req as SessionedRequest;
+  const owner = resolveOwner(typed, res, false);
+  const row = await shareJourney(String(req.params.id), owner);
+
+  if (!row?.shareSlug) {
+    // Same reasoning as getJourneyHandler: a stranger's id must not be
+    // distinguishable from an id that does not exist.
+    res.status(404).json({ error: 'Journey not found' });
+    return;
+  }
+
+  res.json({ journey: { id: row.id, shareSlug: row.shareSlug, isPublic: row.isPublic } });
+}
+
+export async function unshareJourneyHandler(req: Request, res: Response): Promise<void> {
+  const typed = req as SessionedRequest;
+  const owner = resolveOwner(typed, res, false);
+  const cleared = await unshareJourney(String(req.params.id), owner);
+
+  if (!cleared) {
+    res.status(404).json({ error: 'Journey not found' });
+    return;
+  }
+
+  res.status(204).send();
+}
+
+/**
+ * GET /api/shared/:slug — the public read.
+ *
+ * FIRST endpoint that returns journey data to a caller with no session and
+ * no owner cookie, so the serializer is an explicit allowlist rather than a
+ * projection of the row. Never expose:
+ *   - `userId` / `ownerToken` — these identify the OWNER, and an anonymous
+ *     share link must not tell a stranger who made the trip
+ *   - `isPremiumPlus` — a paid tier flag, which is billing state, not travel
+ *     content, and would be advertising someone's purchase
+ *   - `id` — the owner's row id, which is an unguessable capability for every
+ *     other owner-scoped endpoint and must not leak through a public URL
+ *
+ * The `data` snapshot IS returned: the itinerary days are the entire point of
+ * the page, and it is content the owner chose to publish. This is also why
+ * `is_public` is an explicit flag rather than inferred from the presence of a
+ * slug — publishing the snapshot must be a decision, never a side effect.
+ */
+export async function getSharedJourneyHandler(req: Request, res: Response): Promise<void> {
+  const row = await getSharedJourney(String(req.params.slug));
+
+  if (!row) {
+    // One message for "no such slug" and "not shared", so the endpoint
+    // cannot be used to confirm that a slug exists but is private.
+    res.status(404).json({ error: 'Shared journey not found' });
+    return;
+  }
+
+  res.json({
+    sharedJourney: {
+      title: row.title,
+      destination: row.destination,
+      duration: row.duration,
+      travelStyle: row.travelStyle,
+      budget: row.budget,
+      currency: row.currency,
+      createdAt: row.createdAt,
+      data: safeParse(row.data),
+    },
+  });
+}
+
+/** A corrupt snapshot must not 500 the public page. */
+function safeParse(value: string): Record<string, unknown> {
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : {};
+  } catch {
+    console.error('[solen-api] shared journey has an unparseable snapshot');
+    return {};
+  }
 }
 
 /**

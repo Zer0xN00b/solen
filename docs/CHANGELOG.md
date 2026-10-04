@@ -1,4 +1,74 @@
 # SOLEN Changelog
+## Shareable journeys, and the first public endpoint · 2026-10-03
+
+Completes item 8 of the backend upgrade. `POST/DELETE /api/journeys/:id/share`
+and a public `GET /api/shared/:slug`.
+
+### The slug is a UUID on purpose
+
+A public share URL is enumerable by construction. Had this been a counter, or
+reused the row id, `/shared/1` and `/shared/2` would have handed every
+anonymous visitor someone else's trip — the exact class of leak an earlier
+hygiene pass was written to prevent. A v4 UUID has no ordering to walk.
+
+`is_public` is a separate column rather than something inferred from the slug
+being present, so a half-finished write can never publish a trip. Migration
+`0004` is additive with safe defaults: existing rows come up unshared.
+
+### The public read returns an allowlist, not the row
+
+This is the first endpoint that answers a caller with **no session and no
+owner cookie**, so the serializer enumerates what is allowed rather than
+projecting what exists. Eight fields go out: `title`, `destination`,
+`duration`, `travelStyle`, `budget`, `currency`, `createdAt`, `data`.
+
+Four are held back on purpose:
+
+- **`userId` / `ownerToken`** — these identify the *owner*. A share link must
+  not tell a stranger who took the trip.
+- **`isPremiumPlus`** — a paid tier flag. That is billing state, not travel
+  content, and exposing it would advertise someone's purchase.
+- **`id`** — the owner's row id, which is an unguessable capability for every
+  other owner-scoped endpoint. Leaking it through a public URL would hand out
+  that capability.
+
+The `data` snapshot *is* returned: the itinerary days are the entire point of
+the page, and the owner chose to publish them.
+
+Sharing and unsharing are owner-scoped through the same `ownedBy()` predicate
+as everything else, and a stranger gets **404, not 403** — a 403 would confirm
+the journey exists. Unshare clears the slug rather than rotating it, so the
+old URL dies at once, and a later re-share mints a fresh one.
+
+Thirteen cases verified against a live server, including: the anonymous read
+returns exactly the eight fields and nothing else; a stranger's share and
+unshare attempts both 404 and leave the link live; unshare returns 204 and the
+old slug then 404s; re-sharing mints a different slug; re-sharing while already
+shared is idempotent.
+
+### Two bugs the first tests found
+
+Adding a test suite (50 tests, `node:test`, zero dependencies) immediately
+paid for itself:
+
+1. **`buildJourneyDays` crashed on an empty day list.** It indexes
+   `personalized[0 % 0]` — undefined — and then reads `source.title`.
+   Reachable: `createJourney` only checked that a destination had a *record*,
+   not that it had day blocks, so a destination with an empty itinerary
+   sailed past the guard that hygiene pass 5 added and hit a hard crash
+   instead of the friendly "no itinerary data yet" message. Fixed in both
+   places.
+2. **`journey.days.map()` was unguarded** in the result screen, so a saved
+   snapshot without `days` — now reachable from the library's `?journey=`
+   deep link — blanked the planner. `normalizeJourney()` in the engine now
+   fills the shape at the boundary where a journey enters state.
+
+Both were invisible to lint, to the build, and to the seed-verification gate.
+
+### Not done
+
+The **UI**: no Share button on the library page, and no `/shared/:slug` page
+to render one. The API is complete and verified.
 
 ## A signed-in state, a locked-down API, and a way to deploy it · 2026-10-03
 

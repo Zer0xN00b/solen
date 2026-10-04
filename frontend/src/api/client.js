@@ -77,6 +77,31 @@ export const journeys = {
    * second time. Returns how many rows moved.
    */
   claim: () => request('/journeys/claim', { method: 'POST' }),
+
+  /**
+   * Publishes a journey and returns its public slug.
+   *
+   * Idempotent server-side: calling twice returns the same slug rather than
+   * burning a URL that has already been sent to someone.
+   */
+  share: (id) => request(`/journeys/${encodeURIComponent(id)}/share`, { method: 'POST' }),
+
+  /** Revokes sharing. The slug is cleared, so the old URL stops working. */
+  unshare: (id) => request(`/journeys/${encodeURIComponent(id)}/share`, { method: 'DELETE' }),
+};
+
+/* ------------------------------------------------------------- shared */
+
+/**
+ * Public shared-journey read (scope doc §48).
+ *
+ * Separate from `journeys` because this one is NOT user data and carries no
+ * session: a shared link must open for someone with no account and no
+ * cookies. It is also the only read on this client that a stranger can make,
+ * which is why the server answers it with an allowlist rather than the row.
+ */
+export const shared = {
+  journey: (slug) => request(`/shared/${encodeURIComponent(slug)}`),
 };
 
 /* -------------------------------------------------- destination content */

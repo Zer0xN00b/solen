@@ -147,4 +147,94 @@ export async function claimAnonymousJourneys(
   return claimed.length;
 }
 
+/* ------------------------------------------------------------------ *
+ * Sharing (scope doc §48)
+ *
+ * The first surface that serves journey data to a caller with NO session
+ * and NO owner cookie. Two rules follow from that and are enforced below
+ * rather than left to review:
+ *
+ *   1. Writing a slug always goes through `ownedBy(owner)`. Sharing is an
+ *      owner action; without the predicate any caller could publish anyone
+ *      else's trip by guessing an id.
+ *   2. `getSharedJourney` is the ONLY read path that skips ownership, and it
+ *      filters on `isPublic` as well as the slug. A slug alone is not
+ *      consent.
+ * ------------------------------------------------------------------ */
+
+function newShareSlug(): string {
+  return crypto.randomUUID();
+}
+
+/**
+ * Publishes a journey, or returns the slug it already had.
+ *
+ * Idempotent by design: re-sharing must not burn a URL that has already been
+ * sent to someone, so an existing slug is returned rather than rotated.
+ */
+export async function shareJourney(id: string, owner: Owner): Promise<JourneyRow | null> {
+  const existing = await getJourney(id, owner);
+
+  if (!existing) return null;
+
+  if (existing.shareSlug) {
+    await db
+      .update(journey)
+      .set({ isPublic: true })
+      .where(and(eq(journey.id, existing.id), ownedBy(owner)))
+      .returning();
+
+    return { ...existing, isPublic: true };
+  }
+
+  const updated = await db
+    .update(journey)
+    .set({ shareSlug: newShareSlug(), isPublic: true })
+    .where(and(eq(journey.id, existing.id), ownedBy(owner)))
+    .returning();
+
+  return updated[0] ?? null;
+}
+
+/**
+ * Stops sharing and clears the slug.
+ *
+ * Clearing rather than rotating is deliberate: it revokes the old URL
+ * immediately, and a later re-share mints a fresh slug so the previous one
+ * never comes back to life.
+ */
+export async function unshareJourney(id: string, owner: Owner): Promise<boolean> {
+  const cleared = await db
+    .update(journey)
+    .set({ shareSlug: null, isPublic: false })
+    .where(and(eq(journey.id, id), ownedBy(owner)))
+    .returning({ id: journey.id });
+
+  return cleared.length > 0;
+}
+
+/**
+ * Public read by share slug. No owner, no session.
+ *
+ * `isPublic` is checked alongside the slug on purpose — a row that was
+ * unshared has its slug cleared, but the pair is required so that neither
+ * field alone is ever sufficient to publish a trip.
+ */
+export async function getSharedJourney(slug: string): Promise<JourneyRow | null> {
+  if (!slug || typeof slug !== 'string') return null;
+
+  const rows = await db
+    .select()
+    .from(journey)
+    .where(
+      and(
+        eq(journey.shareSlug, slug),
+        eq(journey.isPublic, true),
+      ),
+    )
+    .limit(1);
+
+  return rows[0] ?? null;
+}
+
 export { ValidationError };
