@@ -19,7 +19,7 @@ import {
   getPersonalizedSummary,
 } from '../../engine/personalization.js';
 import { getJourneyDailyEstimate } from '../../engine/budget.js';
-import { getWeatherAwareNote, buildJourneyDays } from '../../engine/journey.js';
+import { getWeatherAwareNote, buildJourneyDays, normalizeJourney } from '../../engine/journey.js';
 import {
   clearSavedJourney,
   hasSavedJourney as hasAnySavedJourney,
@@ -154,7 +154,12 @@ function TripPlanner() {
   const createJourney = () => {
     const data = getItinerary()[destination];
 
-    if (!data) {
+    // No record at all, OR a record with no day blocks. The second case was
+    // missed by the original check: `data` is truthy for a destination that
+    // exists in the database but has an empty itinerary, so it sailed past
+    // here and then crashed inside buildJourneyDays — bypassing the
+    // craftError path that exists precisely to explain this situation.
+    if (!data || !Array.isArray(data.days) || data.days.length === 0) {
       return null;
     }
 
@@ -218,7 +223,7 @@ function TripPlanner() {
         'This destination doesn’t have itinerary data yet. Choose another place and we’ll craft the journey around it.',
       );
     } else {
-      setJourney(newJourney);
+      setJourney(normalizeJourney(newJourney));
     }
 
     setIsCrafting(false);
@@ -279,7 +284,7 @@ function TripPlanner() {
   const applyJourney = (parsed) => {
     const resumed = parsed.journey;
 
-    setJourney(resumed);
+    setJourney(normalizeJourney(resumed));
     setDestination(resumed.destination || '');
     setDuration(resumed.duration || '');
     setTravelStyle(resumed.travelStyle || '');

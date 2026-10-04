@@ -13,6 +13,7 @@
     "dev:backend": "npm run dev -w backend",
     "build": "npm run build -w frontend",
     "lint": "npm run lint -w frontend && npm run lint -w backend",
+    "test": "node --test frontend/tests/*.test.js backend/tests/*.test.js",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
