@@ -1204,6 +1204,8 @@ function TripPlanner() {
               value={budget}
               onChange={(event) => handleBudgetChange(event.target.value)}
               className="planner-budget-slider"
+              aria-label="Total budget"
+              aria-valuetext={`${formatBudget(budget)} ${currency}`}
             />
 
             <div className="planner-budget-labels">

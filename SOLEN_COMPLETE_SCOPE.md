@@ -821,15 +821,19 @@ Already present:
 -   ARIA labels on route controls
 -   Disabled states
 -   Reduced-motion support
+-   `:focus-visible` styles (global)
+-   Every `<img>` has an `alt`; every `<button>` has an explicit `type`
+-   Auth inputs labelled via `htmlFor`/`id`
+-   Budget slider labelled (`aria-label` + `aria-valuetext`, added 5 Oct)
+-   Favourite-day tap target extended to 44px (5 Oct)
 
-Remaining:
+Remaining (the polish pass):
 
 -   Full accessibility audit
 -   Keyboard-navigation review
--   Focus-state review
 -   Screen-reader review
 -   Contrast review
--   Form semantics review
+-   Skip-to-content link
 
 ------------------------------------------------------------------------
 
@@ -847,10 +851,11 @@ refinement.
 
 # 42. FRONTEND REMAINING SCOPE
 
-> **Reshaped 5 Oct 2026.** Two of the three original items in this section —
-> the destination-aware packing list and the cost transparency enhancement —
-> are **descoped**. They are kept below as history, with the reasoning, so the
-> decision reads straight rather than looking like an omission.
+> **Reshaped 5 Oct 2026.** All three of the original items in this section —
+> the destination-aware packing list, the cost transparency enhancement, and
+> travel logistics — are **descoped**. They are kept below as history, with the
+> reasoning, so the decision reads straight rather than looking like an omission.
+> The frontend feature list is closed; what remains is the polish pass.
 >
 > **Packing list — descoped.** The real cost was never the checklist UI; it was
 > authoring packing guidance for seven destinations across weather, style and
@@ -890,7 +895,9 @@ Potential scope:
 
 ------------------------------------------------------------------------
 
-## Travel logistics
+## Travel logistics — DESCOPED (5 OCT 2026)
+
+*Original scope, kept for the record:*
 
 Estimated time: **0.5--1 day**
 
@@ -903,6 +910,13 @@ Potential scope:
 -   Inter-city movement
 -   Approximate travel time
 -   Check-in/check-out context
+
+**Why descoped.** This is reference content the planner already implies: the
+itinerary has days, directions have a destination, and every field listed above
+is static prose that would sit in one section with nothing to personalize it.
+It does not use the budget, the traveller profile, the live weather, or the
+journey itself — the four things this product is built on. Adding it would have
+made the feature count larger without making the journey better.
 
 ------------------------------------------------------------------------
 
@@ -1106,19 +1120,7 @@ account       ← auth accounts (email/password now; OAuth later)
 verification  ← tokens for future email verification
 ```
 
-Remaining entities (target design):
-
-## User Preferences
-
-``` text
-id
-user_id
-travel_style
-budget
-currency
-interests
-preferred_experiences
-```
+**Live entities:**
 
 ## Destinations
 
@@ -1163,7 +1165,9 @@ weather_note
 is_favourite
 ```
 
-The schema can evolve as the product becomes more sophisticated.
+The schema can evolve as the product becomes more sophisticated. The planned
+**user preferences table was descoped 5 Oct 2026** — no UI consumes it (see
+section 60).
 
 ------------------------------------------------------------------------
 
@@ -1181,31 +1185,22 @@ The schema can evolve as the product becomes more sophisticated.
 -   Wrong-credential handling — generic "Invalid email or password"
     (no user enumeration)
 
-Remaining:
+Shipped:
 
--   Protected API routes (requireAuth middleware for journey endpoints)
--   Frontend auth UI (SOLEN-styled sign-up/sign-in, session-aware
-    navbar via the better-auth/react client)
--   User-specific data access (journey ownership)
+-   Protected API routes (requireAuth middleware for journey endpoints) ✅
+-   Frontend auth UI (SOLEN-styled sign-up/sign-in, session-aware navbar
+    via the better-auth/react client) ✅
+-   User-specific data access (journey ownership) ✅
 
 Public trip planning remains available without an account, while
 persistent saved journeys become account-based.
 
 ------------------------------------------------------------------------
 
-# 48. PERSISTENT JOURNEYS --- REMAINING
+# 48. PERSISTENT JOURNEYS --- DONE (SHIPPED WITH PHASE 3, 17 SEP 2026)
 
-Estimated time: **1--2 days**
-
-Current:
-
-``` text
-Browser
-↓
-localStorage
-```
-
-Future:
+Journeys persist through the API rather than the browser. Implemented as
+originally sketched:
 
 ``` text
 React
@@ -1215,8 +1210,6 @@ API
 Database
 ```
 
-Potential API operations:
-
 ``` text
 POST   /api/journeys
 GET    /api/journeys
@@ -1225,17 +1218,13 @@ PUT    /api/journeys/:id
 DELETE /api/journeys/:id
 ```
 
-This would support the Journey Library.
+This supports the Journey Library.
 
 ------------------------------------------------------------------------
 
-# 49. JOURNEY SHARING --- REMAINING
+# 49. JOURNEY SHARING --- DONE (3 OCT 2026)
 
-Estimated time: **\~1 day**
-
-A saved journey can receive a unique public identifier.
-
-Conceptually:
+A saved journey receives a unique public identifier:
 
 ``` text
 Journey
@@ -1247,11 +1236,9 @@ Share URL
 Public journey page
 ```
 
-The backend can determine whether a journey is:
-
--   Private
--   Shared
--   Public
+The backend determines whether a journey is private, shared or public;
+`requireAuth` guards the private routes and `/api/journeys/public/:id` serves
+the shared one.
 
 ------------------------------------------------------------------------
 
@@ -1312,8 +1299,8 @@ the reading.
 
 Not on the to-do list. Maps need a vendor key and a billing decision, the existing
 visual route already reads real coordinates from the DB, and nothing in the
-reshaped scope (packing, logistics, cost, polish) needs route intelligence.
-Revisit only with a chosen vendor and a feature that consumes it.
+reshaped scope (polish) needs route intelligence. Revisit only with a chosen
+vendor and a feature that consumes it.
 
 ------------------------------------------------------------------------
 
@@ -1336,12 +1323,12 @@ history reads straight.
 ------------------------------------------------------------------------
 
 
-# 56. FRONTEND-BACKEND INTEGRATION --- DONE EXCEPT THE WEATHER SNIPPET (5 OCT 2026)
+# 56. FRONTEND-BACKEND INTEGRATION --- DONE (5 OCT 2026)
 
-The planner, library and sharing all read and write through the API. The generate
-arrow in the old diagram (`POST /api/journeys/generate`) was the descoped engine
-(see section 50) and will not be built. The only integration left is the section 52
-weather snippet.
+The planner, library and sharing all read and write through the API, and the
+section 52 weather snippet is wired through the cached proxy. The generate
+arrow in the old diagram (`POST /api/journeys/generate`) was the descoped
+engine (see section 50) and will not be built.
 
 ------------------------------------------------------------------------
 
@@ -1431,19 +1418,19 @@ tablet / desktop, direct URLs, refresh behaviour, API failures, empty states.
 -   [x] Reduced-motion support
 -   [x] Mobile route presentation
 
-## TO-DO (RESHAPED 5 OCT 2026 -- FEATURES + POLISH ONLY)
+## TO-DO (RESHAPED 5 OCT 2026 -- ONE POLISH PASS ONLY)
 
-Two features, one polish pass. Everything else is done or explicitly descoped
-(see sections 42, 50-59). Each item ships with its own verification.
+One polish pass. Everything else is done or explicitly descoped (see sections
+42, 50-59). Each item ships with its own verification.
 
 -   [x] Live weather snippet (section 52, shipped 5 Oct 2026 -- cached proxy, curated fallback)
--   [ ] Travel logistics section (section 42, 0.5-1 day)
 -   [ ] Polish pass: accessibility + responsive QA + performance + visual
     consistency + page-wide empty/error/loading audit incl. the `days.map` guard
     (section 42 QA list, 1-2 days)
 
 Descoped 5 Oct 2026 -- see section 42 for the reasoning:
 
+-   Travel logistics (static reference content; nothing personalized to show)
 -   Destination-aware packing list (not distinctive; large content surface)
 -   Enhanced cost transparency (already shipped -- see the "WHERE YOUR
     ESTIMATE GOES" breakdown)
@@ -1477,33 +1464,29 @@ Descoped 5 Oct 2026 -- see section 42 for the reasoning:
 
   Item                                Estimated time
   --------------------------------- ----------------
-  Travel logistics                  0.5-1 day
-  Polish pass                       1-2 days
+  Polish pass (complete)             1-2 days
 
   (Live weather snippet -- done 5 Oct 2026, see section 52.
-   Packing list and cost transparency -- descoped, see section 42.)
+   Travel logistics, packing list and cost transparency -- descoped,
+   see section 42.)
 
-**Realistic remaining scope: approximately 1.5-3 focused working days.**
+**Realistic remaining scope: approximately 1-2 focused working days.**
 
 ------------------------------------------------------------------------
 
-**Overall realistic remaining scope: approximately 1.5--3 focused working
-days** for a learner-simultaneously-developer, or **2--4 days** of focused
-work for someone comfortable in the stack. Most of the original scope is
-shipped; the residue is one feature and one polish pass.
+**Overall realistic remaining scope: approximately 1--2 focused working
+days** for a learner-simultaneously-developer, or **1 day** of focused work for
+someone comfortable in the stack. Most of the original scope is shipped; the
+residue is one polish pass, then the site is called complete.
 
 ------------------------------------------------------------------------
 
 # 62. RECOMMENDED DEVELOPMENT PHASES (RESHAPED 5 OCT 2026)
 
 Old phases 1-6 shipped everything they were going to ship. What follows is the
-whole plan now: one feature phase, one polish phase, then done.
+whole plan now: one polish pass, then done.
 
-## Phase A --- Travel logistics (0.5-1 day)
-
--   Travel logistics section (section 42)
-
-## Phase B --- Polish pass (1-2 days)
+## Phase A --- Polish pass (1-2 days)
 
 -   Accessibility + responsive QA + performance + visual consistency
 -   Page-wide empty/error/loading audit incl. the `days.map` guard
@@ -1536,7 +1519,6 @@ whole plan now: one feature phase, one polish phase, then done.
    ┌──────┼───────┐              ┌──────────┼──────────┐
    │      │       │              │          │          │
 Homepage Globe Planner       Auth       Journeys   Destinations
-Homepage Globe Planner       Auth       Journeys   Itinerary
    │      │       │              │          │          │
    └──────┴───────┘              └──────────┼──────────┘
                                              │
@@ -1546,7 +1528,6 @@ Homepage Globe Planner       Auth       Journeys   Itinerary
                               │              │              │
                             Users         Journeys     Destinations
                              (journeys + itinerary_day rows)
-                           Users         Journeys     Destinations
                                              │
                               Generation lives in frontend/src/engine (by decision, sec 50)
                                       Personalization
@@ -1602,45 +1583,45 @@ Saved journeys
 
 ## Stage 4 --- Feature + polish finish (reshaped 5 Oct 2026)
 
-**To-do:** travel logistics, then the polish pass. The old engine and maps
-plans are descoped (sections 50 and 53), as are the packing list and cost
+**To-do:** the polish pass only. The old engine and maps plans are descoped
+(sections 50 and 53), as are travel logistics, the packing list and cost
 transparency (section 42). Live weather shipped 5 Oct (section 52).
 
 ## Stage 5 --- Full portfolio-level product
 
-**Target** -- SOLEN is functionally here. What remains is one feature, one
-polish pass, and the shipping-day operations work (first Docker build, CI,
-backups).
+**Target** -- SOLEN is functionally here. What remains is one polish pass, and
+the shipping-day operations work (first Docker build, CI, backups).
 --------------------------------------------------------------------------
 
 # 65. OVERALL SOLEN STATUS (RESHAPED 5 OCT 2026)
 
-**Frontend:** product layer done. One feature (travel logistics) plus the
-polish pass remain.
+**Frontend:** product layer done. Only the polish pass remains.
 
 **Backend:** done. Engine descoped, maps descoped, weather snippet shipped,
 deployment config written (first build is shipping-day work).
 
-**Remaining scope: ~1.5-3 focused working days** (see section 61).
+**Remaining scope: one polish pass, ~1-2 focused working days** (see section
+61), then the site is called complete.
 
-What is left is deliberately small: a logistics section that fits the brand,
-and the polish that makes what already exists feel finished.
+What is left is deliberately small: the polish that makes what already exists
+feel finished.
 
 --------------------------------------------------------------------------
 
 # 66. SCOPE PRIORITY (RESHAPED 5 OCT 2026)
 
-## Build now (in this order)
+## Build now
 
-1.  Travel logistics section (section 42)
-2.  Polish pass (accessibility, responsive QA, performance, visual
+1.  Polish pass (accessibility, responsive QA, performance, visual
     consistency, empty/error/loading audit incl. the `days.map` guard)
+
+Nothing else. When that is done, the site is called complete.
 
 ## Descoped -- do not build
 
-Engine (section 50), maps/route data (section 53), packing list and cost
-transparency (section 42), user preference persistence, CI/backups, and the
-first deployment run.
+Engine (section 50), maps/route data (section 53), travel logistics, packing
+list and cost transparency (section 42), user preference persistence,
+CI/backups, and the first deployment run.
 
 --------------------------------------------------------------------------
 
@@ -1656,18 +1637,20 @@ SOLEN should remain focused on the core promise:
 > want to spend --- then turns those preferences into a considered journey.**
 
 That promise is now met end to end. The goal is no longer to add features
-simply to increase the feature count -- which is precisely why the packing list
-and the restated cost transparency were descoped rather than built. The goal is
-to finish what exists: make it correct on a phone, make it accessible, and make
-it load quickly.
+simply to increase the feature count -- which is precisely why travel logistics,
+the packing list and the restated cost transparency were descoped rather than
+built. The goal is to finish what exists: make it correct on a phone, make it
+accessible, and make it load quickly.
 
 --------------------------------------------------------------------------
 
 # 68. DOCUMENT HISTORY
 
+-   **v5 -- 5 Oct 2026:** travel logistics descoped (section 42). Scope is now
+    a single polish pass (~1-2 days); after it, the site is called complete.
 -   **v4 -- 5 Oct 2026:** live weather snippet shipped (section 52); packing
     list and cost transparency descoped (section 42, the latter already
-    shipped). Remaining scope reduced to ~1.5-3 days.
+    shipped).
 -   **v3 -- 5 Oct 2026:** scope reshaped to features + polish only. Engine
     descoped (stays in frontend by decision), maps descoped, prefs descoped,
     ops deferred to shipping day.

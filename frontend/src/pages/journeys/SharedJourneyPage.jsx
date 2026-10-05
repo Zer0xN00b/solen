@@ -140,7 +140,7 @@ function SharedJourneyPage() {
           </div>
         </div>
       )}
-{status === 'ready' && payload && (
+      {status === 'ready' && payload && (
         <div className="shared-inner">
           <p className="shared-eyebrow">A shared journey</p>
 

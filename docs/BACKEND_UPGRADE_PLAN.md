@@ -39,9 +39,10 @@ Docker was unavailable in this environment. See Phase 6 and
 `docs/DEPLOYMENT.md` §7.
 
 **Next: the frontend polish pass (accessibility, responsive QA, performance)**
-plus travel logistics. The backend is complete — there is no backend work left.
-See `SOLEN_COMPLETE_SCOPE.md` §60–61 for the authoritative remaining roadmap;
-this plan predates the 5 Oct reshape.
+— the last item in scope. The backend is complete and travel logistics is
+descoped, so there is no other feature work. See `SOLEN_COMPLETE_SCOPE.md`
+§60–61 for the authoritative remaining roadmap; this plan predates the 5 Oct
+reshape.
 
 ---
 

@@ -1137,6 +1137,7 @@
 }
 
 .journey-favorite-button {
+  position: relative;
   border: 1px solid rgba(74, 25, 66, 0.18);
   background: transparent;
   color: #4a1942;
@@ -1148,6 +1149,18 @@
   font-size: 1.1rem;
   line-height: 1;
   transition: all 200ms ease;
+}
+
+/* The heart stays visually 34px, but fingers are not that precise: the
+   hit area is pushed out to the 44px minimum without moving anything. */
+.journey-favorite-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
 }
 
 .journey-favorite-button:hover,

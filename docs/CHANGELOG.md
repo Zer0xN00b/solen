@@ -1,10 +1,56 @@
 # SOLEN Changelog
 
+## Descope: travel logistics, plus a small clean pass · 2026-10-05
+
+The last feature is off the list. What remains is one polish pass, then the
+site is called complete. Remaining scope drops to **~1-2 focused working days**.
+
+### Travel logistics — descoped
+
+Arrival guidance, transfers, check-in context: reference material the planner
+already implies. The itinerary has days, the destination is chosen, and every
+field on the list is static prose that would sit in one section with nothing
+personalizing it. It touches none of the four things this product is built on —
+budget, traveller profile, live weather, the journey itself. Adding it would
+have raised the feature count without improving a single journey.
+
+Scope §42 keeps the original list and this reasoning.
+
+### Small clean pass
+
+A sweep of all eight pages, deliberately kept small — three real findings, all
+fixed:
+
+1. **`SharedJourneyPage.jsx` had a line starting at column 0** — `{status ===
+   'ready' && payload && (`, left at the margin by an earlier doc-edit
+   collision. Rendering was unaffected; the source was wrong.
+2. **The budget slider had no accessible name.** A `type="range"` input with no
+   label is announced to screen readers as an unlabelled control with a bare
+   number. It now carries `aria-label="Total budget"` and an `aria-valuetext`
+   that reads in the selected currency ("$3,500 USD").
+3. **The favourite heart was a 34px tap target**, under the 44px minimum. It
+   stays 34px visually; a transparent `::after` extends the hit area to 44px,
+   so nothing shifts on screen.
+
+Also added the missing `<meta name="description">`.
+
+**What the sweep confirmed clean**, so nobody re-audits it: every `<img>` has
+an `alt`; every `<button>` carries an explicit `type`; all auth inputs are
+labelled via `htmlFor`/`id`; all seven routes resolve and are covered by a
+`<main>` landmark (the multi-`h1` pages are mutually exclusive states, so only
+one renders); `:focus-visible` and `prefers-reduced-motion` are in place; all
+public assets referenced by code exist; no TODOs or debug logging.
+
+Two things deliberately **not** done, to avoid churn: Prettier reports every
+file as unformatted — it has never been enforced in this repo, so running it
+would rewrite essentially the whole codebase for no behavioural gain. And the
+skip-to-content link plus a full WCAG contrast audit are left for whoever wants
+to go further than "complete".
+
 ## Descope: packing list and cost transparency · 2026-10-05
 
 Two more items off the list, on the same reasoning as the engine: not because
-they are hard, but because they should not exist. Remaining scope drops from
-~3-4 days to **~1.5-3 days** — one feature and one polish pass.
+they are hard, but because they should not exist.
 
 ### Cost transparency — already built
 
@@ -39,11 +85,6 @@ editorial destination pages, traveller profiles and day-level itineraries as
 the one utilitarian screen in a product whose entire identity is *"one
 continuous, living journey."* Shipping it would have made SOLEN worse, not
 smaller.
-
-### Travel logistics stays
-
-The one feature left that reinforces the brand — arrival, transfers, check-in
-context. It belongs where the other destination-aware content does.
 
 ### Also repaired
 
