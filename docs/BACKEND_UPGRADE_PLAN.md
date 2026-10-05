@@ -18,8 +18,8 @@
 # 1. TL;DR
 
 **9 scope items. 7 done, 2 descoped.** Everything the original upgrade scope
-covered is either complete or has been deliberately descoped. The single
-remaining backend item is the weather snippet.
+covered is either complete or has been deliberately descoped. The backend is
+done — item 7's weather work shipped 5 Oct 2026 (scope §52).
 
 | # | Item | Status |
 |---|------|--------|
@@ -29,7 +29,7 @@ remaining backend item is the weather snippet.
 | 4 | Save journeys to DB | ✅ done |
 | 5 | Journey API | ✅ done + library UI (Phase 2) |
 | 6 | Dynamic itinerary engine | ⛔ **DESCOPED** 5 Oct 2026 — stays in the frontend (scope §50) |
-| 7 | External APIs | ◐ weather snippet remains (§52); maps descoped (§53) |
+| 7 | External APIs | ✅ weather snippet shipped (§52); maps descoped (§53) |
 | 8 | Shareable journeys | ✅ done — API + library/public UI (Phase 3) |
 | 9 | Validation + security | ✅ done — rate limiting + helmet + deployment |
 
@@ -39,8 +39,9 @@ Docker was unavailable in this environment. See Phase 6 and
 `docs/DEPLOYMENT.md` §7.
 
 **Next: the frontend polish pass (accessibility, responsive QA, performance)**
-plus the weather snippet. See `SOLEN_COMPLETE_SCOPE.md` §60–61 for the
-authoritative remaining roadmap — this plan predates the 5 Oct reshape.
+plus travel logistics. The backend is complete — there is no backend work left.
+See `SOLEN_COMPLETE_SCOPE.md` §60–61 for the authoritative remaining roadmap;
+this plan predates the 5 Oct reshape.
 
 ---
 
@@ -630,9 +631,9 @@ If you are reading this cold, here is exactly what to do:
 2. **Phases 1, 2, 3 and 6 are COMPLETE** (§5.1, §5 Phase 2, §5 Phase 3,
    §5 Phase 6). Do not re-run them. If a step below says "not started", those
    sections supersede it.
-3. **Next is the weather snippet** (~0.5 day, scope §52) via Open-Meteo. It
-   needs **no API key** and is free. Keep the curated `weatherSummary` as the
-   fallback so a third-party outage cannot fail the planner.
+3. **The weather snippet is DONE** — `GET /api/weather/:slug`, scope §52,5 Oct
+   2026. Open-Meteo via a cached proxy with a 4s timeout and the curated
+   `weatherSummary` as fallback. Nothing to build here.
 4. **Phase 4 (the itinerary engine) is descoped — do not build it.** Scope §50
    keeps generation in the frontend. Open decision #1 is moot as a result, so
    nothing here gates anything any more.

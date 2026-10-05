@@ -133,22 +133,23 @@ Everything in `engine/` is **pure functions** and everything in `data/` is
 
 ## Status at a glance
 
-- **Frontend:** ~90% — homepage, destination pages, globe and planner are
+- **Frontend:** ~95% — homepage, destination pages, globe and planner are
   done and locked. Accounts, the journey library and the public shared-journey
-  page have shipped. Remaining: packing list, logistics, accessibility and
-  final polish (scope §42).
+  page have shipped. Remaining: travel logistics, accessibility and final
+  polish (scope §42).
 - **Backend:** complete for the current product — foundation, database, auth,
   journey CRUD, library, validation, security hardening, and public sharing are
   all built and tested. **Deliberately descoped:** the server-side itinerary
   engine (scope §50 — relocation, not a feature) and maps/route data (§53).
   `GET /api/weather/:slug` serves live Open-Meteo conditions (§52), cached with
   the curated prose as fallback.
-- **Overall:** ~80% of the full-stack product.
+- **Overall:** ~95% of the full-stack product.
 
 Where the original plan stands — phases 2, 3, 5 and 6 are **done**:
 
 1. **Phase 1** — frontend product layer: Journey Library UI ✅ and shareable
-   journey UI ✅ shipped; packing, logistics and cost transparency remain.
+   journey UI ✅ shipped; logistics remains. Packing list and cost transparency
+   ⛔ descoped 5 Oct (§42 — the latter was already built).
 2. **Phase 2** — backend foundation ✅ (17 Sep 2026).
 3. **Phase 3** — accounts + persistent journeys ✅.
 4. **Phase 4** — intelligent backend planner ⛔ **descoped 5 Oct 2026.** The
@@ -158,5 +159,5 @@ Where the original plan stands — phases 2, 3, 5 and 6 are **done**:
    **config only — the image has never been built.**
 
 Recommended next: **the polish pass** — accessibility, responsive QA and
-performance — plus the packing list or travel logistics. Scope §60–61 puts the
-whole remaining roadmap at ~3–4 focused working days.
+performance — plus travel logistics. Scope §60–61 puts the whole remaining
+roadmap at ~1.5–3 focused working days.

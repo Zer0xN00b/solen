@@ -1,5 +1,60 @@
 # SOLEN Changelog
 
+## Descope: packing list and cost transparency · 2026-10-05
+
+Two more items off the list, on the same reasoning as the engine: not because
+they are hard, but because they should not exist. Remaining scope drops from
+~3-4 days to **~1.5-3 days** — one feature and one polish pass.
+
+### Cost transparency — already built
+
+This one was never really remaining work. The scope asked for accommodation /
+dining / experience / transport estimates, a buffer, daily spend, what's
+included, and a disclaimer. Five of those seven ship today: the "WHERE YOUR
+ESTIMATE GOES" panel splits the estimate into stay (42%), dining (20%),
+experiences (18%), transport (12%) and buffer (8%), alongside per-day spend,
+the total, currency conversion, and a five-factor budget engine
+(destination × style × interests × experience × premium, with a day rhythm).
+
+Section 60 had *already* recorded "Budget category breakdown" and "Day-by-day
+spending" as done. The item existed only because nobody went back and checked.
+Half a day to restate a feature that already works is half a day not spent on
+the polish pass.
+
+The one real gap this descopes: there is no plain statement of what the
+estimate includes and excludes. If that is ever wanted it is a short line under
+the existing grid — an hour, not a phase.
+
+### Packing list — the wrong shape for this product
+
+The estimate was measuring the wrong thing. The checklist UI was never the
+cost; **authoring** was. There is no packing data anywhere in the project, so
+it meant writing guidance for seven destinations across weather, style and
+activity — then keeping it honest against the live weather that shipped today.
+That is most of a day of content and a permanent maintenance surface.
+
+It is also the least distinctive thing the product could carry. A packing
+checklist is what every travel site has. It would have sat beside handcrafted
+editorial destination pages, traveller profiles and day-level itineraries as
+the one utilitarian screen in a product whose entire identity is *"one
+continuous, living journey."* Shipping it would have made SOLEN worse, not
+smaller.
+
+### Travel logistics stays
+
+The one feature left that reinforces the brand — arrival, transfers, check-in
+context. It belongs where the other destination-aware content does.
+
+### Also repaired
+
+The tail of `SOLEN_COMPLETE_SCOPE.md` (§63 onward) had **genuinely corrupted
+Markdown**: interleaved fragments from several overlapping edits, duplicate
+`Stage 3`/`Stage 4` headings, two `# 67. SCOPE PHILOSOPHY` headings, and a
+stage diagram spliced into prose. Sections 63-68 are rebuilt cleanly, and stale
+figures corrected along the way — the old "11-18 focused working days" line
+sat two lines under "3-4", and two places still said 50 tests when there are
+66.
+
 ## Live conditions via Open-Meteo · 2026-10-05
 
 Closes scope §52 — the last live backend item, and the one that makes the

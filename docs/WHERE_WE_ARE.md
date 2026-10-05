@@ -80,11 +80,11 @@ project accurately then; the product layer has since caught up.)*
   note, falling back to the curated prose when the provider is unreachable.
 - **66 tests**, and a deployment config.
 
-Still open from the original scope: packing list, travel logistics, cost
-transparency, and the accessibility and responsive QA passes. Scope §60–61 puts
-that at ~3–4 focused working days. No longer on the list: the server-side
-itinerary engine (descoped 5 Oct, scope §50) or live weather (§52, shipped 5
-Oct).
+Still open from the original scope: travel logistics, and the accessibility
+and responsive QA polish pass. Scope §60–61 puts that at ~1.5–3 focused
+working days. No longer on the list: the server-side itinerary engine (descoped
+5 Oct, §50), live weather (§52, shipped 5 Oct), the packing list or cost
+transparency (both descoped 5 Oct — the latter was already built, §42).
 
 ## How we work (the deal)
 
