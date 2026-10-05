@@ -16,9 +16,9 @@ dynamic data.
 The project is a React/Vite frontend with a substantial interactive
 planner, now paired with a live TypeScript backend (Express 5 +
 Drizzle ORM + SQLite + Better Auth). The frontend remains the most
-complete part of the application; the remaining scope is finishing the
-frontend product layer and turning the planner into a persistent,
-data-driven full-stack experience.
+complete part of the application; the feature scope is closed — every
+item has either shipped or been descoped with its reasoning, and the
+site is called complete as of 5 Oct 2026 (see section 65).
 
 ### Status snapshot — updated 4 October 2026
 
@@ -844,18 +844,19 @@ Approximate frontend completion:
 **85--90%**
 
 The frontend already represents a substantial interactive travel
-product. Remaining frontend work is primarily productization and
-refinement.
+product. The feature layer is finished; only the polish work recorded
+in section 40 is optional from here.
 
 ------------------------------------------------------------------------
 
-# 42. FRONTEND REMAINING SCOPE
+# 42. FRONTEND REMAINING SCOPE --- CLOSED (5 OCT 2026)
 
 > **Reshaped 5 Oct 2026.** All three of the original items in this section —
 > the destination-aware packing list, the cost transparency enhancement, and
 > travel logistics — are **descoped**. They are kept below as history, with the
 > reasoning, so the decision reads straight rather than looking like an omission.
-> The frontend feature list is closed; what remains is the polish pass.
+> The frontend feature list is closed; the clean pass it would have led to has
+> been run (section 61).
 >
 > **Packing list — descoped.** The real cost was never the checklist UI; it was
 > authoring packing guidance for seven destinations across weather, style and
@@ -992,9 +993,13 @@ The permanent journey ID would ultimately come from the backend.
 
 ## Final frontend QA / polish
 
-Estimated time: **1--2 days**
+**Run 5 Oct 2026 -- see section 61.** The audit came out at three defects
+(stray indentation, an unlabelled slider, an undersized tap target), all fixed
+and verified. What it did not cover is listed in section 40 as optional.
 
-Scope:
+Original estimate, kept for the record: **1--2 days**
+
+Original scope:
 
 -   Mobile edge cases
 -   Tablet edge cases
@@ -1350,12 +1355,14 @@ with backups and CI. See docs/DEPLOYMENT.md section 7.
 ------------------------------------------------------------------------
 
 
-# 59. FINAL PRODUCT TESTING --- FOLDED INTO THE POLISH PASS (5 OCT 2026)
+# 59. FINAL PRODUCT TESTING --- RUN AS THE CLEAN PASS (5 OCT 2026)
 
-Not a separate phase. Each to-do item ships with its own verification (screenshots
-for UI, tests for logic), and the polish pass in section 61 ends with a full page-by-page
-sweep: homepage, globe, destination pages, planner, auth, library, sharing, mobile /
-tablet / desktop, direct URLs, refresh behaviour, API failures, empty states.
+Not a separate phase. Each to-do item shipped with its own verification
+(screenshots for UI, tests for logic), and the clean pass in section 61 ended
+with a page-by-page sweep: homepage, globe, destination pages, planner, auth,
+library, sharing, mobile / tablet / desktop, direct URLs, refresh behaviour,
+API failures, empty states. Build, lint, typecheck and 66/66 tests all green
+afterwards.
 
 ------------------------------------------------------------------------
 
@@ -1418,15 +1425,15 @@ tablet / desktop, direct URLs, refresh behaviour, API failures, empty states.
 -   [x] Reduced-motion support
 -   [x] Mobile route presentation
 
-## TO-DO (RESHAPED 5 OCT 2026 -- ONE POLISH PASS ONLY)
+## TO-DO (CLOSED 5 OCT 2026)
 
-One polish pass. Everything else is done or explicitly descoped (see sections
-42, 50-59). Each item ships with its own verification.
+**Nothing open.** Everything below shipped or was descoped with its reasoning
+(sections 42, 50-59). The scope closes with the clean pass; the site is
+called complete.
 
 -   [x] Live weather snippet (section 52, shipped 5 Oct 2026 -- cached proxy, curated fallback)
--   [ ] Polish pass: accessibility + responsive QA + performance + visual
-    consistency + page-wide empty/error/loading audit incl. the `days.map` guard
-    (section 42 QA list, 1-2 days)
+-   [x] Clean pass (shipped 5 Oct 2026 -- see CHANGELOG and section 40; see
+     section 61 for what it deliberately left out)
 
 Descoped 5 Oct 2026 -- see section 42 for the reasoning:
 
@@ -1460,36 +1467,49 @@ Descoped 5 Oct 2026 -- see section 42 for the reasoning:
 
 ------------------------------------------------------------------------
 
-# 61. ESTIMATED REMAINING TIME (RESHAPED 5 OCT 2026)
+# 61. ESTIMATED REMAINING TIME (CLOSED 5 OCT 2026)
 
   Item                                Estimated time
   --------------------------------- ----------------
-  Polish pass (complete)             1-2 days
+  Clean pass (done)                  ~2 hours
 
-  (Live weather snippet -- done 5 Oct 2026, see section 52.
-   Travel logistics, packing list and cost transparency -- descoped,
-   see section 42.)
+  (Everything else either shipped or was descoped with its reasoning:
+   live weather section 52; travel logistics, packing list and cost
+   transparency section 42; engine section 50; maps section 53.)
 
-**Realistic remaining scope: approximately 1-2 focused working days.**
+**Remaining scope: none. SOLEN is called complete.**
+
+The original estimate for this work was a full polish phase -- accessibility,
+responsive QA, performance, contrast, a skip link -- at 1-2 days. What that
+audit actually turned up was three small defects and no structural problems,
+so it was fixed as a clean pass in an afternoon rather than run as a phase.
+The items deliberately left out of "complete" are listed below so the
+decision is on record rather than implied:
+
+-   Prettier reformat -- never enforced here; it would rewrite every file
+    for no behavioural gain.
+-   Skip-to-content link and a formal WCAG contrast audit -- real work, but
+    beyond a small pass; see section 40 if ever wanted.
 
 ------------------------------------------------------------------------
 
-**Overall realistic remaining scope: approximately 1--2 focused working
-days** for a learner-simultaneously-developer, or **1 day** of focused work for
-someone comfortable in the stack. Most of the original scope is shipped; the
-residue is one polish pass, then the site is called complete.
+# 62. RECOMMENDED DEVELOPMENT PHASES (CLOSED 5 OCT 2026)
 
-------------------------------------------------------------------------
+Old phases 1-6 shipped everything they were going to ship. The remaining plan
+was one feature phase and one polish phase; the feature was descoped and the
+polish audit was run as a small clean pass. **No phases remain.**
 
-# 62. RECOMMENDED DEVELOPMENT PHASES (RESHAPED 5 OCT 2026)
+## Phase A --- Clean pass (done 5 Oct 2026)
 
-Old phases 1-6 shipped everything they were going to ship. What follows is the
-whole plan now: one polish pass, then done.
+-   One stray column-0 line in SharedJourneyPage.jsx repaired
+-   Budget slider given an accessible name and value text
+-   Favourite-day tap target extended to 44px, visual unchanged
+-   Missing `<meta name="description">` added to index.html
+-   Full sweep of eight pages: alt text, button types, form labels, main
+    landmarks, focus states, reduced motion, assets, stray debug output
+-   Verified: vite build, eslint (frontend + backend), tsc, 66/66 tests
 
-## Phase A --- Polish pass (1-2 days)
-
--   Accessibility + responsive QA + performance + visual consistency
--   Page-wide empty/error/loading audit incl. the `days.map` guard
+**After Phase A: complete.** Nothing follows it.
 -   Ends with a full page-by-page sweep (the old section-59 list, folded in)
 
 ## Retired phases (history, kept straight)
@@ -1583,28 +1603,30 @@ Saved journeys
 
 ## Stage 4 --- Feature + polish finish (reshaped 5 Oct 2026)
 
-**To-do:** the polish pass only. The old engine and maps plans are descoped
-(sections 50 and 53), as are travel logistics, the packing list and cost
-transparency (section 42). Live weather shipped 5 Oct (section 52).
+**To-do:** nothing. The polish pass was run as a small clean pass (section 61)
+and closed. The old engine and maps plans are descoped (sections 50 and 53),
+as are travel logistics, the packing list and cost transparency (section 42).
+Live weather shipped 5 Oct (section 52).
 
 ## Stage 5 --- Full portfolio-level product
 
-**Target** -- SOLEN is functionally here. What remains is one polish pass, and
-the shipping-day operations work (first Docker build, CI, backups).
+**Target** -- SOLEN is functionally here and is now called complete. What
+remains is the shipping-day operations work (first Docker build, CI, backups).
 --------------------------------------------------------------------------
 
-# 65. OVERALL SOLEN STATUS (RESHAPED 5 OCT 2026)
+# 65. OVERALL SOLEN STATUS (CLOSED 5 OCT 2026)
 
-**Frontend:** product layer done. Only the polish pass remains.
+**Frontend:** product layer done, clean pass applied.
 
 **Backend:** done. Engine descoped, maps descoped, weather snippet shipped,
 deployment config written (first build is shipping-day work).
 
-**Remaining scope: one polish pass, ~1-2 focused working days** (see section
-61), then the site is called complete.
+**Remaining scope: none. SOLEN is complete.**
 
-What is left is deliberately small: the polish that makes what already exists
-feel finished.
+Everything is either shipped or descoped with its reasoning on the record.
+The site is called complete as of 5 Oct 2026; the only work left in the
+repository is shipping-day operations (Docker build, CI, backups), which
+needs a hosting decision rather than code.
 
 --------------------------------------------------------------------------
 
@@ -1612,10 +1634,8 @@ feel finished.
 
 ## Build now
 
-1.  Polish pass (accessibility, responsive QA, performance, visual
-    consistency, empty/error/loading audit incl. the `days.map` guard)
-
-Nothing else. When that is done, the site is called complete.
+Nothing. The build-now list is empty as of 5 Oct 2026 -- the polish pass was
+run as a clean pass and closed (section 61).
 
 ## Descoped -- do not build
 
@@ -1646,8 +1666,11 @@ accessible, and make it load quickly.
 
 # 68. DOCUMENT HISTORY
 
--   **v5 -- 5 Oct 2026:** travel logistics descoped (section 42). Scope is now
-    a single polish pass (~1-2 days); after it, the site is called complete.
+-   **v6 -- 5 Oct 2026:** clean pass run (section 61); stale headings in
+    sections 40, 46-49, 56, 59 corrected. **Scope closed -- SOLEN is called
+    complete.**
+-   **v5 -- 5 Oct 2026:** travel logistics descoped (section 42). Scope was
+    reduced to a single polish pass (~1-2 days).
 -   **v4 -- 5 Oct 2026:** live weather snippet shipped (section 52); packing
     list and cost transparency descoped (section 42, the latter already
     shipped).

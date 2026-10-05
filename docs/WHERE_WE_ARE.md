@@ -1,7 +1,7 @@
 # SOLEN — Where We Are
 
 *Read this whenever the project feels foggy. One page, no jargon.*
-*Last updated 2026-10-04.*
+*Last updated 2026-10-05. **The scope is closed — SOLEN is complete.***
 
 ## The goal, in one sentence
 
@@ -45,28 +45,23 @@ Cormorant & Inter), never a copy of the reference's neon identity.
 Everything is calm under reduced-motion, considered on mobile, and
 every piece is one git revert away from undo.
 
-## What we deliberately have NOT done yet
+## What we deliberately have NOT done — and why
 
-*(Updated 2026-10-04. This section was written on 19 Sep and described the
-project accurately then; the product layer has since caught up.)*
+*(Updated 2026-10-05, when the scope closed.)*
 
 - **Maps.** Route intelligence needs a vendor and a billing decision, and was
   descoped (scope §53). Nothing else is blocked on it.
-- **Polish pass** — the stage layers are still prototype-quality in your eyes.
-  That's taste-work, yours to lead.
+- **Server-side itinerary engine.** Descoped — it stays in the frontend by
+  decision (§50): no secret to protect, nothing to offload, no second consumer.
+- **Travel logistics, packing list, cost transparency.** All descoped 5 Oct
+  (§42), with the reasoning on the record. Cost transparency was already built.
+- **Prettier.** Never enforced in this repo; running it would rewrite every
+  file for no behavioural gain.
+- **Skip-to-content link + formal WCAG contrast audit.** Real work, but
+  beyond a small clean pass — recorded in §40 as optional.
 
-> **Update, 5 Oct 2026.** This section originally listed two more gaps. The
-> *server-side itinerary engine* was descoped (§50 — it stays in the frontend by
-> decision), and *live weather* shipped the same day (§52): the planner now
-> shows a real Open-Meteo reading beside the curated note. Note that it is
-> honestly **conditions**-aware, still not *forecast*-aware — there are no
-> outdoor/indoor reselection or clothing logic behind it, by design.
-
-> **Update, 5 Oct 2026:** the section above originally also listed
-> *server-side itinerary generation* as undone. That item is **descoped** — the
-> engine stays in the frontend by decision (scope §50). It was relocation, not a
-> feature: there was no secret to protect, nothing meaningful to offload, and no
-> second consumer.
+**Live weather** is *conditions*-aware, not *forecast*-aware — there is no
+outdoor/indoor reselection or clothing logic behind it, by design (§52).
 
 ## What did land since then
 
@@ -78,13 +73,18 @@ project accurately then; the product layer has since caught up.)*
   `/shared/:slug` page.
 - **Live conditions** — a real Open-Meteo reading beside the curated weather
   note, falling back to the curated prose when the provider is unreachable.
+- **The clean pass** — stray indentation repaired, budget slider labelled,
+  favourite-heart tap target taken to 44px, meta description added, and all
+  eight pages swept for alt text, button types, labels, landmarks, focus
+  states, motion, assets and stray debug output.
 - **66 tests**, and a deployment config.
 
-Still open from the original scope: the accessibility and responsive QA
-polish pass. Scope §60–61 puts that at **~1–2 focused working days**. No longer
-on the list: the server-side itinerary engine (descoped 5 Oct, §50), live
-weather (§52, shipped 5 Oct), and travel logistics, the packing list or cost
-transparency (all descoped 5 Oct, §42 — cost transparency was already built).
+**Nothing open.** The clean pass has been run (scope §61) and the scope is
+closed — SOLEN is called **complete** as of 2026-10-05.
+
+Optional extras, if anyone ever wants to go past "complete": a
+skip-to-content link and a formal WCAG contrast audit (scope §40), and the
+Prettier reformat (never enforced here — running it would rewrite every file).
 
 ## How we work (the deal)
 

@@ -2,8 +2,10 @@
 
 ## Descope: travel logistics, plus a small clean pass · 2026-10-05
 
-The last feature is off the list. What remains is one polish pass, then the
-site is called complete. Remaining scope drops to **~1-2 focused working days**.
+The last feature is off the list, the clean pass has been run, and the scope
+is closed: **SOLEN is complete.** What remains in the repo is shipping-day
+operations (Docker build, CI, backups), which needs a hosting decision rather
+than code.
 
 ### Travel logistics — descoped
 
@@ -46,6 +48,25 @@ file as unformatted — it has never been enforced in this repo, so running it
 would rewrite essentially the whole codebase for no behavioural gain. And the
 skip-to-content link plus a full WCAG contrast audit are left for whoever wants
 to go further than "complete".
+
+### Closing the scope
+
+Also corrected in `SOLEN_COMPLETE_SCOPE.md`: sections 46, 47, 48, 49, 56 and
+59 were still written as pending work although they shipped, and section 63's
+architecture diagram had duplicated rows from an earlier repair. With those
+fixed, §60's to-do is empty, §61's estimate is spent, §62 has no phase after
+A, and §65 records SOLEN as complete. `README.md`, `docs/WHERE_WE_ARE.md` and
+this file say the same.
+
+### Verification after the pass
+
+`vite build` green (289 modules), `eslint` clean on frontend and backend,
+`tsc --noEmit` clean, **66/66 tests passing**.
+
+> *Environment note: `node.exe` under `C:\Program Files\nodejs` was locked by
+> another process for the whole session, so verification ran against an
+> identical copy at `%TEMP%\node-run.exe` (Node v24.20.0). The project's own
+> `.nvmrc` still says Node 20.*
 
 ## Descope: packing list and cost transparency · 2026-10-05
 

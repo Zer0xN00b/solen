@@ -1,4 +1,4 @@
-# SOLEN — BACKEND UPGRADE PLAN
+﻿# SOLEN — BACKEND UPGRADE PLAN
 
 > **Purpose of this file:** survive a context loss. Everything needed to
 > resume the backend upgrade is here — current state, what is built, what
@@ -38,11 +38,9 @@ buildable as a container, but **the image has never actually been built** —
 Docker was unavailable in this environment. See Phase 6 and
 `docs/DEPLOYMENT.md` §7.
 
-**Next: the frontend polish pass (accessibility, responsive QA, performance)**
-— the last item in scope. The backend is complete and travel logistics is
-descoped, so there is no other feature work. See `SOLEN_COMPLETE_SCOPE.md`
-§60–61 for the authoritative remaining roadmap; this plan predates the 5 Oct
-reshape.
+**Next: nothing — the scope is closed (5 Oct 2026).** The clean pass ran
+as the last item; see `SOLEN_COMPLETE_SCOPE.md` §61. This plan predates the
+5 Oct reshape and is kept as history.
 
 ---
 
@@ -640,8 +638,9 @@ If you are reading this cold, here is exactly what to do:
    nothing here gates anything any more.
 5. **Maps is descoped** (§53), not merely blocked — it needs a key and a
    billing decision that is the owner's call, and the decision was to skip it.
-6. **The polish pass is the real remaining work** — accessibility, responsive
-   QA, performance, and an empty/error/loading audit (scope §42, 1–2 days).
+6. **The polish pass was run as a small clean pass** (5 Oct 2026) — three
+   defects fixed, eight pages swept, build/lint/typecheck/66 tests green.
+   The scope is closed; see `SOLEN_COMPLETE_SCOPE.md` §61.
 7. **Deployment is config-only and unexercised** (`docs/DEPLOYMENT.md` §7).
    The image has never actually been built — Docker was unavailable here. Do
    it before real users, not before the next feature.

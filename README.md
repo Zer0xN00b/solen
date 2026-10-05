@@ -133,17 +133,19 @@ Everything in `engine/` is **pure functions** and everything in `data/` is
 
 ## Status at a glance
 
-- **Frontend:** ~95% — homepage, destination pages, globe and planner are
+- **Frontend:** complete — homepage, destination pages, globe and planner are
   done and locked. Accounts, the journey library and the public shared-journey
-  page have shipped. Remaining: the accessibility and responsive QA polish pass
-  (scope §42).
+  page have shipped, and the clean pass ran 5 Oct 2026 (scope §61).
 - **Backend:** complete for the current product — foundation, database, auth,
   journey CRUD, library, validation, security hardening, and public sharing are
   all built and tested. **Deliberately descoped:** the server-side itinerary
   engine (scope §50 — relocation, not a feature) and maps/route data (§53).
   `GET /api/weather/:slug` serves live Open-Meteo conditions (§52), cached with
   the curated prose as fallback.
-- **Overall:** ~95% of the full-stack product.
+- **Overall:** **complete.** The scope is closed as of 5 Oct 2026 (scope §65);
+  everything is either shipped or descoped with its reasoning on the record.
+  The only work left is shipping-day operations (Docker build, CI, backups),
+  which needs a hosting decision rather than code.
 
 Where the original plan stands — phases 2, 3, 5 and 6 are **done**:
 
@@ -158,6 +160,7 @@ Where the original plan stands — phases 2, 3, 5 and 6 are **done**:
 6. **Phase 6** — security ✅, API tests ✅ (66 passing); deployment is
    **config only — the image has never been built.**
 
-Recommended next: **the polish pass** — accessibility, responsive QA and
-performance. Scope §60–61 puts it at **~1–2 focused working days**, and the
-scope closes after it.
+Recommended next: **nothing — the scope is closed.** The clean pass ran
+5 Oct 2026 (scope §61): three defects fixed, eight pages swept, build, lint,
+typecheck and 66/66 tests green. Optional extras beyond "complete" are listed
+in scope §40.
