@@ -1,8 +1,8 @@
-// Core itinerary content for every SOLEN destination.
+﻿// Core itinerary content for every SOLEN destination.
 // Each destination carries imagery, weather summary, accommodation/dining tiers
 // and the base day-plans the planner personalizes (Scope doc §10, §19, §51).
-// When the backend itinerary engine arrives (§50), this file becomes the seed
-// data for the destinations table.
+// This file seeded the destinations table (see scope section 51) and remains the
+// offline fallback when the API is unreachable.
 
 export const itineraryData = {
   'Amalfi Coast': {

@@ -1,5 +1,61 @@
 # SOLEN Changelog
 
+## Descope: the server-side itinerary engine · 2026-10-05
+
+No code changed. This entry records a decision that was made in the scope doc
+but had never propagated to the rest of the documentation, so four files
+disagreed about what the project still owes.
+
+### The decision
+
+The server-side itinerary engine is **not** remaining work. Generation stays in
+`frontend/src/engine/` as pure, tested modules. See `SOLEN_COMPLETE_SCOPE.md` §50.
+
+It was always **relocation, not a feature**. Moving three pure functions to
+another process would have bought zero user-visible gain:
+
+- **no secret to protect** — the forecast providers under consideration need no
+  API key, so there is nothing a browser can't legitimately hold;
+- **nothing to offload** — the work is microseconds of arithmetic;
+- **no second consumer** — the entire consumer set is `TripPlanner.jsx`.
+
+The real risk was never engineering. It was **quality**: generated itineraries
+can read worse than the 49 handcrafted day blocks, and those blocks are
+precisely what makes the planner feel considered. So the honest accounting was
+2–3 days of work for a coin-flip on whether the product got better.
+
+### Why the docs drifted
+
+`BACKEND_UPGRADE_PLAN.md` was written 27 Sep and updated through 4 Oct, when
+the engine genuinely was still open — item 6 read *"deliberately last"* and an
+open decision was flagged as gating it. The scope doc was reshaped on 5 Oct and
+descoped it. The plan was simply never revisited after that.
+
+Left alone, this would have cost a real afternoon: a future session reading the
+TL;DR would see an item marked *deliberately last*, plus a blocking open
+decision, and reasonably conclude there was a large unfinished phase hanging
+over the project.
+
+### What changed
+
+- `SOLEN_COMPLETE_SCOPE.md` §50 — already authoritative, untouched.
+- `README.md` — Phase 4 marked descoped; "not started" removed; the next-step
+  recommendation no longer points at weather as an engine unblocker.
+- `docs/WHERE_WE_ARE.md` — the stale "server-side generation" bullet removed
+  from *what we deliberately have NOT done*, with a dated note kept so the
+  change is legible rather than looking like an omission.
+- `docs/BACKEND_UPGRADE_PLAN.md` — item 6 descoped; the Phase 4 section
+  retitled and its original text preserved as history; open decision #1 closed
+  as moot; §11 rewritten so a cold reader is not told to settle a decision that
+  no longer gates anything.
+
+### When to reopen it
+
+Not "someday" — three specific triggers, from §50: generation becomes
+non-deterministic or expensive (e.g. an LLM writing itineraries), it becomes a
+paid feature that must be enforced server-side, or a second client needs
+authoritative versioned output. **None of those is true today.**
+
 ## Share controls and the public page · 2026-10-04
 
 Closes the UI half of Phase 3. The API existed; nothing in the app could reach

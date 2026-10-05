@@ -53,10 +53,16 @@ project accurately then; the product layer has since caught up.)*
 - **Live weather and maps.** The planner's weather notes read curated copy
   stored in the database. No third-party forecast or mapping API is integrated
   yet — so "weather-aware" is honestly *conditions-aware*, not *forecast-aware*.
-- **Server-side itinerary generation.** Generation still runs in the browser
-  (`frontend/src/engine/`). There is no generate endpoint.
+  Maps are descoped (scope §53); the weather snippet (§52) is the one live
+  backend item left.
 - **Polish pass** — the stage layers are still prototype-quality in your eyes.
   That's taste-work, yours to lead.
+
+> **Update, 5 Oct 2026:** the section above originally also listed
+> *server-side itinerary generation* as undone. That item is **descoped** — the
+> engine stays in the frontend by decision (scope §50). It was relocation, not a
+> feature: there was no secret to protect, nothing meaningful to offload, and no
+> second consumer.
 
 ## What did land since then
 
@@ -68,9 +74,10 @@ project accurately then; the product layer has since caught up.)*
   `/shared/:slug` page.
 - **50 tests**, and a deployment config.
 
-Still open from the original scope: packing list, travel logistics, the
-accessibility and responsive QA passes, live weather, and the server-side
-itinerary engine.
+Still open from the original scope: packing list, travel logistics, cost
+transparency, the accessibility and responsive QA passes, and the live weather
+snippet. Scope §60–61 puts that at ~3–5 focused working days. The server-side
+itinerary engine is no longer on it — descoped 5 Oct 2026 (scope §50).
 
 ## How we work (the deal)
 

@@ -1,4 +1,4 @@
-# SOLEN — Luxury Travel Concierge
+﻿# SOLEN — Luxury Travel Concierge
 
 SOLEN is a luxury travel concierge and personalized trip-planning web
 application. It combines destination discovery, editorial destination pages,
@@ -102,11 +102,14 @@ solen/
 ### Why `data/` and `engine/` are separate
 
 Everything in `engine/` is **pure functions** and everything in `data/` is
-**plain data** — neither touches React or the DOM. This is deliberate:
+**plain data** -- neither touches React or the DOM. This is deliberate:
 
-- The scope's highest-priority work (scope §50, _Dynamic itinerary engine_)
-  is moving this exact logic to the backend. Clean modules make that a
-  lift-and-shift instead of a rewrite.
+- Clean modules keep logic testable and portable, and the planner UI
+  (`pages/planner/TripPlanner.jsx`) stays presentation-only, which keeps
+  the locked visual design safe while logic evolves.
+- Destination content lives in one place per concern instead of being
+  hard-coded across four components, and is served from the
+  Destination API (scope section 54) with the JS files as offline fallback.
 - The planner UI (`pages/planner/TripPlanner.jsx`) is now presentation-only,
   which keeps the locked visual design safe while logic evolves.
 - Destination content lives in one place per concern instead of being
@@ -134,10 +137,11 @@ Everything in `engine/` is **pure functions** and everything in `data/` is
   done and locked. Accounts, the journey library and the public shared-journey
   page have shipped. Remaining: packing list, logistics, accessibility and
   final polish (scope §42).
-- **Backend:** substantially complete — foundation, database, auth, journey
-  CRUD, library, validation, security hardening, and public sharing are all
-  built and tested. **Not started:** the server-side itinerary engine and any
-  external weather/maps API (scope §43–58).
+- **Backend:** complete for the current product — foundation, database, auth,
+  journey CRUD, library, validation, security hardening, and public sharing are
+  all built and tested. **Deliberately descoped:** the server-side itinerary
+  engine (scope §50 — relocation, not a feature) and maps/route data (§53).
+  One backend item remains: the live weather snippet (§52).
 - **Overall:** ~80% of the full-stack product.
 
 Where the original plan stands — phases 2, 3, 5 and 6 are **done**:
@@ -146,10 +150,12 @@ Where the original plan stands — phases 2, 3, 5 and 6 are **done**:
    journey UI ✅ shipped; packing, logistics and cost transparency remain.
 2. **Phase 2** — backend foundation ✅ (17 Sep 2026).
 3. **Phase 3** — accounts + persistent journeys ✅.
-4. **Phase 4** — intelligent backend planner ❌ **not started**.
+4. **Phase 4** — intelligent backend planner ⛔ **descoped 5 Oct 2026.** The
+   engine stays in the frontend by decision; see scope §50.
 5. **Phase 5** — product-level sharing ✅.
 6. **Phase 6** — security ✅, API tests ✅ (50 passing); deployment is
    **config only — the image has never been built.**
 
-Recommended next: live weather via Open-Meteo (free, no API key), which
-unblocks the itinerary-engine decision. See `docs/BACKEND_UPGRADE_PLAN.md` §11.
+Recommended next: **the polish pass** — accessibility, responsive QA and
+performance — plus the live weather snippet (Open-Meteo, free, no API key).
+Scope §60–61 puts the whole remaining roadmap at ~3–5 focused working days.

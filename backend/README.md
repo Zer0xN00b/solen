@@ -1,4 +1,4 @@
-# SOLEN Backend
+﻿# SOLEN Backend
 
 Express 5 + TypeScript + Drizzle ORM + **Better Auth** + SQLite.
 
@@ -109,7 +109,7 @@ verification, organizations…) — they add fields/tables.
 `journey` table.** The file is deliberately split into two zones —
 generated auth tables, then a `JOURNEY ZONE` of hand-written product code.
 Copy the journey section out before regenerating and paste it back after.
-Product tables (journeys, user_preferences) are added by hand below that
+Product tables (journeys, destinations, itinerary_days) are added by hand below that
 marker and managed through normal drizzle migrations.
 
 ## Why this stack

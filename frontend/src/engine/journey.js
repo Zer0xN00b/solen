@@ -1,5 +1,5 @@
-// Journey assembly: weather-aware notes and day-by-day journey building
-// (Scope doc §11, §24). Pure functions, portable to the backend later.
+﻿// Journey assembly: weather-aware notes and day-by-day journey building
+// (Scope doc sections 11, 24). Pure functions; the engine lives here by decision (see scope section 50).
 
 import { personalizeDays } from './personalization.js';
 import { getJourneyDailyEstimate } from './budget.js';

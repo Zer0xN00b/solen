@@ -17,9 +17,9 @@
 
 # 1. TL;DR
 
-**9 scope items. 7 done, 2 not.** Everything in the original upgrade scope is
-complete except the two deferred items: the server-side itinerary engine (6)
-and external APIs (7).
+**9 scope items. 7 done, 2 descoped.** Everything the original upgrade scope
+covered is either complete or has been deliberately descoped. The single
+remaining backend item is the weather snippet.
 
 | # | Item | Status |
 |---|------|--------|
@@ -28,8 +28,8 @@ and external APIs (7).
 | 3 | Authentication | ✅ done — including **sign-out**, which had no UI at all |
 | 4 | Save journeys to DB | ✅ done |
 | 5 | Journey API | ✅ done + library UI (Phase 2) |
-| 6 | Dynamic itinerary engine | ❌ **not started** — 2–3 days, deliberately last |
-| 7 | External APIs (weather/maps) | ❌ nothing integrated |
+| 6 | Dynamic itinerary engine | ⛔ **DESCOPED** 5 Oct 2026 — stays in the frontend (scope §50) |
+| 7 | External APIs | ◐ weather snippet remains (§52); maps descoped (§53) |
 | 8 | Shareable journeys | ✅ done — API + library/public UI (Phase 3) |
 | 9 | Validation + security | ✅ done — rate limiting + helmet + deployment |
 
@@ -38,8 +38,9 @@ buildable as a container, but **the image has never actually been built** —
 Docker was unavailable in this environment. See Phase 6 and
 `docs/DEPLOYMENT.md` §7.
 
-**Next: Phase 5 (weather, via Open-Meteo) before Phase 4.** See §11 for why the
-order matters — open decision #1 gates the engine.
+**Next: the frontend polish pass (accessibility, responsive QA, performance)**
+plus the weather snippet. See `SOLEN_COMPLETE_SCOPE.md` §60–61 for the
+authoritative remaining roadmap — this plan predates the 5 Oct reshape.
 
 ---
 
@@ -404,17 +405,31 @@ Closed in commit `88f27e7`. The library has Share / Stop sharing per row, and
 - Verified through the real buttons in headless Chrome (9 click-path
   assertions), not only against the API.
 
-## Phase 4 — Server-side itinerary engine (2–3 DAYS) — the big one
-`POST /api/itinerary/generate`. Move the three pure engine files to
-`backend/src/engine/`. Feature flag so the frontend can use either path.
+## Phase 4 — Server-side itinerary engine ⛔ DESCOPED (5 Oct 2026)
+**Do not build this.** Superseded by `SOLEN_COMPLETE_SCOPE.md` §50, which is
+the authoritative decision. The engine stays in `frontend/src/engine/` as pure,
+tested modules.
 
-**Good news:** the engine is already portable — `personalization.js`,
-`journey.js`, `budget.js` are pure functions, no React, no DOM. Only one
-file imports data; the entire consumer set is `TripPlanner.jsx`.
+The original text, kept for the history:
 
-**Quality caveat (matters more than the engineering):** generation risks
-output *worse* than 49 handcrafted blocks. Those are what make the planner
-feel considered. See open decision #1.
+> `POST /api/itinerary/generate`. Move the three pure engine files to
+> `backend/src/engine/`. Feature flag so the frontend can use either path.
+>
+> **Good news:** the engine is already portable — `personalization.js`,
+> `journey.js`, `budget.js` are pure functions, no React, no DOM. Only one
+> file imports data; the entire consumer set is `TripPlanner.jsx`.
+>
+> **Quality caveat (matters more than the engineering):** generation risks
+> output *worse* than 49 handcrafted blocks. Those are what make the planner
+> feel considered.
+
+Why it was dropped: this was **relocation, not a feature**. There was no secret
+to protect, nothing meaningful to offload (microseconds of arithmetic), and no
+second consumer — so 2–3 days would have bought zero user-visible gain against
+a real *quality* risk. Revisit only if generation becomes non-deterministic or
+expensive (e.g. an LLM writing itineraries), becomes a paid feature that must
+be enforced server-side, or a second client needs authoritative versioned
+output. None of those is true today.
 
 ## Phase 5 — External APIs (~8h + your API key)
 Weather first — **Open-Meteo needs no API key** and is free. Maps needs a
@@ -502,10 +517,15 @@ built and run on a platform, A4 is a configuration that has never executed.
 
 # 6. OPEN DECISIONS
 
-## 1. Curated-first, or pure generation? ⬅ blocks Phase 4
-**Recommend: curated-first, generate only when no curated fit exists.**
-Pure generation risks output worse than the handcrafted blocks. Settle
-before Phase 4.
+## 1. Curated-first, or pure generation? ⛔ MOOT (5 Oct 2026)
+Was going to gate Phase 4. **Phase 4 is descoped** (`SOLEN_COMPLETE_SCOPE.md`
+§50), so there is no generation strategy to choose between — the handcrafted
+49 day blocks are the output, full stop. Recorded here only so a future reader
+doesn't reopen it by accident.
+
+The original question was worth answering, and the answer was still
+*curated-first*: pure generation risks output worse than the handcrafted
+blocks. If the engine is ever revived, start from that recommendation.
 
 ## 2. `schema.ts` split — ✅ RESOLVED 2026-09-30
 Folded into Phase 1 Step 1 as non-negotiable, and **done**: `authSchema.ts`
@@ -610,21 +630,20 @@ If you are reading this cold, here is exactly what to do:
 2. **Phases 1, 2, 3 and 6 are COMPLETE** (§5.1, §5 Phase 2, §5 Phase 3,
    §5 Phase 6). Do not re-run them. If a step below says "not started", those
    sections supersede it.
-3. **Next is Phase 5 — weather via Open-Meteo** (~8h). It needs **no API key**
-   and is free, so it is the cheapest half of item 7. Keep the curated
-   `weatherSummary` as the fallback so a third-party outage cannot fail the
-   planner.
-4. **Then settle open decision #1** (curated-first vs pure generation) before
-   touching Phase 4 / item 6. That decision determines whether the 2–3 day
-   engine build makes the product better or worse, so it needs live weather
-   to evaluate honestly — building the engine against stubbed weather means
-   building it twice.
-5. **Maps is the blocker, not weather.** It needs a key and a billing
-   decision. That is the owner's call, not an implementation detail.
-6. **Deployment is config-only and unexercised** (`docs/DEPLOYMENT.md` §7).
+3. **Next is the weather snippet** (~0.5 day, scope §52) via Open-Meteo. It
+   needs **no API key** and is free. Keep the curated `weatherSummary` as the
+   fallback so a third-party outage cannot fail the planner.
+4. **Phase 4 (the itinerary engine) is descoped — do not build it.** Scope §50
+   keeps generation in the frontend. Open decision #1 is moot as a result, so
+   nothing here gates anything any more.
+5. **Maps is descoped** (§53), not merely blocked — it needs a key and a
+   billing decision that is the owner's call, and the decision was to skip it.
+6. **The polish pass is the real remaining work** — accessibility, responsive
+   QA, performance, and an empty/error/loading audit (scope §42, 1–2 days).
+7. **Deployment is config-only and unexercised** (`docs/DEPLOYMENT.md` §7).
    The image has never actually been built — Docker was unavailable here. Do
    it before real users, not before the next feature.
-7. §9 will save you an hour of failed commands.
-8. §8 explains why screenshots matter more than green checks here.
+8. §9 will save you an hour of failed commands.
+9. §8 explains why screenshots matter more than green checks here.
 
 ---

@@ -1,4 +1,4 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
 import { getSharedJourneyHandler } from '../controllers/journeyController.js';
 import destinationRoutes from './destinations.js';
 import journeyRoutes from './journeys.js';
@@ -29,7 +29,7 @@ router.get('/health', (req, res) => {
 router.get('/shared/:slug', getSharedJourneyHandler);
 
 // Journey persistence (scope doc §48) — mounted, works signed-in or
-// anonymous. Remaining modules mount alongside it:
+// anonymous. A future route (e.g. a weather snippet) would mount alongside it:
 //   router.use('/weather', weatherRoutes);
 // (Auth lives separately at /api/auth — see app.ts.)
 router.use(journeyRoutes);
