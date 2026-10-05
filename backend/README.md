@@ -21,6 +21,31 @@ Server: http://localhost:4000
 - Health: `GET /api/health`
 - Auth: `/api/auth/*` (sign-up/email, sign-in/email, sign-out, get-session, …)
 - Journeys: `/api/journeys` (see below)
+- Destinations: `/api/destinations`, `/api/destinations/all`, `/api/destinations/:slug`
+- Weather: `GET /api/weather/:slug` (see below)
+- Shared: `GET /api/shared/:slug` (public, read-only)
+
+## Weather API (scope §52)
+
+```text
+GET /api/weather/:slug      live conditions, curated prose always included
+```
+
+Public, unauthenticated, no session. Returns
+`{ weather: { slug, live, curated, isLive } }`, where `live` is
+`{ temperatureC, description, observedAt, weatherCode }`.
+
+**The provider is an enhancement, never a dependency.** Open-Meteo (free, no
+API key) is read through a cached proxy with a 4s hard timeout. Every failure —
+timeout, non-200, changed payload shape, or a destination with no coordinates —
+answers `200` with `isLive: false` and the curated `weather_summary` prose,
+because the planner must not break where it previously could not.
+
+Only successful readings are cached (10 min, keyed on rounded coordinates).
+Caching a *failure* would extend a brief upstream outage into ten minutes of
+stale fallback. An unknown slug is a `404`, never an invented reading.
+
+No configuration is needed to run it.
 
 ## Journeys API (scope §48)
 

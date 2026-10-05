@@ -2330,7 +2330,8 @@
 
 .journey-budget-breakdown-heading span,
 .journey-weather-note > span,
-.journey-day-weather > span {
+.journey-day-weather > span,
+.journey-live-weather > span {
   display: block;
   margin-bottom: 8px;
   font-size: 10px;
@@ -2382,9 +2383,27 @@
 }
 
 .journey-weather-note p,
-.journey-day-weather p {
+.journey-day-weather p,
+.journey-live-weather p {
   margin: 0;
   line-height: 1.65;
+}
+
+/* Live conditions (scope §52).
+   Deliberately quieter than the curated weather note it sits under: that one
+   is written copy the planner reasons about, this one is a factual reading.
+   No plum rule — it is information, not an editorial aside — and no animation,
+   so a reading arriving late never draws attention to itself. */
+.journey-live-weather {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: rgba(243, 235, 221, 0.62);
+  border-left: 1px solid rgba(74, 25, 66, 0.2);
+}
+
+.journey-live-weather p {
+  font-size: 13px;
+  opacity: 0.82;
 }
 
 .journey-day-weather {

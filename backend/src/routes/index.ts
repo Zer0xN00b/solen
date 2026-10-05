@@ -2,6 +2,7 @@
 import { getSharedJourneyHandler } from '../controllers/journeyController.js';
 import destinationRoutes from './destinations.js';
 import journeyRoutes from './journeys.js';
+import weatherRoutes from './weather.js';
 
 const router = Router();
 
@@ -38,5 +39,10 @@ router.use(journeyRoutes);
 // replacing the four duplicated frontend data files.
 router.use(destinationRoutes);
 
+
+// Live weather proxy (scope doc §52) — public, cached, curated fallback.
+// Mounted last and with no session: it is the one endpoint that depends on a
+// third party, so it is kept separate from the content routes above.
+router.use(weatherRoutes);
 
 export default router;

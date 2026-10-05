@@ -1255,15 +1255,25 @@ without a feature.
 ------------------------------------------------------------------------
 
 
-# 52. LIVE WEATHER SNIPPET --- THE ONE BACKEND ITEM LEFT (SCOPED 5 OCT 2026)
+# 52. LIVE WEATHER SNIPPET --- DONE (5 OCT 2026)
 
-Estimated time: **~0.5 day**. One user-visible thing, nothing more: a small live
-conditions snippet on the planner result (e.g. next to the existing weather-aware
-note), fetched from Open-Meteo (free, no key) through a thin cached proxy with
-a timeout, falling back to the curated `weather_summary` string when the provider
-is unreachable. No itinerary adjustments, no outdoor/indoor reselection, no clothing
-logic -- the curated copy already covers the planning; this only makes the weather
-claim live instead of static.
+Shipped. `GET /api/weather/:slug` reads Open-Meteo (free, no key) through a
+cached proxy and returns a live temperature and sky condition beside the
+planner's curated weather note.
+
+Scoped as originally written, and built to that scope: one user-visible thing
+and nothing more. No itinerary adjustments, no outdoor/indoor reselection, no
+clothing logic -- the curated copy already covers the planning; this only makes
+the weather claim live instead of static.
+
+The design rule throughout is that the provider is an enhancement, never a
+dependency. A 4s hard timeout, shape-validated responses, a 10-minute cache
+that stores only successes, and a curated `weather_summary` fallback on every
+failure path. The planner cannot fail where it previously could not.
+
+Note the honesty boundary this deliberately does not cross: the planner is
+**conditions**-aware, still not **forecast**-aware. Nothing reschedules around
+the reading.
 
 ------------------------------------------------------------------------
 
@@ -1399,7 +1409,7 @@ Four features, one polish pass. Everything else is done or explicitly descoped
 -   [ ] Destination-aware packing list (section 42, 0.5-1 day)
 -   [ ] Travel logistics section (section 42, 0.5-1 day)
 -   [ ] Enhanced cost transparency (section 42, 0.5-1 day)
--   [ ] Live weather snippet (section 52, ~0.5 day -- cached proxy, curated fallback)
+-   [x] Live weather snippet (section 52, shipped 5 Oct 2026 -- cached proxy, curated fallback)
 -   [ ] Polish pass: accessibility + responsive QA + performance + visual
     consistency + page-wide empty/error/loading audit incl. the `days.map` guard
     (section 42 QA list, 1-2 days)
@@ -1436,10 +1446,11 @@ Four features, one polish pass. Everything else is done or explicitly descoped
   Packing list                      0.5-1 day
   Travel logistics                  0.5-1 day
   Cost transparency                 0.5-1 day
-  Live weather snippet              ~0.5 day
   Polish pass                       1-2 days
 
-**Realistic remaining scope: approximately 3-5 focused working days.**
+  (Live weather snippet -- done 5 Oct 2026, see section 52.)
+
+**Realistic remaining scope: approximately 3-4 focused working days.**
 
 ------------------------------------------------------------------------
 

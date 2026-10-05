@@ -141,7 +141,8 @@ Everything in `engine/` is **pure functions** and everything in `data/` is
   journey CRUD, library, validation, security hardening, and public sharing are
   all built and tested. **Deliberately descoped:** the server-side itinerary
   engine (scope §50 — relocation, not a feature) and maps/route data (§53).
-  One backend item remains: the live weather snippet (§52).
+  `GET /api/weather/:slug` serves live Open-Meteo conditions (§52), cached with
+  the curated prose as fallback.
 - **Overall:** ~80% of the full-stack product.
 
 Where the original plan stands — phases 2, 3, 5 and 6 are **done**:
@@ -153,9 +154,9 @@ Where the original plan stands — phases 2, 3, 5 and 6 are **done**:
 4. **Phase 4** — intelligent backend planner ⛔ **descoped 5 Oct 2026.** The
    engine stays in the frontend by decision; see scope §50.
 5. **Phase 5** — product-level sharing ✅.
-6. **Phase 6** — security ✅, API tests ✅ (50 passing); deployment is
+6. **Phase 6** — security ✅, API tests ✅ (66 passing); deployment is
    **config only — the image has never been built.**
 
 Recommended next: **the polish pass** — accessibility, responsive QA and
-performance — plus the live weather snippet (Open-Meteo, free, no API key).
-Scope §60–61 puts the whole remaining roadmap at ~3–5 focused working days.
+performance — plus the packing list or travel logistics. Scope §60–61 puts the
+whole remaining roadmap at ~3–4 focused working days.

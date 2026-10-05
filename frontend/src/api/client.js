@@ -128,3 +128,18 @@ export const content = {
   /** Full record plus its curated day blocks. 404s on an unknown slug. */
   destination: (slug) => request(`/destinations/${encodeURIComponent(slug)}`),
 };
+
+/* --------------------------------------------------------- live weather */
+
+/**
+ * Live conditions proxy (scope doc §52).
+ *
+ * Resolves to the curated fallback rather than rejecting when the upstream
+ * provider is unreachable — see the note in `request` callers. Callers should
+ * therefore branch on `isLive`, not on whether the promise settled: a settled
+ * result with `isLive: false` is a normal, expected outcome, not an error.
+ */
+export const weather = {
+  /** `{ live, curated, isLive }`. 404s only on an unknown destination slug. */
+  destination: (slug) => request(`/weather/${encodeURIComponent(slug)}`),
+};

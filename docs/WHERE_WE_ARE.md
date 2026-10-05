@@ -50,13 +50,17 @@ every piece is one git revert away from undo.
 *(Updated 2026-10-04. This section was written on 19 Sep and described the
 project accurately then; the product layer has since caught up.)*
 
-- **Live weather and maps.** The planner's weather notes read curated copy
-  stored in the database. No third-party forecast or mapping API is integrated
-  yet — so "weather-aware" is honestly *conditions-aware*, not *forecast-aware*.
-  Maps are descoped (scope §53); the weather snippet (§52) is the one live
-  backend item left.
+- **Maps.** Route intelligence needs a vendor and a billing decision, and was
+  descoped (scope §53). Nothing else is blocked on it.
 - **Polish pass** — the stage layers are still prototype-quality in your eyes.
   That's taste-work, yours to lead.
+
+> **Update, 5 Oct 2026.** This section originally listed two more gaps. The
+> *server-side itinerary engine* was descoped (§50 — it stays in the frontend by
+> decision), and *live weather* shipped the same day (§52): the planner now
+> shows a real Open-Meteo reading beside the curated note. Note that it is
+> honestly **conditions**-aware, still not *forecast*-aware — there are no
+> outdoor/indoor reselection or clothing logic behind it, by design.
 
 > **Update, 5 Oct 2026:** the section above originally also listed
 > *server-side itinerary generation* as undone. That item is **descoped** — the
@@ -72,12 +76,15 @@ project accurately then; the product layer has since caught up.)*
 - **Journey Library** — `/journeys`, list, open, delete.
 - **Shareable journeys** — a Share control per journey and a public, read-only
   `/shared/:slug` page.
-- **50 tests**, and a deployment config.
+- **Live conditions** — a real Open-Meteo reading beside the curated weather
+  note, falling back to the curated prose when the provider is unreachable.
+- **66 tests**, and a deployment config.
 
 Still open from the original scope: packing list, travel logistics, cost
-transparency, the accessibility and responsive QA passes, and the live weather
-snippet. Scope §60–61 puts that at ~3–5 focused working days. The server-side
-itinerary engine is no longer on it — descoped 5 Oct 2026 (scope §50).
+transparency, and the accessibility and responsive QA passes. Scope §60–61 puts
+that at ~3–4 focused working days. No longer on the list: the server-side
+itinerary engine (descoped 5 Oct, scope §50) or live weather (§52, shipped 5
+Oct).
 
 ## How we work (the deal)
 

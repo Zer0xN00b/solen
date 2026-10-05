@@ -1,5 +1,71 @@
 # SOLEN Changelog
 
+## Live conditions via Open-Meteo · 2026-10-05
+
+Closes scope §52 — the last live backend item, and the one that makes the
+planner's weather claim honest rather than static. A small line under the
+weather-aware note now reads the actual temperature and sky for the destination,
+from Open-Meteo. No API key, no account, no billing.
+
+### The provider is an enhancement, never a dependency
+
+This is the whole design. Every failure path — timeout, DNS failure, non-200, a
+payload shape change, a destination with no coordinates — resolves to the
+curated `weather_summary` that was already serving this role. The planner
+cannot fail where it previously couldn't, because nothing about it now waits
+on a third party.
+
+Concretely:
+
+- **4s hard timeout** on the upstream call. It is a decorative snippet on a
+  planner render; holding the request open to chase a slow upstream would be a
+  worse failure than showing the curated string.
+- **Shape-validated, not trusted.** A provider change that alters the payload
+  degrades to the curated string. It will never render `undefined°C`.
+- **Only successful readings are cached** (10 min, keyed on rounded
+  coordinates). Caching a *failure* would turn one slow upstream into ten
+  minutes of stale fallback — the outage would outlast the outage. There is a
+  test for exactly this.
+- **No synchronous `setState` in the fetch effect.** Clearing state on every
+  destination change cascaded a render and tripped the hooks lint rule. The
+  response carries its own slug, so a reading for a previous destination is
+  recognised as stale at render time instead of being erased first. One guard,
+  no extra render, and it also closes the window where a slow response for
+  Kyoto could be shown under Bali.
+
+### "Live" is only ever a claim we can back
+
+The label reads `LIVE CONDITIONS` only when a real reading is behind it. On a
+fallback the block renders *nothing at all* and the curated prose stands alone
+— deliberately not a fallback label, and deliberately not a retry. The
+curated text is already on screen from the destination record, so repeating it
+beside itself would be noise rather than honesty.
+
+An unknown destination slug is a `404`, never an invented reading. The API
+already refuses to invent weather for places that do not exist.
+
+### Where it sits
+
+`GET /api/weather/:slug` — public, unauthenticated, no session, in its own
+router (`routes/weather.ts`) so the third-party concern stays in one folder.
+Presentation logic is pure and lives in `engine/liveWeather.js` per the
+existing layering; `TripPlanner.jsx` stays presentation-only.
+
+The block is deliberately quieter than the weather-aware note above it: no plum
+rule, no animation. A factual reading arriving late should not draw attention
+to itself, and the plum-tinted editorial note is where the planner's own voice
+lives.
+
+### Verified
+
+- 16 new tests (66 total): fallback on error / non-200 / bad shape / missing
+  coordinates, cache hit, and recovery after a cached failure.
+- Live against the real provider: Kyoto 20.2°C partly cloudy, Iceland 5.2°C
+  overcast; unknown slug 404s. Cache confirmed: 950ms → 128ms.
+- Rendered and checked in a headless browser — the block appears beneath the
+  curated note with both present.
+- `build` ✅ `lint` ✅ `tsc --noEmit` ✅ 66/66 tests ✅
+
 ## Descope: the server-side itinerary engine · 2026-10-05
 
 No code changed. This entry records a decision that was made in the scope doc

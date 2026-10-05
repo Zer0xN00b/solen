@@ -20,6 +20,8 @@ import {
 } from '../../engine/personalization.js';
 import { getJourneyDailyEstimate } from '../../engine/budget.js';
 import { getWeatherAwareNote, buildJourneyDays, normalizeJourney } from '../../engine/journey.js';
+import { formatLiveConditions, liveConditionsLabel } from '../../engine/liveWeather.js';
+import { weather as weatherApi } from '../../api/client.js';
 import {
   clearSavedJourney,
   hasSavedJourney as hasAnySavedJourney,
@@ -58,6 +60,12 @@ function TripPlanner() {
   const [saveMessage, setSaveMessage] = useState('');
   const [copyMessage, setCopyMessage] = useState('');
   const [shareMessage, setShareMessage] = useState('');
+  // Live conditions for the crafted destination (scope §52). Starts null and
+  // stays null when the provider is unreachable — the curated prose is
+  // already on screen, so there is nothing to show until a real reading
+  // arrives. Never an error state: an unreachable provider is an expected
+  // outcome here, not something to apologize for on screen.
+  const [liveWeather, setLiveWeather] = useState(null);
   const [favoriteDays, setFavoriteDays] = useState([]);
   const [regeneratingDay, setRegeneratingDay] = useState(null);
 
@@ -339,6 +347,55 @@ function TripPlanner() {
       cancelled = true;
     };
   }, [searchParams]);
+
+  // Live conditions for the journey on screen (scope §52).
+  //
+  // Fetched per destination rather than at craft time, so opening a saved or
+  // shared journey shows live conditions too. The server keys its cache on
+  // coordinates, so revisiting a destination costs no upstream call.
+  //
+  // `cancelled` guards the same way the loaders above do: switching
+  // destination mid-flight would otherwise let the slower response land last
+  // and overwrite the newer journey's weather.
+  useEffect(() => {
+    if (!journey?.destination) return undefined;
+
+    let cancelled = false;
+
+    // No synchronous setState here on purpose. Clearing `liveWeather` in the
+    // effect body would cascade a render on every destination change, and it
+    // buys nothing: the response carries its own slug, so a reading for the
+    // previous destination is recognised as stale at render time below rather
+    // than being erased first.
+    weatherApi
+      .destination(createSlug(journey.destination))
+      .then((payload) => {
+        if (cancelled) return;
+        setLiveWeather(payload?.weather ?? null);
+      })
+      // A rejected promise here means the API itself was unreachable, not
+      // merely the upstream provider. Leave the curated prose standing — the
+      // planner must not surface a third-party failure as a broken journey.
+      .catch(() => {
+        if (!cancelled) setLiveWeather(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [journey?.destination]);
+
+  // Only a reading for the destination actually on screen may be shown. This
+  // is what removes the need to clear state on every change, and it also stops
+  // a slow response for a previous destination being displayed under a new one
+  // in the moment before the `cancelled` guard fires.
+  const currentWeather =
+    liveWeather && journey?.destination && liveWeather.slug === createSlug(journey.destination)
+      ? liveWeather
+      : null;
+
+  // Formatted once per render rather than twice inside the JSX.
+  const liveConditionsText = formatLiveConditions(currentWeather);
 
   const handleCopyJourney = async () => {
     if (!journey) return;
@@ -657,6 +714,17 @@ function TripPlanner() {
             <span>WEATHER-AWARE PLANNING</span>
             <p>{journey.weatherNote}</p>
           </div>
+
+          {/* Live conditions (scope §52). Appears only once a real reading
+              has arrived. When the provider is unreachable this renders
+              nothing at all and the curated prose above stands on its own —
+              the itinerary was never waiting on this. */}
+          {liveConditionsText && (
+            <div className="journey-live-weather">
+              <span>{liveConditionsLabel(currentWeather)}</span>
+              <p>{liveConditionsText}</p>
+            </div>
+          )}
 
           {journey.personalizedSummary && (
             <div className="journey-personalized-summary">
