@@ -34,8 +34,8 @@ site is called complete as of 5 Oct 2026 (see section 65).
     and database-backed sessions via httpOnly cookies (no localStorage
     tokens, by design).
 -   Destination content, journeys, the journey library and public sharing
-    are all complete and tested. **Two scope items remain open:** the
-    server-side itinerary engine and external weather/maps APIs.
+    are all complete and tested. **No scope items remain open** — everything
+    is either shipped or descoped with its reasoning (see §42, §50, §53, §65).
 -   See `docs/BACKEND_UPGRADE_PLAN.md` for the authoritative current state.
 
 ------------------------------------------------------------------------
