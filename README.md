@@ -42,12 +42,21 @@ so frontend code can call relative `/api` URLs with no CORS setup.
 ```text
 solen/
 ├── README.md                        ← you are here
-├── SOLEN_COMPLETE_SCOPE.md          ← complete scope, status & roadmap
+├── SOLEN_COMPLETE_SCOPE.md          ← complete scope, status & roadmap (closed)
+├── LOCAL_SETUP.md                   ← running SOLEN on a personal PC
 ├── package.json                     ← npm workspaces (frontend + backend)
 ├── .nvmrc / .editorconfig           ← Node 20 + shared editor conventions
 ├── .prettierrc.json / .gitignore
 │
-├── frontend/                        ← React + Vite application (~85–90% done)
+├── docs/
+│   ├── CHANGELOG.md                 ← chronological record of every change
+│   ├── WHERE_WE_ARE.md              ← one-page orientation
+│   ├── BACKEND_UPGRADE_PLAN.md      ← backend scope & status
+│   ├── DEPLOYMENT.md                ← deployment config (unexercised)
+│   └── MOTION_ANALYSIS.md / MOTION_FOUNDATION.md   ← design rules
+│
+├── frontend/                        ← React + Vite application (complete)
+│   ├── README.md                    ← commands + source map
 │   ├── index.html
 │   ├── vite.config.js               ← dev server + /api → :4000 proxy
 │   ├── public/
@@ -58,17 +67,23 @@ solen/
 │   │       └── hero/                ← homepage hero
 │   └── src/
 │       ├── main.jsx                 ← entry point (BrowserRouter)
-│       ├── AppRoutes.jsx            ← route table + scroll restore
+│       ├── AppRoutes.jsx            ← route table (7 routes) + scroll restore
 │       │
 │       ├── pages/                   ← one folder per route
 │       │   ├── home/                ← /                (LOCKED design)
 │       │   ├── destination/         ← /destinations/:slug (LOCKED design)
-│       │   └── planner/             ← /planner (UI + state only)
+│       │   ├── planner/             ← /planner
+│       │   ├── auth/                ← /auth (sign-up / sign-in)
+│       │   ├── journeys/            ← /journeys + /shared/:slug
+│       │   └── notFound/            ← * catch-all
 │       │
 │       ├── components/              ← reusable UI
 │       │   ├── globe/               ← custom CSS globe (SolenGlobe)
-│       │   └── navbar/              ← reserved for a future shared navbar
+│       │   ├── ambient/             ← drifting dust canvas
+│       │   ├── edges/               ← torn-paper chapter seams
+│       │   └── rail/                ← scroll progress rail
 │       │
+│       ├── api/                     ← fetch wrappers for /api
 │       ├── data/                    ← application data (no logic)
 │       │   ├── destinations.js      ← itinerary content, 7 destinations
 │       │   ├── destinationEditorial.js ← editorial detail-page content
@@ -81,21 +96,24 @@ solen/
 │       │   ├── budget.js            ← cost multipliers & daily estimates
 │       │   └── journey.js           ← weather notes & journey assembly
 │       │
+│       ├── utils/                   ← reveal.js
 │       └── styles/                  ← global styles
 │           ├── index.css
+│           ├── motion.css           ← motion tokens + reduced-motion contract
 │           └── responsive.css
 │
-└── backend/                         ← Express + TypeScript + Better Auth (Phase 2–3 merged)
+└── backend/                         ← Express + TypeScript + Better Auth
+    ├── README.md                    ← API reference
     ├── .env.example
     ├── drizzle/                     ← generated SQL migrations (committed)
     ├── data/                        ← local SQLite file (git-ignored)
     └── src/
         ├── server.ts / app.ts       ← entry point + app assembly (auto-migrates DB)
-        ├── auth/auth.ts             ← Better Auth config (email/password, httpOnly cookies)
+        ├── auth/                    ← Better Auth config (email/password, httpOnly cookies)
         ├── config/env.ts            ← environment access
         ├── database/                ← schema.ts (generated), db.ts, migrate.ts
-        ├── routes/                  ← /api routes (health today)
-        ├── controllers/  services/  models/   ← product code lands here
+        ├── routes/                  ← /api routes (journeys, destinations, weather, sharing)
+        ├── controllers/  services/  models/   ← product code
         └── middleware/              ← notFound + errorHandler
 ```
 

@@ -10,8 +10,8 @@
 > Update it whenever state changes.
 >
 > Companion files: `docs/CHANGELOG.md` (what was done and why),
-> `SOLEN_COMPLETE_SCOPE.md` (original scope, partly stale),
-> `HANDOVER.md` + `redesign.md` (earlier UI redesign pass).
+> `SOLEN_COMPLETE_SCOPE.md` (scope and status, closed 5 Oct 2026),
+> `docs/WHERE_WE_ARE.md` (one-page orientation).
 
 ---
 

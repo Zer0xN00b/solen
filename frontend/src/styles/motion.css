@@ -17,8 +17,8 @@
   --motion-stagger: 200ms;      /* arrival-order offsets         150-250 ms */
 
   /* Per-line staged reveal (P4: progressive disclosure).
-     Adapted from the motion reference analysed in
-     .ui-shots/subscrr.css (its rise-blur mechanic), re-skinned
+     Adapted from the motion reference analysed in the reference
+     site's rise-blur mechanic, re-skinned
      onto SOLEN tokens rather than its own 120ms (R1 — tokens
      only, no magic numbers). Kept separate from
      --motion-stagger so the line cadence can be tuned without

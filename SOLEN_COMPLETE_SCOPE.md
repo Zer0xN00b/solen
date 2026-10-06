@@ -80,30 +80,36 @@ Current project structure:
 ``` text
 solen/                          ← npm workspaces monorepo
 ├── package.json                ← shared scripts; allowScripts approvals
+├── README.md                   ← project identity, layout, status
 ├── SOLEN_COMPLETE_SCOPE.md     ← this document
 ├── LOCAL_SETUP.md              ← running SOLEN on a personal PC
 ├── frontend/                   ← React + Vite
+│   ├── README.md               ← frontend commands + source map
 │   ├── public/assets/          ← brand, hero, destinations, experiences
 │   └── src/
 │       ├── main.jsx            ← entry (BrowserRouter)
-│       ├── AppRoutes.jsx       ← route table + scroll restore
-│       ├── pages/              ← home/, destination/, planner/
-│       ├── components/         ← globe/, navbar/
+│       ├── AppRoutes.jsx       ← route table (7 routes) + scroll restore
+│       ├── pages/              ← home/, destination/, planner/, auth/,
+│       │                         journeys/ (library + shared), notFound/
+│       ├── components/         ← ambient/, edges/, globe/, rail/
+│       ├── api/                ← fetch wrappers for /api
 │       ├── data/               ← application data only (no logic)
 │       ├── engine/             ← pure personalization/budget/journey logic
-│       └── styles/             ← index.css, responsive.css
+│       ├── utils/              ← reveal.js
+│       └── styles/             ← index.css, motion.css, responsive.css
 └── backend/                    ← TypeScript + Express 5
+    ├── README.md               ← API reference
     ├── .env.example            ← documented environment variables
     ├── drizzle/                ← committed SQL migrations
     ├── data/                   ← local SQLite file (git-ignored)
     └── src/
         ├── server.ts / app.ts  ← entry point + app assembly
-        ├── auth/auth.ts        ← Better Auth configuration
+        ├── auth/               ← Better Auth configuration
         ├── config/env.ts       ← typed environment access
-        ├── routes/             ← /api routes (health today)
+        ├── routes/ controllers/ services/ models/  ← journey, destination,
+        │                         weather and sharing endpoints
         ├── middleware/         ← notFound + errorHandler
-        ├── database/           ← schema.ts (generated), db.ts, migrate.ts
-        └── controllers/ services/ models/  ← future product code
+        └── database/           ← schema.ts (generated), db.ts, migrate.ts
 ```
 
 ### Frontend code organization rules

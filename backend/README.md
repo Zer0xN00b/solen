@@ -4,8 +4,8 @@ Express 5 + TypeScript + Drizzle ORM + **Better Auth** + SQLite.
 
 Authentication is fully wired (email/password, DB-backed sessions via
 httpOnly cookies — no localStorage tokens). The journeys API (scope §48)
-is live and works both signed-in and anonymously. The destinations API is
-built in a later phase.
+is live and works both signed-in and anonymously, as are the destinations
+and weather APIs below.
 
 ## Commands
 
@@ -113,8 +113,8 @@ backend/
     │   ├── schema.ts      ← Drizzle schema (GENERATED — see below)
     │   ├── db.ts          ← shared SQLite connection + drizzle instance
     │   └── migrate.ts     ← standalone migration runner
-    ├── routes/            ← /api routes (health today; journeys next)
-    ├── controllers/  services/  models/   ← product code lands here
+    ├── routes/            ← /api routes (journeys, destinations, weather)
+    ├── controllers/  services/  models/   ← controllers, validation, queries
     └── middleware/        ← notFound + errorHandler
 ```
 

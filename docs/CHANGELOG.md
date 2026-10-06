@@ -1,5 +1,42 @@
 # SOLEN Changelog
 
+## Workspace cleanup — only current-state documents remain · 2026-10-05
+
+The workspace held documents describing states that no longer exist. Removed:
+
+| File | Why |
+|---|---|
+| `dev.log`, `deverr.log` | Run logs from a September dev session |
+| `.ui-shots/` | Screenshot workspace for a finished UI pass (gitignored; 18 files) |
+| `HANDOVER.md` (root) | Session handover for the 25 Sep redesign, all phases done; describes an uncommitted state at an old HEAD on `main` |
+| `redesign.md` | Living tracker for that same redesign; all four phases marked done |
+| `docs/HANDOVER.md` | 19 Sep handover whose status sections are now wrong (says the backend is scaffolded and auth/journeys are deferred — both shipped) |
+| `docs/ANIMATION_REVIEW_RUBRIC.md` | The 75% gate for scoring user-supplied prototypes; that process is over |
+| `backend/src/{controllers,models,services}/.gitkeep` | Redundant — all three directories hold real files |
+
+`docs/MOTION_ANALYSIS.md` and `docs/MOTION_FOUNDATION.md` were **kept**: they
+are the design rules that still govern every entrance and reveal in the CSS,
+not a record of a past state. MOTION_FOUNDATION's header claiming "no
+individual animations are implemented yet" was corrected.
+
+Seven pointers to the removed files were rewritten rather than left dangling —
+two in live code (`m4Stepper.js`/`.css` cite the rubric score, `motion.css`
+cited a screenshot stylesheet), and five across `CHANGELOG`, `WHERE_WE_ARE`,
+`BACKEND_UPGRADE_PLAN` and the scope doc.
+
+Three structure trees were stale about what is actually in the tree, and now
+match `git ls-files`: the root `README` (showed three pages, a nonexistent
+`components/navbar/`, and no `docs/`), the scope doc's project layout
+(showed `routes/ … health today`), and `backend/README.md` (said the
+destinations API was future work while listing its endpoints below).
+`frontend/README.md` also claimed the engine "can move to the backend later
+(scope §50)" — §50 descoped that relocation.
+
+**Result — eleven documents, all describing the site as it is now:**
+`README`, `SOLEN_COMPLETE_SCOPE`, `LOCAL_SETUP`, `docs/{CHANGELOG,
+WHERE_WE_ARE, BACKEND_UPGRADE_PLAN, DEPLOYMENT, MOTION_ANALYSIS,
+MOTION_FOUNDATION}`, `backend/README`, `frontend/README`.
+
 ## Descope: travel logistics, plus a small clean pass · 2026-10-05
 
 The last feature is off the list, the clean pass has been run, and the scope
@@ -1738,9 +1775,10 @@ user scores belonging. Both votes matter, and the user's is final.
 ## Animation 03 — Experiences horizontal stepper (M4) · 2026-09-18
 
 Status: user-supplied module (rubric score **89/100 — PASS**, first use of
-`ANIMATION_REVIEW_RUBRIC.md`) integrated into the homepage experiences
-section, plus the integration-side cinematic additions the rubric flagged
-as missing. The locked experiences **heading is untouched**; the locked
+the animation review rubric — since retired, 5 Oct 2026 cleanup) integrated
+into the homepage experiences section, plus the integration-side cinematic
+additions the rubric flagged as missing. The locked experiences **heading is
+untouched**; the locked
 **card grid is replaced** by the stepper (the approved mapping target),
 with every card's content and its Discover→planner navigation preserved.
 Recoverable with one git revert if ever wanted back.

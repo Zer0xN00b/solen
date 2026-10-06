@@ -88,8 +88,10 @@ Prettier reformat (never enforced here — running it would rewrite every file).
 
 ## How we work (the deal)
 
-- **You judge, I build.** Your taste is the final vote; the rubric and
-  the reporting rule (file + page-location + before/after) keep me honest.
+- **You judge, I build.** Your taste is the final vote; the reporting rule
+  (file + page-location + before/after) keeps me honest. The animation
+  rubric that used to score prototypes was retired with the workspace
+  cleanup — that phase is over.
 - Nothing ships unverified — I now check my own work in a real
   headless browser before it reaches your eyes.
 - Every decision, lesson and revert lives in `docs/CHANGELOG.md`, so
