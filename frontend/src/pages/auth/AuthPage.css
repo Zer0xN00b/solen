@@ -58,7 +58,7 @@
 .auth-aside-eyebrow {
   margin-bottom: 26px;
 
-  color: #8fa8b8;
+  color: var(--mist);
 
   font-size: 10px;
   font-weight: 600;
@@ -112,7 +112,7 @@
 .auth-signed-in-eyebrow {
   margin-bottom: 18px;
 
-  color: #8fa8b8;
+  color: var(--mist);
 
   font-size: 10px;
   font-weight: 600;
@@ -195,7 +195,7 @@
 }
 
 .auth-panel--checking .auth-message {
-  color: #8fa8b8;
+  color: var(--mist);
   font-size: 13px;
   font-weight: 300;
   letter-spacing: 0.04em;
@@ -224,7 +224,7 @@
   border: 0;
   background: transparent;
 
-  color: rgba(36, 28, 29, 0.45);
+  color: rgba(36, 28, 29, 0.65);
 
   font-size: 11px;
   font-weight: 500;
@@ -283,7 +283,7 @@
   font-weight: 300;
   line-height: 1.7;
 
-  color: rgba(36, 28, 29, 0.6);
+  color: rgba(36, 28, 29, 0.65);
 }
 
 .auth-form {
@@ -327,7 +327,7 @@
 }
 
 .auth-field input::placeholder {
-  color: rgba(36, 28, 29, 0.32);
+  color: rgba(36, 28, 29, 0.65);
 }
 
 .auth-field input:hover {
@@ -402,7 +402,7 @@
 .auth-switch {
   margin-top: 26px;
 
-  color: rgba(36, 28, 29, 0.62);
+  color: rgba(36, 28, 29, 0.65);
 
   font-size: 13px;
   line-height: 1.6;
@@ -434,7 +434,7 @@
 
   border-top: 1px solid rgba(74, 25, 66, 0.12);
 
-  color: rgba(36, 28, 29, 0.48);
+  color: rgba(36, 28, 29, 0.65);
 
   font-size: 12px;
   font-weight: 300;

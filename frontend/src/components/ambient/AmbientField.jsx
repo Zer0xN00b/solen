@@ -3,7 +3,7 @@ import './AmbientField.css';
 
 /**
  * Stage layer 1 — ambient particle field (M5/M6 as permanent chrome).
- * Spec: docs/MOTION_ANALYSIS.md (M5/M6, P5) & docs/MOTION_FOUNDATION.md
+ * Spec: docs-backup/MOTION_ANALYSIS.md (M5/M6, P5) & docs-backup/MOTION_FOUNDATION.md
  * ("The density lesson").
  *
  * Site-wide plum/cream dust on the ambient clock: slow drift, gentle

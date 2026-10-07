@@ -118,7 +118,7 @@ function HomePage() {
       </header>
 
       {/* HERO */}
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <section className="hero">
           <div className="hero-image">
             <img src="/assets/hero/hero-main.webp" alt="A cinematic travel destination" />

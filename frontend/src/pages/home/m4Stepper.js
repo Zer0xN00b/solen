@@ -1,6 +1,6 @@
 /**
  * Animation 03 — M4 Horizontal Stepper (pinned, discrete pushes).
- * Spec: docs/MOTION_ANALYSIS.md (M4) · Handoff: user module, 2026-09-18
+ * Spec: docs-backup/MOTION_ANALYSIS.md (M4) · Handoff: user module, 2026-09-18
  * (scored 89/100 against the animation review rubric — the rubric file
  * itself was retired in the 5 Oct 2026 workspace cleanup).
  *

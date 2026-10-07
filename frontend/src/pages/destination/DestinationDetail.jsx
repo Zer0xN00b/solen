@@ -53,7 +53,7 @@ function DestinationDetail() {
   }
 
   return (
-    <main className="destination-detail">
+    <main className="destination-detail" id="main-content" tabIndex={-1}>
       {/* =========================
           LOCKED DESTINATION HERO
           ========================= */}

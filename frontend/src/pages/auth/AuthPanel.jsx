@@ -99,7 +99,7 @@ function AuthPanel({
             autoComplete={isSignUp ? 'new-password' : 'current-password'}
             value={password}
             onChange={(event) => onPasswordChange(event.target.value)}
-            placeholder={isSignUp ? 'At least 8 characters' : '••••••••'}
+            placeholder={isSignUp ? 'At least 8 characters' : ''}
             required
           />
         </div>

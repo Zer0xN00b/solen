@@ -116,7 +116,7 @@
 .planner-step-number {
   font-size: 0.68rem;
   letter-spacing: 0.2em;
-  color: #8fa8b8;
+  color: var(--mist);
   margin: 0 0 20px;
 }
 
@@ -167,7 +167,7 @@
 
 .planner-destination-option span:last-child {
   text-align: right;
-  opacity: 0.5;
+  opacity: 0.65;
 }
 
 .planner-destination-option:hover,
@@ -214,7 +214,7 @@
   font-size: 0.68rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #8fa8b8;
+  color: var(--mist);
 }
 
 .planner-duration-option:hover,
@@ -225,9 +225,10 @@
   padding-right: 20px;
 }
 
+/* On plum when selected/hovered — light tone (see token notes). */
 .planner-duration-option:hover small,
 .planner-duration-option.selected small {
-  color: #8fa8b8;
+  color: var(--mist-light);
 }
 
 /* NAVIGATION */
@@ -309,7 +310,7 @@
 }
 
 .planner-interest-option span:last-child {
-  color: #8fa8b8;
+  color: var(--mist);
   font-size: 1rem;
 }
 
@@ -320,6 +321,7 @@
   padding-left: 26px;
 }
 
+.planner-interest-option:hover span:last-child,
 .planner-interest-option.selected span:last-child {
   color: #faf7f1;
 }
@@ -345,7 +347,7 @@
 .planner-budget-top span {
   font-size: 0.68rem;
   letter-spacing: 0.14em;
-  color: #8fa8b8;
+  color: var(--mist);
 }
 
 /* Full track/thumb paint lives in the BUDGET SLIDER block further down;
@@ -361,7 +363,7 @@
   margin-top: 14px;
   font-size: 0.68rem;
   letter-spacing: 0.08em;
-  color: rgba(36, 28, 29, 0.55);
+  color: rgba(36, 28, 29, 0.65);
 }
 
 .planner-premium-option {
@@ -397,11 +399,11 @@
 .planner-premium-option > div > span {
   font-size: 0.72rem;
   letter-spacing: 0.04em;
-  color: rgba(36, 28, 29, 0.55);
+  color: rgba(36, 28, 29, 0.65);
 }
 
 .planner-premium-option > span:last-child {
-  color: #8fa8b8;
+  color: var(--mist);
 }
 
 .planner-premium-option:hover,
@@ -416,6 +418,13 @@
 .planner-premium-option:hover > div > span,
 .planner-premium-option.selected > div > span {
   color: rgba(250, 247, 241, 0.65);
+}
+
+/* The trailing label sits on the plum hover/selected ground, where the
+   dark mist token would fail — flip to the light tone like the rest. */
+.planner-premium-option:hover > span:last-child,
+.planner-premium-option.selected > span:last-child {
+  color: var(--mist-light);
 }
 
 .planner-currency {
@@ -505,7 +514,7 @@
 
 .planner-crafting > p:not(.planner-eyebrow) {
   max-width: 520px;
-  color: rgba(36, 28, 29, 0.6);
+  color: rgba(36, 28, 29, 0.65);
   line-height: 1.8;
 }
 
@@ -576,7 +585,7 @@
 }
 
 .journey-header > p:not(.planner-eyebrow) {
-  color: rgba(36, 28, 29, 0.6);
+  color: rgba(36, 28, 29, 0.65);
   letter-spacing: 0.08em;
   font-size: 0.8rem;
   text-transform: uppercase;
@@ -644,7 +653,7 @@
   display: block;
   font-size: 0.65rem;
   letter-spacing: 0.18em;
-  color: #8fa8b8;
+  color: var(--mist);
   margin-bottom: 14px;
 }
 
@@ -666,10 +675,11 @@
   margin-bottom: 100px;
 }
 
+/* On the plum note — light tone; dark mist would fail here. */
 .journey-premium-note > span {
   font-size: 0.65rem;
   letter-spacing: 0.2em;
-  color: #8fa8b8;
+  color: var(--mist-light);
 }
 
 .journey-premium-note strong {
@@ -721,7 +731,7 @@
 .journey-day-label {
   font-size: 0.62rem;
   letter-spacing: 0.18em;
-  color: #8fa8b8;
+  color: var(--mist);
   margin: 0 0 8px;
 }
 
@@ -765,7 +775,7 @@
 .journey-day-meta span {
   font-size: 0.62rem;
   letter-spacing: 0.15em;
-  color: #8fa8b8;
+  color: var(--mist);
 }
 
 .journey-day-meta strong {
@@ -1069,7 +1079,7 @@
 
 .journey-preferences p {
   margin: 0;
-  color: rgba(36, 28, 29, 0.62);
+  color: rgba(36, 28, 29, 0.65);
   font-size: 0.9rem;
   line-height: 1.7;
 }
@@ -1080,7 +1090,7 @@
   padding: 0;
   border: none;
   background: transparent;
-  color: rgba(36, 28, 29, 0.45);
+  color: rgba(36, 28, 29, 0.65);
   font-size: 0.68rem;
   letter-spacing: 0.06em;
   text-decoration: underline;
@@ -1119,7 +1129,7 @@
 .journey-total-estimate span {
   font-size: 0.6rem;
   letter-spacing: 0.16em;
-  color: #8fa8b8;
+  color: var(--mist);
 }
 
 .journey-total-estimate strong {
@@ -1187,7 +1197,7 @@
 .journey-route-intro {
   max-width: 620px;
   margin: -4px auto 34px;
-  color: rgba(36, 28, 29, 0.58);
+  color: rgba(36, 28, 29, 0.65);
   font-size: 0.9rem;
   line-height: 1.7;
   text-align: center;
@@ -1271,7 +1281,7 @@
 
 .journey-route-day {
   margin-bottom: 3px;
-  color: #8fa8b8;
+  color: var(--mist);
   font-size: 0.58rem;
   letter-spacing: 0.18em;
 }
@@ -1284,12 +1294,14 @@
 
 .journey-route-copy small {
   margin-top: 2px;
-  color: rgba(36, 28, 29, 0.54);
+  color: rgba(36, 28, 29, 0.65);
   font-size: 0.76rem;
 }
 
 .journey-route-heart {
-  color: rgba(74, 25, 66, 0.38);
+  /* Meaningful state glyph (♥/♡, aria-labelled) — needs 3:1 as a
+     non-text control; 0.38 measured ~1.9:1, 0.55 measures ~3.4:1. */
+  color: rgba(74, 25, 66, 0.55);
   font-size: 1.15rem;
   text-align: center;
 }
@@ -1300,7 +1312,7 @@
 
 .journey-route-note {
   margin: 20px 0 0;
-  color: rgba(36, 28, 29, 0.42);
+  color: rgba(36, 28, 29, 0.65);
   font-size: 0.68rem;
   letter-spacing: 0.05em;
   text-align: center;

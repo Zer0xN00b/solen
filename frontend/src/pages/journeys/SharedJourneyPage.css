@@ -72,7 +72,7 @@
 .shared-status {
   padding-top: clamp(48px, 8vw, 96px);
 
-  color: #8fa8b8;
+  color: var(--mist);
 
   font-size: 13px;
   font-weight: 300;
@@ -82,7 +82,7 @@
 .shared-eyebrow {
   margin-bottom: 24px;
 
-  color: #8fa8b8;
+  color: var(--mist);
 
   font-size: 10px;
   font-weight: 600;
@@ -207,7 +207,7 @@
 .shared-day-number {
   margin-bottom: 12px;
 
-  color: #8fa8b8;
+  color: var(--mist);
 
   font-size: 10px;
   font-weight: 600;
@@ -280,7 +280,7 @@
 .shared-detail-label {
   margin-bottom: 8px;
 
-  color: #8fa8b8;
+  color: var(--mist);
 
   font-size: 10px;
   font-weight: 600;

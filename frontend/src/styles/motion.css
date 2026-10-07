@@ -1,11 +1,11 @@
 /* ============================================================
    SOLEN MOTION FOUNDATION
-   Spec: docs/MOTION_ANALYSIS.md (principles P1-P7, timings §17)
+   Spec: docs-backup/MOTION_ANALYSIS.md (principles P1-P7, timings §17)
 
    This file is VOCABULARY, not choreography. It defines tokens,
    one opt-in reveal primitive, and the reduced-motion contract.
    Individual animations live co-located with their page and must
-   reference these tokens (rule R1 in docs/MOTION_FOUNDATION.md).
+   reference these tokens (rule R1 in docs-backup/MOTION_FOUNDATION.md).
    ============================================================ */
 
 :root {

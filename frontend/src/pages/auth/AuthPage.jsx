@@ -125,7 +125,7 @@ function AuthPage() {
   };
 
   return (
-    <main className="auth-page">
+    <main className="auth-page" id="main-content" tabIndex={-1}>
       <header className="auth-header">
         <Link to="/" className="auth-brand">
           SOLEN

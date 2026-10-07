@@ -17,7 +17,13 @@
   --cream: #faf7f1;
   --ink: #241c1d;
   --plum: #4a1942;
-  --mist: #8fa8b8;
+  /* Mist doubles as the small-label colour on light grounds, where the
+     original #8fa8b8 measured only ~2.3:1 (WCAG AA needs 4.5:1 at these
+     sizes). Darkened, hue kept. --mist-light preserves the original tone
+     for labels that sit ON plum — light-on-dark there already passes
+     (~5.6:1), and darkening them would invert the problem. */
+  --mist: #4f6b80;
+  --mist-light: #8fa8b8;
 
   /* Hairlines over shadows (skill §1.2). */
   --rule-plum: rgba(74, 25, 66, 0.15);
@@ -25,9 +31,10 @@
   --rule-cream: rgba(250, 247, 241, 0.25);
   --rule-cream-faint: rgba(250, 247, 241, 0.15);
 
-  /* Translucent brand wash for ambient section grounds. An alpha
-     variant of the token above, same rationale as --rule-*: a brand
-     change here should still land in one place. */
+  /* Translucent brand wash for ambient section grounds — decorative,
+     never text. Deliberately keeps the ORIGINAL light mist tone
+     (rgba 143,168,184) even though --mist was darkened for text
+     contrast; a brand change here should still land in one place. */
   --wash-mist: rgba(143, 168, 184, 0.22);
 
   /* Photographic ambient grounds. Path lives here (not in the
@@ -65,6 +72,15 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+/* Smooth scrolling is motion — the reduced-motion contract (motion.css
+   R7) must cover it too. The planner already forces auto locally; this
+   is the site-wide half, which also covers the skip link's jump. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
@@ -108,4 +124,39 @@ a {
 .solen-globe-stage :focus-visible,
 .m4-stepper.is-dark :focus-visible {
   outline-color: #faf7f1;
+}
+
+/* ------------------------------------------------------------
+   SKIP LINK — first focusable element on every route
+   (AppRoutes.jsx; target id on each page's <main>). Parked
+   above the viewport until focused; transform keeps it out of
+   flow so nothing shifts when it appears.
+   ------------------------------------------------------------ */
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+
+  padding: 12px 20px;
+
+  background: var(--plum);
+  color: var(--cream);
+
+  font-size: 14px;
+  letter-spacing: 0.04em;
+
+  transform: translateY(-250%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* The skip link hands focus to <main> (tabIndex -1) so the next Tab
+   continues from inside the content. A focus ring around the whole
+   landmark would be page-sized noise — the visible skip link already
+   told the keyboard user where they landed. */
+#main-content:focus {
+  outline: none;
 }

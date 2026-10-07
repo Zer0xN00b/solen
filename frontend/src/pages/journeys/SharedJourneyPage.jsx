@@ -73,7 +73,7 @@ function SharedJourneyPage() {
   const facts = payload ? describe(payload) : [];
 
   return (
-    <main className="shared-page">
+    <main className="shared-page" id="main-content" tabIndex={-1}>
       <header className="shared-header">
         <Link to="/" className="shared-brand">
           SOLEN

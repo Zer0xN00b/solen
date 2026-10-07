@@ -1,6 +1,6 @@
 /**
  * Stage layer 3 upgrade — M1 scroll-driven wipe (2026-09-19).
- * Spec: docs/MOTION_ANALYSIS.md (M1): torn wipe, scroll-driven, no
+ * Spec: docs-backup/MOTION_ANALYSIS.md (M1): torn wipe, scroll-driven, no
  * hijacking. The static v1 tears now RISE over the previous chapter
  * as their seam enters the viewport: at entry the tear sits +100px
  * low (invisible against the next chapter's identical ground), and

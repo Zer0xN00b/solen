@@ -16,7 +16,7 @@ import './NotFoundPage.css';
  */
 function NotFoundPage() {
   return (
-    <main className="not-found">
+    <main className="not-found" id="main-content" tabIndex={-1}>
       <header className="not-found-header">
         <Link to="/" className="not-found-brand">
           SOLEN

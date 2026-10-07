@@ -164,7 +164,7 @@ function JourneysPage() {
   }, [reloadToken]);
 
   return (
-    <main className="journeys-page">
+    <main className="journeys-page" id="main-content" tabIndex={-1}>
       <header className="journeys-header">
         <Link to="/" className="journeys-brand">
           SOLEN

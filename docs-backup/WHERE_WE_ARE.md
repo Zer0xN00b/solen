@@ -57,8 +57,6 @@ every piece is one git revert away from undo.
   (§42), with the reasoning on the record. Cost transparency was already built.
 - **Prettier.** Never enforced in this repo; running it would rewrite every
   file for no behavioural gain.
-- **Skip-to-content link + formal WCAG contrast audit.** Real work, but
-  beyond a small clean pass — recorded in §40 as optional.
 
 **Live weather** is *conditions*-aware, not *forecast*-aware — there is no
 outdoor/indoor reselection or clothing logic behind it, by design (§52).
@@ -77,14 +75,19 @@ outdoor/indoor reselection or clothing logic behind it, by design (§52).
   favourite-heart tap target taken to 44px, meta description added, and all
   eight pages swept for alt text, button types, labels, landmarks, focus
   states, motion, assets and stray debug output.
+- **Final polish (7 Oct)** — the two §40 optionals landed: a
+  skip-to-content link on every route, and the WCAG contrast audit (mist
+  token darkened for light grounds, low-alpha label text raised, heart
+  glyph to the 3:1 icon minimum). Plus a site-wide reduced-motion guard on
+  smooth scrolling.
 - **66 tests**, and a deployment config.
 
 **Nothing open.** The clean pass has been run (scope §61) and the scope is
 closed — SOLEN is called **complete** as of 2026-10-05.
 
-Optional extras, if anyone ever wants to go past "complete": a
-skip-to-content link and a formal WCAG contrast audit (scope §40), and the
-Prettier reformat (never enforced here — running it would rewrite every file).
+Optional extras, if anyone ever wants to go past "complete": the Prettier
+reformat (never enforced here — running it would rewrite every file).
+The skip link and the contrast audit from scope §40 shipped on 7 Oct.
 
 ## How we work (the deal)
 

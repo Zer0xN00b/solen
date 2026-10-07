@@ -1,5 +1,59 @@
 # SOLEN Changelog
 
+## Final polish — skip link, reduced-motion scroll, contrast audit · 2026-10-07
+
+A UI/UX Pro Max skill review against its pre-delivery checklist found three
+real gaps — the two §40 optionals and a missing motion guard. All three fixed.
+
+**1. Skip-to-content link (scope §40 optional — now shipped).**
+`frontend/src/AppRoutes.jsx` renders `<a className="skip-link" href="#main-content">`
+as the first focusable element on every route. Every page `<main>` — all ten
+render sites, including TripPlanner's four states — carries
+`id="main-content" tabIndex={-1}` so the jump hands focus into the content and
+the next Tab continues from there. Styles live in `styles/index.css`;
+`#main-content:focus` deliberately drops the outline (a ring around the whole
+landmark would be page-sized noise — the visible skip link already says where
+you landed).
+
+**2. Smooth scroll was outside the reduced-motion contract.**
+`html { scroll-behavior: smooth; }` had no site-wide `prefers-reduced-motion`
+guard — only TripPlanner's local block forced `auto`. Guard added next to the
+rule in `styles/index.css`; the built CSS carries both.
+
+**3. Contrast pass — the §40 audit.** Computed WCAG luminance ratios
+(4.5:1 text, 3:1 for the heart glyph):
+
+- `--mist` `#8fa8b8` computes to **2.3:1** on oatmeal/cream at 10–13px — and
+  it is the eyebrow/label tone used ~28 times. Darkened to `#4f6b80`
+  (4.7:1 oatmeal, 5.2:1 cream), hue kept. The four labels that sit **on plum**
+  (destination-plan eyebrow, premium note, duration hover/selected small,
+  premium trailing label) keep the light tone via a new `--mist-light` —
+  light-on-dark already passes (~5.6:1) there, so darkening would invert the
+  failure. Hover/selected overrides added where a ground flips to plum mid-
+  interaction (interest option, premium option).
+- Low-alpha ink text `rgba(36, 28, 29, 0.42–0.62)` raised to `0.65`
+  (≈4.9:1) wherever it is real copy: auth tabs/subtitle/notice, planner step
+  copy and budget labels, crafting and route text, globe paragraph and chips.
+- Opacity failures: footer bottom 0.45→0.6, M4 index label 0.6→0.7,
+  M4 CTA hover 0.6→0.7, destination region sublabel 0.5→0.65.
+- Favourite-heart glyph `rgba(74, 25, 66, 0.38)` → `0.55` (~1.9:1 → ~3.4:1,
+  the non-text minimum for a meaningful icon).
+- The password field's fake-bullets placeholder is gone: at the corrected
+  placeholder contrast it would read as a filled password at rest. The
+  sign-up hint stays.
+
+**Verification:** `npm run lint` clean; `npm run build` clean (`.skip-link`
+and the scroll guard both present in built CSS); `npm test` 66/66. Headless
+Chrome DOM dumps of `/`, `/planner`, `/auth`, `/journeys` and an unknown
+route each show exactly one skip link and one focusable `#main-content`.
+
+**Defect caught and repaired during this pass:** the first attempt at the
+bulk CSS sweep used a PowerShell `-replace` loop whose single-rule arrays
+unrolled, turning every `c` into `o` in four stylesheets
+(`JourneysPage.css`, `SharedJourneyPage.css`, `NotFoundPage.css`,
+`SolenGlobe.css`). Restored with `git checkout` and re-applied by hand; a
+repo-wide search confirms no `oolor`/`olamp`/`spaoing` residue remains.
+
 ## Workspace cleanup — only current-state documents remain · 2026-10-05
 
 The workspace held documents describing states that no longer exist. Removed:

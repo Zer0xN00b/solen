@@ -76,7 +76,7 @@
 .journeys-eyebrow {
   margin-bottom: 26px;
 
-  color: #8fa8b8;
+  color: var(--mist);
 
   font-size: 10px;
   font-weight: 600;
@@ -112,7 +112,7 @@
 /* ---------- states ---------- */
 
 .journeys-status {
-  color: #8fa8b8;
+  color: var(--mist);
 
   font-size: 13px;
   font-weight: 300;
@@ -271,7 +271,7 @@
 
   gap: 0 18px;
 
-  color: #8fa8b8;
+  color: var(--mist);
 
   font-size: 12px;
   font-weight: 300;
@@ -360,7 +360,7 @@
 
   border-color: transparent;
 
-  color: #8fa8b8;
+  color: var(--mist);
 }
 
 .journeys-item-delete:hover:not(:disabled) {
@@ -429,7 +429,7 @@
 
   overflow-wrap: anywhere;
 
-  color: #8fa8b8;
+  color: var(--mist);
 
   font-size: 11px;
   font-weight: 300;

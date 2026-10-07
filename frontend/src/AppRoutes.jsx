@@ -24,6 +24,13 @@ function ScrollToTop() {
 function AppRoutes() {
   return (
     <>
+      {/* First focusable element on every route: keyboard users skip the
+          navbar and land in the page content (WCAG skip-links). The target
+          id lives on each page's <main>. */}
+      <a className="skip-link" href="#main-content">
+        Skip to main content
+      </a>
+
       <ScrollToTop />
 
       {/* Stage layer 1 — site-wide ambient particle field. */}

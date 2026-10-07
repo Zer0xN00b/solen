@@ -1,8 +1,8 @@
 # SOLEN Frontend
 
 React 19 + Vite frontend for the SOLEN luxury travel concierge.
-See the [repository README](../README.md) for the full project layout and
-the [scope doc](../SOLEN_COMPLETE_SCOPE.md) for feature status.
+See the [repository README](../docs-backup/README.md) for the full project layout and
+the [scope doc](../docs-backup/SOLEN_COMPLETE_SCOPE.md) for feature status.
 
 ## Commands
 

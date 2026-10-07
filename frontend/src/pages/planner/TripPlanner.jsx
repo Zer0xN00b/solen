@@ -610,7 +610,7 @@ function TripPlanner() {
 
   if (isCrafting) {
     return (
-      <main className="planner-page">
+      <main className="planner-page" id="main-content" tabIndex={-1}>
         <section className="planner-crafting">
           <p className="planner-eyebrow">SOLEN</p>
 
@@ -632,7 +632,7 @@ function TripPlanner() {
   // styles, so it adds an explanation and a way out — not new chrome.
   if (craftError) {
     return (
-      <main className="planner-page">
+      <main className="planner-page" id="main-content" tabIndex={-1}>
         <section className="planner-crafting">
           <p className="planner-eyebrow">SOMETHING WENT WRONG</p>
 
@@ -663,7 +663,7 @@ function TripPlanner() {
 
   if (journey) {
     return (
-      <main className="planner-page">
+      <main className="planner-page" id="main-content" tabIndex={-1}>
         <section className="journey-results">
           <div className="journey-header">
             <p className="planner-eyebrow">YOUR JOURNEY</p>
@@ -974,7 +974,7 @@ function TripPlanner() {
   }
 
   return (
-    <main className="planner-page">
+    <main className="planner-page" id="main-content" tabIndex={-1}>
       <section className="planner-hero">
         <p className="planner-eyebrow">THE SOLEN PLANNER</p>
 

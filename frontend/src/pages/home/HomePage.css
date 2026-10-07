@@ -1025,7 +1025,9 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
 
-  opacity: 0.45;
+  /* 0.45 failed even the 3:1 large-text bar on the dark footer;
+     0.6 clears 4.5:1 for cream-on-ink at this size. */
+  opacity: 0.6;
 }
 
 /* =========================================================
@@ -1260,7 +1262,7 @@
 
 /* ==========================================================================
    Animation 01 — Hero headline per-word blur-in (M3)
-   Spec: docs/MOTION_ANALYSIS.md (M3) · Handoff: user prototype, 2026-09-17.
+   Spec: docs-backup/MOTION_ANALYSIS.md (M3) · Handoff: user prototype, 2026-09-17.
    Tokens come from styles/motion.css (not redefined here, per R1).
    Design (typography / colour / layout) untouched.
    ========================================================================== */
@@ -1331,7 +1333,7 @@ html.js .hero h1[data-animation='m3-blur-in'] .word:nth-of-type(7) { transition-
 
 /* ==========================================================================
    Animation 05 — M8 accent word on the intro statement
-   Spec: docs/MOTION_ANALYSIS.md (M8). The statement reveals via the
+   Spec: docs-backup/MOTION_ANALYSIS.md (M8). The statement reveals via the
    foundation [data-reveal] primitive; the final word ("personal.")
    blooms to plum AFTER the line settles — the accent lands last.
    Design (typography/layout) untouched; colour only.
