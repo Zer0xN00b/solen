@@ -1,5 +1,5 @@
-// Traveller personalization logic (Scope doc §17-19).
-// Pure functions: no React, no DOM - portable to the backend later (§50).
+﻿// Traveller personalization logic (Scope doc §17-19).
+// Pure functions: no React, no DOM. The engine lives here by decision (see scope section 50).
 
 import { experiences } from '../data/plannerOptions.js';
 

@@ -9,14 +9,26 @@ import {
   currencies,
   experiences,
 } from '../../data/plannerOptions.js';
-import { itineraryData } from '../../data/destinations.js';
+import {
+  getItinerary,
+  loadDestinationContent,
+} from '../../data/destinationSource.js';
 import {
   createSlug,
   getTravelerProfile,
   getPersonalizedSummary,
 } from '../../engine/personalization.js';
 import { getJourneyDailyEstimate } from '../../engine/budget.js';
-import { getWeatherAwareNote, buildJourneyDays } from '../../engine/journey.js';
+import { getWeatherAwareNote, buildJourneyDays, normalizeJourney } from '../../engine/journey.js';
+import { formatLiveConditions, liveConditionsLabel } from '../../engine/liveWeather.js';
+import { weather as weatherApi } from '../../api/client.js';
+import {
+  clearSavedJourney,
+  hasSavedJourney as hasAnySavedJourney,
+  loadLatestJourney,
+  loadJourneyById,
+  saveJourney,
+} from '../../api/journeyStorage.js';
 
 function TripPlanner() {
   const [searchParams] = useSearchParams();
@@ -33,9 +45,27 @@ function TripPlanner() {
   const [isCrafting, setIsCrafting] = useState(false);
   const [journey, setJourney] = useState(null);
   const [hasSavedJourney, setHasSavedJourney] = useState(false);
+  // Id of the API row backing the saved journey. Needed so "Remove
+  // saved journey" deletes the real row rather than only the browser's
+  // copy — without it, removing would leave the journey in the account.
+  const [savedJourneyId, setSavedJourneyId] = useState(null);
+  // True once a journey was opened by deep link from the library. While it
+  // holds, the generic "Resume saved journey" button is suppressed — it would
+  // load rows[0] (the newest journey), which is a *different* journey from the
+  // one already on screen.
+  const [openedFromLibrary, setOpenedFromLibrary] = useState(false);
+  // Save is now an async round trip; without this the button would let a
+  // second click fire a duplicate create before the first resolves.
+  const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
   const [copyMessage, setCopyMessage] = useState('');
   const [shareMessage, setShareMessage] = useState('');
+  // Live conditions for the crafted destination (scope §52). Starts null and
+  // stays null when the provider is unreachable — the curated prose is
+  // already on screen, so there is nothing to show until a real reading
+  // arrives. Never an error state: an unreachable provider is an expected
+  // outcome here, not something to apologize for on screen.
+  const [liveWeather, setLiveWeather] = useState(null);
   const [favoriteDays, setFavoriteDays] = useState([]);
   const [regeneratingDay, setRegeneratingDay] = useState(null);
 
@@ -48,9 +78,21 @@ function TripPlanner() {
   // One-time mount initialization: restore the saved journey flag and apply
   // homepage URL preselection (?destination / ?experience / ?feeling).
   useEffect(() => {
-    const saved = localStorage.getItem('solenSavedJourney');
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setHasSavedJourney(Boolean(saved));
+    // Fetch destination content from the API. This is a refresh, not a gate:
+    // the source module is already serving the bundled values, so the wizard
+    // is fully usable before this resolves and nothing on screen waits on it.
+    loadDestinationContent();
+
+    // Now an async check against the API (with a localStorage fallback),
+    // so the flag reflects the API rather than just this browser's copy.
+    // `cancelled` guards the state update: the effect re-runs when
+    // searchParams changes, and a slow response from a superseded run
+    // must not overwrite a newer one.
+    let cancelled = false;
+
+    hasAnySavedJourney().then((has) => {
+      if (!cancelled) setHasSavedJourney(has);
+    });
 
     const destinationParam = searchParams.get('destination');
     const experienceParam = searchParams.get('experience');
@@ -62,6 +104,12 @@ function TripPlanner() {
       );
 
       if (matchingDestination) {
+        // Pre-existing: these URL-preselection setters are synchronous
+        // and intentional (they seed the wizard from the homepage link).
+        // The saved-journey check above no longer needs a suppression —
+        // it runs in a promise callback — so the directive moved here,
+        // where the rule actually fires.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setDestination(matchingDestination);
       }
     }
@@ -83,6 +131,10 @@ function TripPlanner() {
     if (feelingParam && feelingMap[feelingParam]) {
       setTravelStyle(feelingMap[feelingParam]);
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, [searchParams]);
 
   const selectedCurrency = currencies.find((item) => item.code === currency);
@@ -108,9 +160,14 @@ function TripPlanner() {
   };
 
   const createJourney = () => {
-    const data = itineraryData[destination];
+    const data = getItinerary()[destination];
 
-    if (!data) {
+    // No record at all, OR a record with no day blocks. The second case was
+    // missed by the original check: `data` is truthy for a destination that
+    // exists in the database but has an empty itinerary, so it sailed past
+    // here and then crashed inside buildJourneyDays — bypassing the
+    // craftError path that exists precisely to explain this situation.
+    if (!data || !Array.isArray(data.days) || data.days.length === 0) {
       return null;
     }
 
@@ -174,7 +231,7 @@ function TripPlanner() {
         'This destination doesn’t have itinerary data yet. Choose another place and we’ll craft the journey around it.',
       );
     } else {
-      setJourney(newJourney);
+      setJourney(normalizeJourney(newJourney));
     }
 
     setIsCrafting(false);
@@ -192,63 +249,153 @@ function TripPlanner() {
     setTimeout(craftJourneyOrFail, 2400);
   };
 
-  const handleSaveJourney = () => {
-    if (!journey) return;
-
-    localStorage.setItem(
-      'solenSavedJourney',
-      JSON.stringify({
-        journey,
-        isPremiumPlus,
-        favoriteDays,
-      }),
-    );
-
-    setHasSavedJourney(true);
-    setSaveMessage('Saved to this browser ✓');
+  const flashSaveMessage = (message) => {
+    setSaveMessage(message);
 
     setTimeout(() => {
       setSaveMessage('');
     }, 2500);
   };
 
-  const handleResumeJourney = () => {
-    const saved = localStorage.getItem('solenSavedJourney');
+  const handleSaveJourney = async () => {
+    if (!journey || isSaving) return;
 
-    if (!saved) return;
+    setIsSaving(true);
 
-    try {
-      const parsed = JSON.parse(saved);
+    // The API is the source of truth; journeyStorage falls back to
+    // localStorage if it's unreachable. The confirmation copy reports
+    // which actually happened rather than always claiming the cloud.
+    const result = await saveJourney({
+      journey,
+      isPremiumPlus,
+      favoriteDays,
+    });
 
-      if (parsed.journey) {
-        setJourney(parsed.journey);
-        setDestination(parsed.journey.destination || '');
-        setDuration(parsed.journey.duration || '');
-        setTravelStyle(parsed.journey.travelStyle || '');
-        setSelectedInterests(parsed.journey.interests || []);
-        setBudget(parsed.journey.budget || 3000);
-        setCurrency(parsed.journey.currency || 'INR');
-        setSelectedExperience(
-          parsed.journey.experience
-            ? Object.keys(experiences).find(
-                (key) => experiences[key].name === parsed.journey.experience.name,
-              ) || ''
-            : '',
-        );
-        setIsPremiumPlus(Boolean(parsed.isPremiumPlus));
-        setFavoriteDays(Array.isArray(parsed.favoriteDays) ? parsed.favoriteDays : []);
-        setStep(6);
-        setSaveMessage('Welcome back to your journey ✓');
+    setIsSaving(false);
+    setHasSavedJourney(true);
+    setSavedJourneyId(result.journey?.id ?? null);
 
-        setTimeout(() => {
-          setSaveMessage('');
-        }, 2500);
-      }
-    } catch {
-      localStorage.removeItem('solenSavedJourney');
-      setHasSavedJourney(false);
-    }
+    flashSaveMessage(
+      result.target === 'api' ? 'Saved to your library ✓' : 'Saved to this browser ✓',
+    );
   };
+
+  /**
+   * Applies a normalized journey envelope to wizard state and jumps to the
+   * result step.
+   *
+   * Extracted from handleResumeJourney so "resume the latest" and "resume the
+   * one named in ?journey=" cannot drift apart — the earlier version had this
+   * inline, which meant the new path would have been a second copy of a
+   * nine-setter block waiting to diverge.
+   */
+  const applyJourney = (parsed) => {
+    const resumed = parsed.journey;
+
+    setJourney(normalizeJourney(resumed));
+    setDestination(resumed.destination || '');
+    setDuration(resumed.duration || '');
+    setTravelStyle(resumed.travelStyle || '');
+    setSelectedInterests(resumed.interests || []);
+    setBudget(resumed.budget || 3000);
+    setCurrency(resumed.currency || 'INR');
+    setSelectedExperience(
+      resumed.experience
+        ? Object.keys(experiences).find((key) => experiences[key].name === resumed.experience.name) || ''
+        : '',
+    );
+    setIsPremiumPlus(Boolean(parsed.isPremiumPlus));
+    setFavoriteDays(Array.isArray(parsed.favoriteDays) ? parsed.favoriteDays : []);
+
+    // Remember the row id so "Remove saved journey" deletes the API row
+    // rather than only clearing this browser's copy.
+    setSavedJourneyId(parsed.id ?? null);
+
+    setStep(6);
+  };
+
+  const handleResumeJourney = async () => {
+    const parsed = await loadLatestJourney();
+
+    if (!parsed?.journey) return;
+
+    applyJourney(parsed);
+    flashSaveMessage('Welcome back to your journey ✓');
+  };
+
+  // Deep link from the journey library: /planner?journey=<id> opens one
+  // specific saved journey. Needed because "resume latest" always loads
+  // rows[0], so without this the library's Open button would silently open
+  // the wrong journey for every row except the newest.
+  //
+  // Declared here rather than alongside the mount effect above because it
+  // depends on `applyJourney` and `flashSaveMessage`.
+  useEffect(() => {
+    const journeyParam = searchParams.get('journey');
+    if (!journeyParam) return undefined;
+
+    let cancelled = false;
+
+    loadJourneyById(journeyParam).then((parsed) => {
+      if (cancelled || !parsed?.journey) return;
+      applyJourney(parsed);
+      flashSaveMessage('Welcome back to your journey ✓');
+      setOpenedFromLibrary(true);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [searchParams]);
+
+  // Live conditions for the journey on screen (scope §52).
+  //
+  // Fetched per destination rather than at craft time, so opening a saved or
+  // shared journey shows live conditions too. The server keys its cache on
+  // coordinates, so revisiting a destination costs no upstream call.
+  //
+  // `cancelled` guards the same way the loaders above do: switching
+  // destination mid-flight would otherwise let the slower response land last
+  // and overwrite the newer journey's weather.
+  useEffect(() => {
+    if (!journey?.destination) return undefined;
+
+    let cancelled = false;
+
+    // No synchronous setState here on purpose. Clearing `liveWeather` in the
+    // effect body would cascade a render on every destination change, and it
+    // buys nothing: the response carries its own slug, so a reading for the
+    // previous destination is recognised as stale at render time below rather
+    // than being erased first.
+    weatherApi
+      .destination(createSlug(journey.destination))
+      .then((payload) => {
+        if (cancelled) return;
+        setLiveWeather(payload?.weather ?? null);
+      })
+      // A rejected promise here means the API itself was unreachable, not
+      // merely the upstream provider. Leave the curated prose standing — the
+      // planner must not surface a third-party failure as a broken journey.
+      .catch(() => {
+        if (!cancelled) setLiveWeather(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [journey?.destination]);
+
+  // Only a reading for the destination actually on screen may be shown. This
+  // is what removes the need to clear state on every change, and it also stops
+  // a slow response for a previous destination being displayed under a new one
+  // in the moment before the `cancelled` guard fires.
+  const currentWeather =
+    liveWeather && journey?.destination && liveWeather.slug === createSlug(journey.destination)
+      ? liveWeather
+      : null;
+
+  // Formatted once per render rather than twice inside the JSX.
+  const liveConditionsText = formatLiveConditions(currentWeather);
 
   const handleCopyJourney = async () => {
     if (!journey) return;
@@ -378,7 +525,7 @@ function TripPlanner() {
   const handleRegenerateDay = (dayIndex) => {
     if (!journey || regeneratingDay !== null) return;
 
-    const sourceDays = itineraryData[journey.destination]?.days || [];
+    const sourceDays = getItinerary()[journey.destination]?.days || [];
     if (sourceDays.length === 0) return;
 
     setRegeneratingDay(dayIndex);
@@ -431,14 +578,12 @@ function TripPlanner() {
     }, 650);
   };
 
-  const handleClearSavedJourney = () => {
-    localStorage.removeItem('solenSavedJourney');
-    setHasSavedJourney(false);
-    setSaveMessage('Saved journey removed');
+  const handleClearSavedJourney = async () => {
+    await clearSavedJourney(savedJourneyId);
 
-    setTimeout(() => {
-      setSaveMessage('');
-    }, 2500);
+    setHasSavedJourney(false);
+    setSavedJourneyId(null);
+    flashSaveMessage('Saved journey removed');
   };
 
   const handleStartOver = () => {
@@ -465,7 +610,7 @@ function TripPlanner() {
 
   if (isCrafting) {
     return (
-      <main className="planner-page">
+      <main className="planner-page" id="main-content" tabIndex={-1}>
         <section className="planner-crafting">
           <p className="planner-eyebrow">SOLEN</p>
 
@@ -487,7 +632,7 @@ function TripPlanner() {
   // styles, so it adds an explanation and a way out — not new chrome.
   if (craftError) {
     return (
-      <main className="planner-page">
+      <main className="planner-page" id="main-content" tabIndex={-1}>
         <section className="planner-crafting">
           <p className="planner-eyebrow">SOMETHING WENT WRONG</p>
 
@@ -518,7 +663,7 @@ function TripPlanner() {
 
   if (journey) {
     return (
-      <main className="planner-page">
+      <main className="planner-page" id="main-content" tabIndex={-1}>
         <section className="journey-results">
           <div className="journey-header">
             <p className="planner-eyebrow">YOUR JOURNEY</p>
@@ -569,6 +714,17 @@ function TripPlanner() {
             <span>WEATHER-AWARE PLANNING</span>
             <p>{journey.weatherNote}</p>
           </div>
+
+          {/* Live conditions (scope §52). Appears only once a real reading
+              has arrived. When the provider is unreachable this renders
+              nothing at all and the curated prose above stands on its own —
+              the itinerary was never waiting on this. */}
+          {liveConditionsText && (
+            <div className="journey-live-weather">
+              <span>{liveConditionsLabel(currentWeather)}</span>
+              <p>{liveConditionsText}</p>
+            </div>
+          )}
 
           {journey.personalizedSummary && (
             <div className="journey-personalized-summary">
@@ -752,8 +908,13 @@ function TripPlanner() {
 
           <div className="journey-actions">
             <div className="journey-action-left">
-              <button type="button" className="journey-save-button" onClick={handleSaveJourney}>
-                Save This Journey →
+              <button
+                type="button"
+                className="journey-save-button"
+                onClick={handleSaveJourney}
+                disabled={isSaving}
+              >
+                {isSaving ? 'Saving…' : 'Save This Journey →'}
               </button>
 
               <button
@@ -813,7 +974,7 @@ function TripPlanner() {
   }
 
   return (
-    <main className="planner-page">
+    <main className="planner-page" id="main-content" tabIndex={-1}>
       <section className="planner-hero">
         <p className="planner-eyebrow">THE SOLEN PLANNER</p>
 
@@ -835,7 +996,7 @@ function TripPlanner() {
             ))}
           </div>
 
-          {hasSavedJourney && (
+          {hasSavedJourney && !openedFromLibrary && (
             <>
               <button type="button" className="planner-resume" onClick={handleResumeJourney}>
                 Resume saved journey →
@@ -1043,6 +1204,8 @@ function TripPlanner() {
               value={budget}
               onChange={(event) => handleBudgetChange(event.target.value)}
               className="planner-budget-slider"
+              aria-label="Total budget"
+              aria-valuetext={`${formatBudget(budget)} ${currency}`}
             />
 
             <div className="planner-budget-labels">

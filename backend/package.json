@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "SOLEN API \u2014 Express + Drizzle + Better Auth + SQLite (scope doc \u00a743-58)",
+  "description": "SOLEN API — Express + Drizzle + Better Auth + SQLite (scope doc §43-58)",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
@@ -11,21 +11,23 @@
     "lint": "eslint .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx src/database/migrate.ts",
-    "auth:generate-schema": "better-auth generate --config src/auth/auth.ts --output src/database/schema.ts",
+    "db:seed": "tsx src/database/seed.ts",
+    "auth:generate-schema": "better-auth generate --config src/auth/auth.ts --output src/database/authSchema.ts",
     "predev": "node scripts/ensure-env.mjs"
   },
   "dependencies": {
     "@better-auth/drizzle-adapter": "^1.4.5",
+    "@libsql/client": "^0.18.0",
     "better-auth": "^1.4.5",
-    "better-sqlite3": "^12.2.0",
     "dotenv": "^17.2.0",
     "drizzle-orm": "^0.45.2",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.3.0"
   },
   "devDependencies": {
     "@better-auth/cli": "^1.4.22",
     "@eslint/js": "^10.0.1",
-    "@types/better-sqlite3": "^7.6.13",
     "@types/express": "^5.0.3",
     "@types/node": "^24.0.0",
     "drizzle-kit": "^0.31.1",

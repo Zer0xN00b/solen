@@ -1,8 +1,14 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './HomePage.css';
 import './m4Stepper.css';
-import { destinations, experiences, feelings } from '../../data/homeContent.js';
+import {
+  getExperiences,
+  getFeelings,
+  getHomeDestinations,
+  loadDestinationContent,
+  subscribe,
+} from '../../data/destinationSource.js';
 import TornEdge from '../../components/edges/TornEdge.jsx';
 
 // The 3D globe pulls in three.js — code-split so the rest of the site
@@ -13,12 +19,57 @@ import { initHeroBlurIn } from './heroBlurIn.js';
 import { initHeroParallax } from './heroParallax.js';
 import { initM4Stepper } from './m4Stepper.js';
 
+// Pixels scrolled before the nav switches from transparent to solid.
+const NAV_SOLID_AT = 40;
+
 function HomePage() {
   const navigate = useNavigate();
+  const navRef = useRef(null);
+
+  // Refresh destination cards from the API, then re-render when it lands.
+  // The bundled cards render on the first frame, so the locked grid is never
+  // empty and never shifts. `experiences` and `feelings` are homepage-only
+  // marketing content with no database table, and stay bundled.
+  const [, setContentVersion] = useState(0);
+  useEffect(() => {
+    loadDestinationContent();
+    return subscribe(setContentVersion);
+  }, []);
+
+  const destinations = getHomeDestinations();
+  const experiences = getExperiences();
+  const feelings = getFeelings();
 
   // Animation 01 — hero headline per-word blur-in (M3). Trigger: page ready.
   useEffect(() => {
     initHeroBlurIn();
+  }, []);
+
+  // Nav scroll state. Over the hero the bar is transparent so the photograph
+  // runs edge to edge; once scrolled, the sections beneath are pale, so the
+  // cream links would vanish without it. Passive listener + rAF-throttle,
+  // matching ProgressRail, and a class toggle rather than inline styles.
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return undefined;
+
+    let ticking = false;
+
+    const update = () => {
+      nav.classList.toggle('is-solid', window.scrollY > NAV_SOLID_AT);
+      ticking = false;
+    };
+
+    const requestUpdate = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    update();
+
+    return () => window.removeEventListener('scroll', requestUpdate);
   }, []);
 
   // Polish — hero image scroll parallax (depth layer). Trigger: scroll.
@@ -35,7 +86,7 @@ function HomePage() {
   return (
     <div className="app">
       {/* NAVIGATION */}
-      <header className="navbar">
+      <header className="navbar" ref={navRef}>
         <Link to="/" className="brand">
           <span className="hero-wordmark">SOLEN</span>
         </Link>
@@ -50,10 +101,24 @@ function HomePage() {
         <a href="#planner" className="nav-cta">
           Start Planning <span>→</span>
         </a>
+
+        {/* Account entry point (scope §47). Last in the bar so it never
+            competes with the primary CTA. */}
+        <Link to="/auth" className="nav-account">
+          Sign in
+        </Link>
+
+        {/* Journey library (scope §48). Sits beside the account link, not
+            inside .nav-links — those are in-page anchors that collapse on
+            mobile, and the library is a real route that must stay reachable
+            at every width. */}
+        <Link to="/journeys" className="nav-library">
+          Journeys
+        </Link>
       </header>
 
       {/* HERO */}
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <section className="hero">
           <div className="hero-image">
             <img src="/assets/hero/hero-main.webp" alt="A cinematic travel destination" />
@@ -100,6 +165,16 @@ function HomePage() {
         {/* Stage layer 3 — torn edge: hero photo -> oatmeal chapter. */}
         <TornEdge fill="#f3ebdd" />
 
+        {/* GLOBE — promoted from section 05 to sit directly under the
+            hero. It was previously 8+ viewports deep (after the 340vh
+            stepper), which is why it went unnoticed. Loaded eagerly at
+            the top now, but still code-split and still behind
+            Suspense; the 770kB three.js chunk loads async so the hero
+            paints first. */}
+        <Suspense fallback={<div className="solen-globe-suspense" aria-hidden="true"></div>}>
+          <SolenGlobe />
+        </Suspense>
+
         {/* INTRO */}
         <section className="intro" id="about">
           <div className="section-label">
@@ -108,7 +183,7 @@ function HomePage() {
           </div>
 
           <div className="intro-content">
-            <h2 data-reveal="blur">
+            <h2 data-reveal="blur" data-reveal-lines>
               Travel should feel
               <br />
               <em>personal.</em>
@@ -129,12 +204,12 @@ function HomePage() {
         <section className="destinations-section" id="destinations">
           <div className="section-heading">
             <div className="section-label">
-              <span>02</span>
+              <span>03</span>
               DESTINATIONS
             </div>
 
             <div>
-              <h2 data-reveal="blur">
+              <h2 data-reveal="blur" data-reveal-lines>
                 Where are you
                 <br />
                 <em>drawn to?</em>
@@ -147,7 +222,7 @@ function HomePage() {
           <div className="destination-grid">
             {destinations.map((destination, index) => (
               <Link
-                to={`/destinations/${destination.name.toLowerCase().replace(/\s+/g, '-')}`}
+                to={`/destinations/${destination.slug}`}
                 className={`destination-card destination-${index + 1}`}
                 key={destination.name}
               >
@@ -182,11 +257,11 @@ function HomePage() {
 
           <div className="feeling-content">
             <div className="section-label light-label">
-              <span>03</span>
+              <span>04</span>
               START WITH A FEELING
             </div>
 
-            <h2 data-reveal="blur">
+            <h2 data-reveal="blur" data-reveal-lines>
               How do you want
               <br />
               to <em>feel?</em>
@@ -216,12 +291,12 @@ function HomePage() {
         <section className="experiences-section" id="experiences">
           <div className="section-heading experience-heading">
             <div className="section-label">
-              <span>04</span>
+              <span>05</span>
               EXPERIENCES
             </div>
 
             <div>
-              <h2 data-reveal="blur">
+              <h2 data-reveal="blur" data-reveal-lines>
                 Travel beyond
                 <br />
                 <em>the itinerary.</em>
@@ -274,9 +349,6 @@ function HomePage() {
             </div>
           </div>
         </section>
-        <Suspense fallback={<div className="solen-globe-suspense" aria-hidden="true"></div>}>
-          <SolenGlobe />
-        </Suspense>
 
         {/* Stage layer 3 — torn edge into the cream planner chapter. */}
         <TornEdge fill="#faf7f1" flip />
@@ -286,7 +358,7 @@ function HomePage() {
           <div className="planner-inner">
             <p className="planner-eyebrow">YOUR JOURNEY AWAITS</p>
 
-            <h2 data-reveal="blur">
+            <h2 data-reveal="blur" data-reveal-lines>
               Your next story
               <br />
               is <em>waiting.</em>
@@ -307,7 +379,7 @@ function HomePage() {
       {/* FOOTER */}
       <footer className="footer">
         <div className="footer-brand">
-          <img src="/assets/brand/solen-logo.webp" alt="SOLEN" />
+          <img src="/assets/brand/solen-logo.png" alt="SOLEN" />
 
           <p>
             Travel thoughtfully.

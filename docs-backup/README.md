@@ -1,4 +1,4 @@
-# SOLEN — Luxury Travel Concierge
+﻿# SOLEN — Luxury Travel Concierge
 
 SOLEN is a luxury travel concierge and personalized trip-planning web
 application. It combines destination discovery, editorial destination pages,
@@ -42,12 +42,21 @@ so frontend code can call relative `/api` URLs with no CORS setup.
 ```text
 solen/
 ├── README.md                        ← you are here
-├── SOLEN_COMPLETE_SCOPE.md          ← complete scope, status & roadmap
+├── SOLEN_COMPLETE_SCOPE.md          ← complete scope, status & roadmap (closed)
+├── LOCAL_SETUP.md                   ← running SOLEN on a personal PC
 ├── package.json                     ← npm workspaces (frontend + backend)
 ├── .nvmrc / .editorconfig           ← Node 20 + shared editor conventions
 ├── .prettierrc.json / .gitignore
 │
-├── frontend/                        ← React + Vite application (~85–90% done)
+├── docs/
+│   ├── CHANGELOG.md                 ← chronological record of every change
+│   ├── WHERE_WE_ARE.md              ← one-page orientation
+│   ├── BACKEND_UPGRADE_PLAN.md      ← backend scope & status
+│   ├── DEPLOYMENT.md                ← deployment config (unexercised)
+│   └── MOTION_ANALYSIS.md / MOTION_FOUNDATION.md   ← design rules
+│
+├── frontend/                        ← React + Vite application (complete)
+│   ├── README.md                    ← commands + source map
 │   ├── index.html
 │   ├── vite.config.js               ← dev server + /api → :4000 proxy
 │   ├── public/
@@ -58,17 +67,23 @@ solen/
 │   │       └── hero/                ← homepage hero
 │   └── src/
 │       ├── main.jsx                 ← entry point (BrowserRouter)
-│       ├── AppRoutes.jsx            ← route table + scroll restore
+│       ├── AppRoutes.jsx            ← route table (7 routes) + scroll restore
 │       │
 │       ├── pages/                   ← one folder per route
 │       │   ├── home/                ← /                (LOCKED design)
 │       │   ├── destination/         ← /destinations/:slug (LOCKED design)
-│       │   └── planner/             ← /planner (UI + state only)
+│       │   ├── planner/             ← /planner
+│       │   ├── auth/                ← /auth (sign-up / sign-in)
+│       │   ├── journeys/            ← /journeys + /shared/:slug
+│       │   └── notFound/            ← * catch-all
 │       │
 │       ├── components/              ← reusable UI
 │       │   ├── globe/               ← custom CSS globe (SolenGlobe)
-│       │   └── navbar/              ← reserved for a future shared navbar
+│       │   ├── ambient/             ← drifting dust canvas
+│       │   ├── edges/               ← torn-paper chapter seams
+│       │   └── rail/                ← scroll progress rail
 │       │
+│       ├── api/                     ← fetch wrappers for /api
 │       ├── data/                    ← application data (no logic)
 │       │   ├── destinations.js      ← itinerary content, 7 destinations
 │       │   ├── destinationEditorial.js ← editorial detail-page content
@@ -81,32 +96,38 @@ solen/
 │       │   ├── budget.js            ← cost multipliers & daily estimates
 │       │   └── journey.js           ← weather notes & journey assembly
 │       │
+│       ├── utils/                   ← reveal.js
 │       └── styles/                  ← global styles
 │           ├── index.css
+│           ├── motion.css           ← motion tokens + reduced-motion contract
 │           └── responsive.css
 │
-└── backend/                         ← Express + TypeScript + Better Auth (Phase 2–3 merged)
+└── backend/                         ← Express + TypeScript + Better Auth
+    ├── README.md                    ← API reference
     ├── .env.example
     ├── drizzle/                     ← generated SQL migrations (committed)
     ├── data/                        ← local SQLite file (git-ignored)
     └── src/
         ├── server.ts / app.ts       ← entry point + app assembly (auto-migrates DB)
-        ├── auth/auth.ts             ← Better Auth config (email/password, httpOnly cookies)
+        ├── auth/                    ← Better Auth config (email/password, httpOnly cookies)
         ├── config/env.ts            ← environment access
         ├── database/                ← schema.ts (generated), db.ts, migrate.ts
-        ├── routes/                  ← /api routes (health today)
-        ├── controllers/  services/  models/   ← product code lands here
+        ├── routes/                  ← /api routes (journeys, destinations, weather, sharing)
+        ├── controllers/  services/  models/   ← product code
         └── middleware/              ← notFound + errorHandler
 ```
 
 ### Why `data/` and `engine/` are separate
 
 Everything in `engine/` is **pure functions** and everything in `data/` is
-**plain data** — neither touches React or the DOM. This is deliberate:
+**plain data** -- neither touches React or the DOM. This is deliberate:
 
-- The scope's highest-priority work (scope §50, _Dynamic itinerary engine_)
-  is moving this exact logic to the backend. Clean modules make that a
-  lift-and-shift instead of a rewrite.
+- Clean modules keep logic testable and portable, and the planner UI
+  (`pages/planner/TripPlanner.jsx`) stays presentation-only, which keeps
+  the locked visual design safe while logic evolves.
+- Destination content lives in one place per concern instead of being
+  hard-coded across four components, and is served from the
+  Destination API (scope section 54) with the JS files as offline fallback.
 - The planner UI (`pages/planner/TripPlanner.jsx`) is now presentation-only,
   which keeps the locked visual design safe while logic evolves.
 - Destination content lives in one place per concern instead of being
@@ -122,24 +143,42 @@ Everything in `engine/` is **pure functions** and everything in `data/` is
 | `/`                   | `HomePage`          | Design LOCKED (scope §5)                             |
 | `/destinations/:slug` | `DestinationDetail` | Design LOCKED (scope §7)                             |
 | `/planner`            | `TripPlanner`       | Accepts `?destination=`, `?experience=`, `?feeling=` |
+| `/auth`               | `AuthPage`          | Sign-up / sign-in tabs                               |
+| `/journeys`           | `JourneysPage`      | Owner library: open, delete, share                   |
+| `/shared/:slug`       | `SharedJourneyPage` | **Public, read-only.** No auth, no owner chrome      |
 
 ---
 
 ## Status at a glance
 
-- **Frontend:** ~85–90% — homepage, destination pages, globe and planner are
-  done and locked. Remaining: packing list, logistics, Journey Library UI,
-  shareable journey view, accessibility & final polish (scope §42).
-- **Backend:** not started — foundation, database, auth, persistent journeys,
-  itinerary engine, sharing, deployment (scope §43–58).
-- **Overall:** ~60–65% of the full-stack product.
+- **Frontend:** complete — homepage, destination pages, globe and planner are
+  done and locked. Accounts, the journey library and the public shared-journey
+  page have shipped, and the clean pass ran 5 Oct 2026 (scope §61).
+- **Backend:** complete for the current product — foundation, database, auth,
+  journey CRUD, library, validation, security hardening, and public sharing are
+  all built and tested. **Deliberately descoped:** the server-side itinerary
+  engine (scope §50 — relocation, not a feature) and maps/route data (§53).
+  `GET /api/weather/:slug` serves live Open-Meteo conditions (§52), cached with
+  the curated prose as fallback.
+- **Overall:** **complete.** The scope is closed as of 5 Oct 2026 (scope §65);
+  everything is either shipped or descoped with its reasoning on the record.
+  The only work left is shipping-day operations (Docker build, CI, backups),
+  which needs a hosting decision rather than code.
 
-Recommended next phases — see scope §62:
+Where the original plan stands — phases 2, 3, 5 and 6 are **done**:
 
-1. **Phase 1** — finish the frontend product layer (packing, logistics,
-   cost transparency, Journey Library UI, shareable journey UI).
-2. **Phase 2** — backend foundation (Node/Express, database, schema).
-3. **Phase 3** — accounts + persistent journeys.
-4. **Phase 4** — intelligent backend planner (port `src/engine/` + `src/data/`).
-5. **Phase 5** — shareable journeys.
-6. **Phase 6** — security, testing, deployment.
+1. **Phase 1** — frontend product layer: Journey Library UI ✅ and shareable
+   journey UI ✅ shipped. Packing list, cost transparency and travel logistics
+   ⛔ descoped 5 Oct (§42 — the second was already built).
+2. **Phase 2** — backend foundation ✅ (17 Sep 2026).
+3. **Phase 3** — accounts + persistent journeys ✅.
+4. **Phase 4** — intelligent backend planner ⛔ **descoped 5 Oct 2026.** The
+   engine stays in the frontend by decision; see scope §50.
+5. **Phase 5** — product-level sharing ✅.
+6. **Phase 6** — security ✅, API tests ✅ (66 passing); deployment is
+   **config only — the image has never been built.**
+
+Recommended next: **nothing — the scope is closed.** The clean pass ran
+5 Oct 2026 (scope §61): three defects fixed, eight pages swept, build, lint,
+typecheck and 66/66 tests green. Optional extras beyond "complete" are listed
+in scope §40.

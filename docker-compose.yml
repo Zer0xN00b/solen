@@ -1,0 +1,49 @@
+# SOLEN — local production-shaped run.
+#
+#   docker compose up --build
+#
+# Runs the SAME image a deploy would, which is the point: what you verify
+# here is what ships. Differences from `npm run dev` are deliberate —
+# NODE_ENV=production turns on helmet, rate limiting and SPA serving.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: solen:latest
+    ports:
+      - '4000:4000'
+    environment:
+      NODE_ENV: production
+      PORT: '4000'
+
+      # Better Auth signs session cookies with this. Generate a fresh one per
+      # environment: `openssl rand -hex 32`. Rotating it signs everyone out.
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env}
+
+      # The public origin of THIS deployment. Better Auth validates the
+      # browser Origin header against trustedOrigins, so this must match what
+      # the user actually types, or sign-in fails with an origin mismatch.
+      BETTER_AUTH_URL: ${PUBLIC_URL:-http://localhost:4000}
+
+      # Path to the SQLite file. On a named volume below, never in the
+      # container filesystem — that is wiped on every rebuild.
+      DB_FILE: /app/backend/data/solen.db
+
+      # Behind a reverse proxy set this to the number of proxies in front of
+      # the app (usually 1). Without it the rate limiter sees every visitor as
+      # one shared IP and will eventually lock them all out together.
+      TRUST_PROXY: ${TRUST_PROXY:-}
+
+    volumes:
+      # The database is the only state that must survive a redeploy. Named
+      # volume, never a bind mount: the image runs as the unprivileged `node`
+      # user (uid 1000), so a host bind mount would need matching ownership
+      # or the process cannot open the file.
+      - solen-data:/app/backend/data
+
+    restart: unless-stopped
+
+volumes:
+  solen-data:

@@ -4,8 +4,8 @@
 
 .app {
   min-height: 100vh;
-  background: #f3ebdd;
-  color: #241c1d;
+  background: var(--oatmeal);
+  color: var(--ink);
   overflow-x: hidden;
   overflow-x: clip; /* sticky-safe: clip doesn't create a scroll container */
 }
@@ -22,8 +22,13 @@
    NAVBAR
    ========================================================= */
 
+/* Fixed rather than absolute so the bar survives the scroll. At the top it is
+   fully transparent and the hero photograph runs edge to edge; past 40px the
+   sections underneath are pale, so .is-solid flips the bar to the cream page
+   ground and the type to ink (cream links on a cream bar would be invisible).
+   Colour and background both transition, so the swap is never a hard cut. */
 .navbar {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 20;
@@ -37,12 +42,59 @@
 
   padding: 0 5vw;
 
-  color: #faf7f1;
+  color: var(--cream);
+
+  transition:
+    background-color 400ms var(--ease-decel),
+    box-shadow 400ms var(--ease-decel),
+    color 400ms var(--ease-decel);
+}
+
+.navbar.is-solid {
+  background-color: rgba(250, 247, 241, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  /* Hairline-over-shadow: the separation is a 1px rule, not a glow. */
+  box-shadow: 0 1px 0 rgba(74, 25, 66, 0.08);
+
+  color: var(--ink);
 }
 
 .brand {
   display: flex;
   align-items: center;
+}
+
+/* The wordmark sits directly on the hero photograph, so it has to hold up
+   against a bright sunset sky. It was ink — dark-on-light in the worst
+   possible spot, effectively unreadable over the upper sky. Cream is
+   the nav's ground colour and the only tone that survives every part of
+   the photo. The text-shadow is a legibility scrim, not a drop shadow:
+   it costs no layout and keeps the mark readable where the sky is pale. */
+.hero-wordmark {
+  display: inline-block;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 500;
+  font-style: italic;
+
+  letter-spacing: 0.16em;
+  line-height: 1;
+
+  /* Inherits from .navbar, which flips cream -> ink when the bar goes solid.
+     The text-shadow is a legibility scrim for the transparent state only —
+     over the solid cream bar it would read as a smudge. */
+  color: inherit;
+  text-shadow: 0 1px 12px rgba(36, 28, 29, 0.45);
+  transition:
+    color 400ms var(--ease-decel),
+    text-shadow 400ms var(--ease-decel);
+}
+
+.navbar.is-solid .hero-wordmark {
+  text-shadow: none;
 }
 
 .brand img {
@@ -81,13 +133,48 @@
   align-items: center;
   gap: 10px;
 
-  border-bottom: 1px solid rgba(250, 247, 241, 0.65);
+  /* Current colour, so it tracks the nav's cream -> ink swap. */
+  border-bottom: 1px solid currentColor;
+  opacity: 0.85;
 
   padding-bottom: 7px;
 }
 
 .nav-cta span {
   font-size: 15px;
+}
+
+/* Account link (scope §47). Quieter than .nav-cta by design — it has no
+   underline at rest, so the primary CTA keeps the eye. currentColor
+   means it tracks the nav's cream -> ink swap automatically.
+
+   .nav-library (scope §48, the journey library) shares these values
+   deliberately: it is the same register as the account link — a quiet
+   utility route, not a competing call to action. Sharing one rule keeps
+   them from drifting apart as the bar is tuned. */
+.nav-account,
+.nav-library {
+  margin-left: 22px;
+
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  opacity: 0.75;
+
+  padding-bottom: 7px;
+  border-bottom: 1px solid transparent;
+
+  transition:
+    opacity 250ms ease,
+    border-color 250ms ease;
+}
+
+.nav-account:hover,
+.nav-library:hover {
+  opacity: 1;
+  border-bottom-color: currentColor;
 }
 
 /* =========================================================
@@ -107,7 +194,7 @@
 
   overflow: hidden;
 
-  color: #faf7f1;
+  color: var(--cream);
 }
 
 .hero-image {
@@ -221,7 +308,7 @@
 
   padding: 0 25px;
 
-  border: 1px solid #faf7f1;
+  border: 1px solid var(--cream);
 
   font-size: 11px;
   font-weight: 500;
@@ -240,28 +327,33 @@
 }
 
 .button-primary {
-  background: #4a1942;
-  border-color: #4a1942;
-  color: #faf7f1;
+  background: var(--plum);
+  border-color: var(--plum);
+  color: var(--cream);
 }
 
 .button-primary:hover {
-  background: #faf7f1;
-  border-color: #faf7f1;
-  color: #4a1942;
+  background: var(--cream);
+  border-color: var(--cream);
+  color: var(--plum);
 }
 
 .button-light {
   background: rgba(250, 247, 241, 0.04);
-  color: #faf7f1;
+  color: var(--cream);
   backdrop-filter: blur(4px);
 }
 
 .button-light:hover {
-  background: #faf7f1;
-  color: #241c1d;
+  background: var(--cream);
+  color: var(--ink);
 }
 
+/* Rotating this whole box with transform-origin: right bottom pushed the
+   entire label BELOW the viewport — the hairline stayed put and the text ran
+   off the bottom edge, leaving a clipped "…VER" in the corner. The box is no
+   longer rotated; only the label is set vertical, which keeps the element
+   in normal flow so the right/bottom offsets actually pin it. */
 .scroll-indicator {
   position: absolute;
   z-index: 3;
@@ -270,11 +362,12 @@
   bottom: 9vh;
 
   display: flex;
+
+  /* column-reverse puts the line on top and the label below it, matching
+     the original left-to-right order once rotated. */
+  flex-direction: column-reverse;
   align-items: center;
   gap: 15px;
-
-  transform: rotate(-90deg);
-  transform-origin: right bottom;
 
   font-size: 9px;
   letter-spacing: 0.2em;
@@ -283,29 +376,41 @@
   opacity: 0.8;
 }
 
-.scroll-indicator div {
-  width: 45px;
-  height: 1px;
+/* vertical-rl runs the text downward; the 180 turn makes it read
+   bottom-to-top, the usual orientation for a right-edge rail. */
+.scroll-indicator span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+}
 
-  background: #faf7f1;
+.scroll-indicator div {
+  width: 1px;
+  height: 45px;
+
+  background: var(--cream);
 }
 
 /* =========================================================
    INTRO
    ========================================================= */
 
+/* This chapter opens the oatmeal ground, so it owns a full top rhythm. Its
+   bottom is left to the destinations chapter that follows — stacking both
+   sections' padding is what previously produced the uneven 170px/0/150px
+   air between beats. */
 .intro {
-  padding: 150px 8vw 170px;
+  padding: var(--section-pad-block) var(--section-pad-inline) 0;
 }
 
 .section-label {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--space-sm);
 
-  margin-bottom: 55px;
+  margin-bottom: var(--section-gap);
 
-  color: #4a1942;
+  color: var(--plum);
 
   font-size: 10px;
   font-weight: 600;
@@ -344,7 +449,7 @@
   line-height: 0.88;
   letter-spacing: -0.035em;
 
-  color: #4a1942;
+  color: var(--plum);
 }
 
 .intro h2 em,
@@ -377,8 +482,12 @@
    DESTINATIONS
    ========================================================= */
 
+/* The destination grid is the showpiece of this chapter, so it opens on a
+   full section rhythm and closes on the large one — the two beats have to
+   read as different depths of air, not one padded block. */
 .destinations-section {
-  padding: 0 6vw 170px;
+  padding: var(--section-pad-block) var(--section-pad-inline)
+    var(--section-pad-block-lg);
 }
 
 .section-heading {
@@ -387,7 +496,7 @@
 
   gap: 8vw;
 
-  margin-bottom: 80px;
+  margin-bottom: var(--section-gap);
 }
 
 .section-heading .section-label {
@@ -506,7 +615,7 @@
 
   margin-bottom: 7px;
 
-  color: #8fa8b8;
+  color: var(--mist);
 
   font-size: 10px;
   letter-spacing: 0.12em;
@@ -519,7 +628,7 @@
   font-size: 29px;
   font-weight: 500;
 
-  color: #4a1942;
+  color: var(--plum);
 }
 
 .destination-info p {
@@ -539,9 +648,9 @@
   width: 35px;
   height: 35px;
 
-  border: 1px solid rgba(74, 25, 66, 0.35);
+  border: 1px solid var(--rule-plum-strong);
 
-  color: #4a1942;
+  color: var(--plum);
 
   font-size: 17px;
 
@@ -552,8 +661,8 @@
 }
 
 .destination-card:hover .destination-arrow {
-  background: #4a1942;
-  color: #faf7f1;
+  background: var(--plum);
+  color: var(--cream);
   transform: rotate(45deg);
 }
 
@@ -571,9 +680,9 @@
 
   overflow: hidden;
 
-  background: #4a1942;
+  background: var(--plum);
 
-  color: #faf7f1;
+  color: var(--cream);
 }
 
 .feeling-background {
@@ -591,11 +700,11 @@
 
   width: 100%;
 
-  padding: 130px 8vw;
+  padding: var(--section-pad-block-lg) var(--section-pad-inline);
 }
 
 .light-label {
-  color: #faf7f1;
+  color: var(--cream);
   opacity: 0.8;
 }
 
@@ -604,7 +713,7 @@
 
   margin-bottom: 28px;
 
-  color: #faf7f1;
+  color: var(--cream);
 }
 
 .feeling-content > p {
@@ -641,7 +750,7 @@
 
   background: transparent;
 
-  color: #faf7f1;
+  color: var(--cream);
 
   text-align: left;
 
@@ -680,11 +789,12 @@
    ========================================================= */
 
 .experiences-section {
-  padding: 160px 6vw 180px;
+  padding: var(--section-pad-block) var(--section-pad-inline)
+    var(--section-pad-block-lg);
 }
 
 .experience-heading {
-  margin-bottom: 90px;
+  margin-bottom: var(--section-pad-block);
 }
 
 .experience-grid {
@@ -736,7 +846,7 @@
   font-size: 34px;
   font-weight: 500;
 
-  color: #4a1942;
+  color: var(--plum);
 }
 
 .experience-info p {
@@ -760,7 +870,7 @@
   border: 0;
   background: transparent;
 
-  color: #4a1942;
+  color: var(--plum);
 
   font-size: 10px;
   font-weight: 600;
@@ -784,9 +894,9 @@
    ========================================================= */
 
 .planner-section {
-  padding: 140px 6vw;
+  padding: var(--section-pad-block-lg) var(--section-pad-inline);
 
-  background: #faf7f1;
+  background: var(--cream);
 }
 
 .planner-inner {
@@ -800,7 +910,7 @@
 .planner-eyebrow {
   margin-bottom: 30px;
 
-  color: #8fa8b8;
+  color: var(--mist);
 
   font-size: 10px;
   font-weight: 600;
@@ -825,15 +935,15 @@
 }
 
 .planner-button {
-  background: #4a1942;
-  border-color: #4a1942;
+  background: var(--plum);
+  border-color: var(--plum);
 
-  color: #faf7f1;
+  color: var(--cream);
 }
 
 .planner-button:hover {
   background: transparent;
-  color: #4a1942;
+  color: var(--plum);
 }
 
 /* =========================================================
@@ -845,19 +955,27 @@
 
   grid-template-columns: 1fr 1fr;
 
-  gap: 80px;
+  gap: var(--section-gap);
 
-  padding: 80px 6vw 35px;
+  padding: var(--section-pad-block) var(--section-pad-inline)
+    var(--space-xl);
 
-  background: #241c1d;
+  background: var(--ink);
 
-  color: #faf7f1;
+  color: var(--cream);
 }
 
+/* The mark ships as a transparent PNG (the .webp had its cream background
+   baked in, which drew a light rectangle on the ink ground). At true alpha it
+   is plum artwork, so on this dark chapter it is filtered to cream — the same
+   inversion the brand uses anywhere plum sits on ink. */
 .footer-brand img {
   width: 110px;
+  height: auto;
 
-  margin-bottom: 25px;
+  margin-bottom: var(--space-md);
+
+  filter: invert(1) sepia(0.06) saturate(0.6) brightness(1.06);
 }
 
 .footer-brand p {
@@ -907,7 +1025,9 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
 
-  opacity: 0.45;
+  /* 0.45 failed even the 3:1 large-text bar on the dark footer;
+     0.6 clears 4.5:1 for cream-on-ink at this size. */
+  opacity: 0.6;
 }
 
 /* =========================================================
@@ -1139,20 +1259,10 @@
     gap: 10px;
   }
 }
-.hero-wordmark {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 500;
-  font-style: italic;
-  letter-spacing: 0.16em;
-  color: #241c1d;
-  line-height: 1;
-  display: inline-block;
-}
 
 /* ==========================================================================
    Animation 01 — Hero headline per-word blur-in (M3)
-   Spec: docs/MOTION_ANALYSIS.md (M3) · Handoff: user prototype, 2026-09-17.
+   Spec: docs-backup/MOTION_ANALYSIS.md (M3) · Handoff: user prototype, 2026-09-17.
    Tokens come from styles/motion.css (not redefined here, per R1).
    Design (typography / colour / layout) untouched.
    ========================================================================== */
@@ -1223,7 +1333,7 @@ html.js .hero h1[data-animation='m3-blur-in'] .word:nth-of-type(7) { transition-
 
 /* ==========================================================================
    Animation 05 — M8 accent word on the intro statement
-   Spec: docs/MOTION_ANALYSIS.md (M8). The statement reveals via the
+   Spec: docs-backup/MOTION_ANALYSIS.md (M8). The statement reveals via the
    foundation [data-reveal] primitive; the final word ("personal.")
    blooms to plum AFTER the line settles — the accent lands last.
    Design (typography/layout) untouched; colour only.
@@ -1237,7 +1347,7 @@ html.js .hero h1[data-animation='m3-blur-in'] .word:nth-of-type(7) { transition-
 }
 
 .intro h2[data-reveal].is-revealed em {
-  color: #4a1942;
+  color: var(--plum);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1247,7 +1357,9 @@ html.js .hero h1[data-animation='m3-blur-in'] .word:nth-of-type(7) { transition-
 }
 
 /* Suspense placeholder while the 3D globe chunk loads (styled here
-   because the globe CSS ships inside the lazy chunk). */
+   because the globe CSS ships inside the lazy chunk). Tracked to the
+   globe's new viewport-relative size so landing the chunk doesn't
+   shove the page down under the hero. */
 .solen-globe-suspense {
-  min-height: 650px;
+  min-height: min(760px, 92vw, 62vh);
 }

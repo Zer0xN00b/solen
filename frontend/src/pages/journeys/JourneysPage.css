@@ -1,0 +1,486 @@
+/* =========================================================
+   SOLEN — JOURNEY LIBRARY (scope §48)
+   Additive page. Mirrors the locked pages' brand language
+   (oatmeal ground, plum accent, Cormorant + Inter) in its own
+   file rather than importing HomePage.css, so nothing locked
+   is coupled — the same reasoning as NotFoundPage/AuthPage.
+
+   Motion references the site's tokens (--motion-reveal,
+   --ease-decel) rather than raw ms/beziers, per rule R1.
+   Journeys use hairline rules, not shadows.
+   ========================================================= */
+
+.journeys-page {
+  display: flex;
+  flex-direction: column;
+
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  padding: 26px 6vw 90px;
+
+  background: #f3ebdd;
+}
+
+.journeys-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.journeys-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+
+  color: #4a1942;
+}
+
+.journeys-header-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 26px;
+}
+
+.journeys-header-link {
+  border-bottom: 1px solid rgba(74, 25, 66, 0.3);
+
+  padding-bottom: 3px;
+
+  color: #4a1942;
+
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  transition: border-color 250ms ease;
+}
+
+.journeys-header-link:hover {
+  border-bottom-color: #4a1942;
+}
+
+.journeys-inner {
+  flex: 1;
+
+  padding-top: clamp(48px, 9vw, 110px);
+}
+
+.journeys-eyebrow {
+  margin-bottom: 26px;
+
+  color: var(--mist);
+
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.journeys-title {
+  margin-bottom: 26px;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(42px, 7vw, 82px);
+  font-weight: 400;
+  line-height: 0.98;
+
+  color: #241c1d;
+}
+
+.journeys-title em {
+  color: #4a1942;
+}
+
+.journeys-copy {
+  max-width: 460px;
+
+  margin-bottom: 46px;
+
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.8;
+}
+
+/* ---------- states ---------- */
+
+.journeys-status {
+  color: var(--mist);
+
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+}
+
+.journeys-empty {
+  max-width: 460px;
+}
+
+.journeys-empty-text {
+  margin-bottom: 30px;
+
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.8;
+}
+
+.journeys-error {
+  max-width: 460px;
+}
+
+.journeys-error-text {
+  margin-bottom: 26px;
+
+  color: #241c1d;
+
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.8;
+}
+
+.journeys-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 32px;
+}
+
+.journeys-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 14px;
+
+  min-height: 52px;
+
+  padding: 0 25px;
+
+  border: 1px solid #4a1942;
+
+  background: #4a1942;
+  color: #faf7f1;
+
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  transition:
+    background 300ms ease,
+    color 300ms ease,
+    transform 300ms ease;
+}
+
+.journeys-button:hover {
+  background: transparent;
+  color: #4a1942;
+
+  transform: translateY(-2px);
+}
+
+.journeys-secondary {
+  border-bottom: 1px solid rgba(74, 25, 66, 0.3);
+
+  padding-bottom: 3px;
+
+  color: #4a1942;
+
+  font-size: 12px;
+  letter-spacing: 0.04em;
+
+  transition: border-color 250ms ease;
+}
+
+.journeys-secondary:hover {
+  border-bottom-color: #4a1942;
+}
+
+/* ---------- the list ---------- */
+
+/* Full-bleed rule, content constrained inside it. The rule reads as one
+   continuous divider; a max-width on the <ul> would stop it at 760px and
+   leave it floating beside the empty right half of the page. */
+.journeys-list {
+  display: flex;
+  flex-direction: column;
+
+  /* This is a <ul> purely for semantics. Without this reset the browser
+     renders its own disc markers — the page showed a bullet beside every
+     journey title, which no design pass would have chosen. */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  border-top: 1px solid rgba(74, 25, 66, 0.2);
+}
+
+.journeys-item-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+
+  max-width: 760px;
+
+  padding: 28px 0;
+
+  border-bottom: 1px solid rgba(74, 25, 66, 0.2);
+}
+
+.journeys-item-body {
+  min-width: 0;
+}
+
+.journeys-item-title {
+  margin-bottom: 8px;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(22px, 2.6vw, 30px);
+  font-weight: 400;
+  line-height: 1.15;
+
+  color: #241c1d;
+}
+
+.journeys-item-destination {
+  margin-bottom: 6px;
+
+  color: #4a1942;
+
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+}
+
+.journeys-item-facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  gap: 0 18px;
+
+  color: var(--mist);
+
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+}
+
+/* The facts are separate elements so the gap can space them; the middot
+   rides on the last one so it collapses with the flex gap instead of
+   trailing when the list wraps. */
+.journeys-fact::after {
+  content: '·';
+
+  margin-left: 18px;
+
+  color: rgba(143, 168, 184, 0.6);
+}
+
+.journeys-fact:last-child::after {
+  content: none;
+  margin-left: 0;
+}
+
+.journeys-item-saved {
+  margin-top: 10px;
+
+  color: rgba(143, 168, 184, 0.85);
+
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.journeys-item-side {
+  flex-shrink: 0;
+}
+
+.journeys-item-action {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 44px;
+
+  padding: 0 22px;
+
+  border: 1px solid rgba(74, 25, 66, 0.3);
+
+  color: #4a1942;
+
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+/* Step 2 replaces this with the live control. Until then it reads as
+   unavailable rather than as something that silently does nothing. */
+.journeys-item-action-pending {
+  opacity: 0.45;
+}
+
+/* ---------- row controls ---------- */
+
+.journeys-item-action {
+  background: transparent;
+  cursor: pointer;
+
+  transition:
+    color 250ms ease,
+    border-color 250ms ease;
+}
+
+.journeys-item-open:hover:not(:disabled) {
+  border-color: #4a1942;
+  background: #4a1942;
+  color: #faf7f1;
+}
+
+.journeys-item-delete {
+  /* Delete is the destructive control, so it stays a hairline like
+     everything else — no red fill, which the palette doesn't sanction —
+     and reads as secondary until hovered. */
+  margin-left: 12px;
+
+  border-color: transparent;
+
+  color: var(--mist);
+}
+
+.journeys-item-delete:hover:not(:disabled) {
+  border-color: rgba(74, 25, 66, 0.45);
+
+  color: #4a1942;
+}
+
+/* A disabled control must not keep advertising hoverability — the planner
+   has the same fix on its save button. */
+.journeys-item-action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Visually hidden but still announced — used to give the Delete button a
+   name that says WHICH journey it removes. */
+.sr-only {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  padding: 0;
+
+  overflow: hidden;
+
+  border: 0;
+
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.journeys-item-delete:focus-visible .sr-only,
+.sr-only:focus-visible {
+  position: static;
+  width: auto;
+  height: auto;
+  clip-path: none;
+}
+
+.journeys-item-share {
+  margin-left: 12px;
+
+  /* Quiet by default so three controls in a row don't shout; it fills on
+     hover like Open does. */
+  border-color: rgba(74, 25, 66, 0.3);
+
+  color: #4a1942;
+}
+
+.journeys-item-share:hover:not(:disabled) {
+  background: #4a1942;
+  border-color: #4a1942;
+  color: #faf7f1;
+}
+
+/* The public link wraps under its own row rather than sitting beside the
+   controls. `max-width` matches `.journeys-item-inner` so the link starts on
+   the same left edge as the destination title; the negative top margin pulls
+   it back under the row's own bottom padding. */
+.journeys-share-url {
+  max-width: 760px;
+
+  margin: -4px 0 24px;
+
+  overflow-wrap: anywhere;
+
+  color: var(--mist);
+
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+.journeys-note {
+  min-height: 20px;
+
+  margin-bottom: 12px;
+
+  color: #4a1942;
+
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+}
+
+.journeys-banner {
+  max-width: 560px;
+
+  margin-bottom: 30px;
+  padding: 14px 18px;
+
+  border: 1px solid rgba(143, 168, 184, 0.55);
+
+  color: #241c1d;
+
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+@media (max-width: 700px) {
+  .journeys-page {
+    padding: 22px 6vw 70px;
+  }
+
+  .journeys-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .journeys-title {
+    font-size: clamp(38px, 12vw, 58px);
+  }
+
+  .journeys-item-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+}

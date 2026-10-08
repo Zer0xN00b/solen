@@ -8,6 +8,34 @@
       "when": 1789612911339,
       "tag": "0000_far_giant_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1790499185702,
+      "tag": "0001_odd_psynapse",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1790516200411,
+      "tag": "0002_shiny_paibok",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1790522138814,
+      "tag": "0003_third_synch",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1791041990382,
+      "tag": "0004_woozy_darkhawk",
+      "breakpoints": true
     }
   ]
 }

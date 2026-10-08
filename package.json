@@ -13,18 +13,19 @@
     "dev:backend": "npm run dev -w backend",
     "build": "npm run build -w frontend",
     "lint": "npm run lint -w frontend && npm run lint -w backend",
+    "test": "node --test frontend/tests/*.test.js backend/tests/*.test.js",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
-    "prettier": "^3.5.3"
+    "prettier": "^3.5.3",
+    "shadcn": "^4.21.0"
   },
   "engines": {
     "node": ">=20"
   },
   "allowScripts": {
-    "better-sqlite3": true,
     "esbuild": true,
     "@prisma/client": true
   },

@@ -1,7 +1,8 @@
 /* ==========================================================================
    Animation 03 — M4 Horizontal Stepper (pinned, discrete pushes)
-   Spec: docs/MOTION_ANALYSIS.md (M4) · Handoff: user module, 2026-09-18
-   (rubric score 89/100 — see docs/ANIMATION_REVIEW_RUBRIC.md).
+   Spec: docs-backup/MOTION_ANALYSIS.md (M4) · Handoff: user module, 2026-09-18
+   (scored 89/100 against the animation review rubric — that rubric file
+   was retired in the 5 Oct 2026 workspace cleanup).
 
    Tokens from styles/motion.css (R1). Structure follows the handoff:
    1. BASE (no html.js / JS fails): static stacked list, fully readable.
@@ -53,7 +54,9 @@
   font-size: 0.78rem;
   letter-spacing: 0.12em;
 
-  opacity: 0.6;
+  /* 0.6 measured ~4.2:1 on the cream chapter — under AA for this size.
+     0.7 passes both the cream and (as cream-on-plum) the dark chapter. */
+  opacity: 0.7;
 }
 
 .m4-stepper__title {
@@ -96,7 +99,7 @@
 }
 
 .m4-stepper__cta:hover {
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 /* Ghost numerals & indicator only mean something in the pinned view. */
@@ -239,6 +242,7 @@ html.js .m4-stepper__step {
 
   display: flex;
   flex-direction: column;
+  align-items: flex-start; /* stops the CTA stretching to the step's full width */
   justify-content: center;
 }
 

@@ -1,0 +1,474 @@
+/* =========================================================
+   SOLEN — SIGN IN / CREATE ACCOUNT (scope §47)
+   Additive page. Mirrors the brand language of the locked pages
+   (oatmeal ground, plum accent, Cormorant display + Inter copy)
+   rather than importing HomePage.css, so nothing locked is coupled.
+
+   Form values follow the established .planner-currency rules: a 1px
+   plum-alpha rule, transparent ground, Inter explicitly (a bare
+   <input> would otherwise fall back to the UA font — the same defect
+   that made the currency select read as OS chrome), and
+   :focus-visible rather than :focus so a mouse click doesn't park a
+   ring on the field.
+   ========================================================= */
+
+.auth-page {
+  display: flex;
+  flex-direction: column;
+
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  padding: 26px 6vw 72px;
+
+  background: #f3ebdd;
+}
+
+.auth-header {
+  flex-shrink: 0;
+}
+
+.auth-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+
+  color: #4a1942;
+}
+
+/* Two columns on desktop: editorial counterpoint + the form. The
+   asymmetric split keeps the page from reading as a centered login
+   box, which is the SaaS register the rest of the site avoids. */
+.auth-layout {
+  display: grid;
+
+  flex: 1;
+  grid-template-columns: 1fr minmax(0, 420px);
+  align-items: center;
+  gap: clamp(40px, 8vw, 120px);
+
+  padding-top: 40px;
+}
+
+/* ---------- editorial aside ---------- */
+
+.auth-aside-eyebrow {
+  margin-bottom: 26px;
+
+  color: var(--mist);
+
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.auth-aside-title {
+  margin-bottom: 26px;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(38px, 5.2vw, 64px);
+  font-weight: 400;
+  line-height: 1.02;
+
+  color: #241c1d;
+}
+
+.auth-aside-title em {
+  color: #4a1942;
+}
+
+.auth-aside-copy {
+  max-width: 400px;
+
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.8;
+
+  color: rgba(36, 28, 29, 0.72);
+}
+
+/* A single hairline instead of a card or shadow — hairlines over
+   shadows is the house rule (skill §1.2). */
+.auth-aside-rule {
+  width: 78px;
+  height: 1px;
+  margin-top: 38px;
+
+  background: rgba(74, 25, 66, 0.28);
+}
+/* ---------- signed-in panel ---------- */
+
+/* Signed out is the form; signed in is this. Same panel slot, so the
+   two-column layout is unchanged and the page never reflows on the
+   session round trip. */
+.auth-panel--signed-in {
+  padding: 8px 0 0;
+}
+
+.auth-signed-in-eyebrow {
+  margin-bottom: 18px;
+
+  color: var(--mist);
+
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.auth-signed-in-name {
+  margin-bottom: 20px;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(30px, 3.4vw, 42px);
+  font-weight: 400;
+  line-height: 1.06;
+
+  color: #241c1d;
+}
+
+.auth-signed-in-copy {
+  max-width: 380px;
+  margin-bottom: 34px;
+
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.8;
+
+  color: rgba(36, 28, 29, 0.72);
+}
+
+.auth-signed-in-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  gap: 18px 26px;
+}
+
+/* Sign out is a secondary, quiet control. It sits beside the primary
+   "Your journeys" link, and a filled destructive button here would
+   compete with the thing the user most likely came here to do. */
+.auth-signout {
+  /* `border-bottom` alone does NOT clear the UA's button border — the other
+     three sides survive, which rendered as a default OS button box around
+     the label. Same class of defect the currency select had. Reset the
+     whole shorthand first, then draw the hairline. */
+  border: 0;
+  border-bottom: 1px solid rgba(74, 25, 66, 0.3);
+
+  padding: 0 0 3px;
+
+  background: transparent;
+  appearance: none;
+
+  color: #4a1942;
+
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+
+  cursor: pointer;
+
+  transition: border-color 250ms ease;
+}
+
+.auth-signout:hover:not(:disabled) {
+  border-bottom-color: #4a1942;
+}
+
+.auth-signout:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.auth-panel--checking {
+  min-height: 180px;
+
+  display: flex;
+  align-items: center;
+}
+
+.auth-panel--checking .auth-message {
+  color: var(--mist);
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- form panel ---------- */
+
+.auth-panel {
+  width: 100%;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 26px;
+
+  margin-bottom: 34px;
+
+  border-bottom: 1px solid rgba(74, 25, 66, 0.15);
+}
+
+.auth-tab {
+  position: relative;
+
+  padding: 0 0 13px;
+
+  border: 0;
+  background: transparent;
+
+  color: rgba(36, 28, 29, 0.65);
+
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+
+  transition: color 250ms ease;
+}
+
+/* Underline grows from the left on activation — the same restrained
+   move the M4 stepper uses for its active step. */
+.auth-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+
+  width: 100%;
+  height: 1px;
+
+  background: #4a1942;
+
+  transform: scaleX(0);
+  transform-origin: left center;
+
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.auth-tab:hover {
+  color: rgba(36, 28, 29, 0.75);
+}
+
+.auth-tab.is-active {
+  color: #4a1942;
+}
+
+.auth-tab.is-active::after {
+  transform: scaleX(1);
+}
+
+.auth-title {
+  margin-bottom: 10px;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(30px, 3.4vw, 40px);
+  font-weight: 400;
+  line-height: 1.1;
+
+  color: #241c1d;
+}
+
+.auth-subtitle {
+  margin-bottom: 32px;
+
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.7;
+
+  color: rgba(36, 28, 29, 0.65);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-field {
+  margin-bottom: 22px;
+}
+
+.auth-field label {
+  display: block;
+  margin-bottom: 9px;
+
+  color: #4a1942;
+
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.auth-field input {
+  width: 100%;
+
+  padding: 12px 14px;
+
+  border: 1px solid rgba(74, 25, 66, 0.2);
+  background: transparent;
+  color: #241c1d;
+
+  outline: none;
+
+  /* Without this a bare <input> renders in the UA font — the exact
+     defect that made the currency select look like OS chrome. */
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+
+  transition: border-color 200ms ease;
+}
+
+.auth-field input::placeholder {
+  color: rgba(36, 28, 29, 0.65);
+}
+
+.auth-field input:hover {
+  border-color: rgba(74, 25, 66, 0.35);
+}
+
+.auth-field input:focus-visible {
+  border-color: #4a1942;
+}
+
+/* Reserve the error's height so the submit button doesn't jump down
+   when a message appears. Collapses to nothing when there is no
+   error, but keeps the flow stable. */
+.auth-message {
+  min-height: 20px;
+  margin-bottom: 18px;
+
+  color: #8a3b3b;
+
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.auth-message:empty {
+  margin-bottom: 0;
+  min-height: 0;
+}
+
+.auth-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 14px;
+
+  min-height: 52px;
+  margin-top: 2px;
+  padding: 0 25px;
+
+  border: 1px solid #4a1942;
+
+  background: #4a1942;
+  color: #faf7f1;
+
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+
+  transition:
+    background 300ms ease,
+    color 300ms ease,
+    transform 300ms ease,
+    opacity 300ms ease;
+}
+
+.auth-submit:hover:not(:disabled) {
+  background: transparent;
+  color: #4a1942;
+
+  transform: translateY(-2px);
+}
+
+/* Disabled while a request is in flight — prevents a double submit,
+   which would create two accounts on a slow connection. */
+.auth-submit:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.auth-switch {
+  margin-top: 26px;
+
+  color: rgba(36, 28, 29, 0.65);
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.auth-switch-link {
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid rgba(74, 25, 66, 0.3);
+  background: transparent;
+
+  color: #4a1942;
+
+  font-size: 13px;
+
+  transition: border-color 250ms ease;
+}
+
+.auth-switch-link:hover {
+  border-color: #4a1942;
+}
+
+/* Reassurance about anonymous saving — the backend supports it, and
+   a traveller deciding whether to sign up deserves to know they aren't
+   being blocked from using the product. */
+.auth-anonymous {
+  margin-top: 22px;
+  padding-top: 20px;
+
+  border-top: 1px solid rgba(74, 25, 66, 0.12);
+
+  color: rgba(36, 28, 29, 0.65);
+
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.65;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 900px) {
+  .auth-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+
+    padding-top: 28px;
+  }
+
+  /* The aside is decorative; on a single column it would just push the
+     form below the fold. */
+  .auth-aside {
+    display: none;
+  }
+
+  .auth-panel {
+    max-width: 420px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-page {
+    padding: 22px 6vw 60px;
+  }
+
+  .auth-tabs {
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+}

@@ -2,7 +2,7 @@ import './TornEdge.css';
 
 /**
  * Stage layer 3 — torn chapter edge (M1, v1).
- * Spec: docs/MOTION_ANALYSIS.md (M1) & the stage plan (CHANGELOG).
+ * Spec: docs-backup/MOTION_ANALYSIS.md (M1) & the stage plan (docs-backup/CHANGELOG.md).
  *
  * A torn-paper seam between two chapters. `fill` must equal the NEXT
  * section's ground colour; the tear is pulled up over the previous

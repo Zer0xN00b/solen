@@ -47,7 +47,7 @@
 .not-found-eyebrow {
   margin-bottom: 28px;
 
-  color: #8fa8b8;
+  color: var(--mist);
 
   font-size: 10px;
   font-weight: 600;

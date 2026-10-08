@@ -1,4 +1,4 @@
-# SOLEN --- Complete Project Scope & Development Status
+﻿# SOLEN --- Complete Project Scope & Development Status
 
 ## 1. Project Overview
 
@@ -16,22 +16,27 @@ dynamic data.
 The project is a React/Vite frontend with a substantial interactive
 planner, now paired with a live TypeScript backend (Express 5 +
 Drizzle ORM + SQLite + Better Auth). The frontend remains the most
-complete part of the application; the remaining scope is finishing the
-frontend product layer and turning the planner into a persistent,
-data-driven full-stack experience.
+complete part of the application; the feature scope is closed — every
+item has either shipped or been descoped with its reasoning, and the
+site is called complete as of 5 Oct 2026 (see section 65).
 
-### Status snapshot — 17 September 2026
+### Status snapshot — updated 4 October 2026
+
+> The snapshot below originally read 17 September 2026 and was accurate then.
+> Backend foundation, authentication, journey persistence, the journey library,
+> security hardening and shareable journeys have all landed since.
 
 -   The repository was restructured into a clean monorepo
-    (`frontend/` + `backend/` npm workspaces) and lives on GitHub with
-    automated two-way sync (auto-push from the build workspace).
--   The backend is now real: Express 5 + TypeScript + Drizzle ORM over
+    (`frontend/` + `backend/` npm workspaces) and lives on GitHub on the
+    `SOLEN-Phase-2` branch.
+-   The backend is real: Express 5 + TypeScript + Drizzle ORM over
     SQLite, with Better Auth providing email/password authentication
     and database-backed sessions via httpOnly cookies (no localStorage
     tokens, by design).
--   Backend foundation (Phase 2) and authentication core (part of
-    Phase 3) are DONE. Next: auth UI, journey persistence, then the
-    Phase 1 frontend product features.
+-   Destination content, journeys, the journey library and public sharing
+    are all complete and tested. **No scope items remain open** — everything
+    is either shipped or descoped with its reasoning (see §42, §50, §53, §65).
+-   See `docs/BACKEND_UPGRADE_PLAN.md` for the authoritative current state.
 
 ------------------------------------------------------------------------
 
@@ -54,8 +59,8 @@ Frontend stack:
 -   JavaScript / JSX
 -   CSS
 -   Google Fonts
--   Browser local storage (legacy journey saving — to be replaced by
-    account-based persistence)
+-   Browser local storage (legacy journey saving — the API is now the
+    source of truth; local storage remains an offline fallback)
 -   Browser Web Share API
 -   Clipboard API
 -   Browser print/PDF functionality
@@ -75,30 +80,36 @@ Current project structure:
 ``` text
 solen/                          ← npm workspaces monorepo
 ├── package.json                ← shared scripts; allowScripts approvals
+├── README.md                   ← project identity, layout, status
 ├── SOLEN_COMPLETE_SCOPE.md     ← this document
 ├── LOCAL_SETUP.md              ← running SOLEN on a personal PC
 ├── frontend/                   ← React + Vite
+│   ├── README.md               ← frontend commands + source map
 │   ├── public/assets/          ← brand, hero, destinations, experiences
 │   └── src/
 │       ├── main.jsx            ← entry (BrowserRouter)
-│       ├── AppRoutes.jsx       ← route table + scroll restore
-│       ├── pages/              ← home/, destination/, planner/
-│       ├── components/         ← globe/, navbar/
+│       ├── AppRoutes.jsx       ← route table (7 routes) + scroll restore
+│       ├── pages/              ← home/, destination/, planner/, auth/,
+│       │                         journeys/ (library + shared), notFound/
+│       ├── components/         ← ambient/, edges/, globe/, rail/
+│       ├── api/                ← fetch wrappers for /api
 │       ├── data/               ← application data only (no logic)
 │       ├── engine/             ← pure personalization/budget/journey logic
-│       └── styles/             ← index.css, responsive.css
+│       ├── utils/              ← reveal.js
+│       └── styles/             ← index.css, motion.css, responsive.css
 └── backend/                    ← TypeScript + Express 5
+    ├── README.md               ← API reference
     ├── .env.example            ← documented environment variables
     ├── drizzle/                ← committed SQL migrations
     ├── data/                   ← local SQLite file (git-ignored)
     └── src/
         ├── server.ts / app.ts  ← entry point + app assembly
-        ├── auth/auth.ts        ← Better Auth configuration
+        ├── auth/               ← Better Auth configuration
         ├── config/env.ts       ← typed environment access
-        ├── routes/             ← /api routes (health today)
+        ├── routes/ controllers/ services/ models/  ← journey, destination,
+        │                         weather and sharing endpoints
         ├── middleware/         ← notFound + errorHandler
-        ├── database/           ← schema.ts (generated), db.ts, migrate.ts
-        └── controllers/ services/ models/  ← future product code
+        └── database/           ← schema.ts (generated), db.ts, migrate.ts
 ```
 
 ### Frontend code organization rules
@@ -816,15 +827,19 @@ Already present:
 -   ARIA labels on route controls
 -   Disabled states
 -   Reduced-motion support
+-   `:focus-visible` styles (global)
+-   Every `<img>` has an `alt`; every `<button>` has an explicit `type`
+-   Auth inputs labelled via `htmlFor`/`id`
+-   Budget slider labelled (`aria-label` + `aria-valuetext`, added 5 Oct)
+-   Favourite-day tap target extended to 44px (5 Oct)
 
-Remaining:
+Remaining (the polish pass):
 
 -   Full accessibility audit
 -   Keyboard-navigation review
--   Focus-state review
 -   Screen-reader review
 -   Contrast review
--   Form semantics review
+-   Skip-to-content link
 
 ------------------------------------------------------------------------
 
@@ -835,14 +850,44 @@ Approximate frontend completion:
 **85--90%**
 
 The frontend already represents a substantial interactive travel
-product. Remaining frontend work is primarily productization and
-refinement.
+product. The feature layer is finished; only the polish work recorded
+in section 40 is optional from here.
 
 ------------------------------------------------------------------------
 
-# 42. FRONTEND REMAINING SCOPE
+# 42. FRONTEND REMAINING SCOPE --- CLOSED (5 OCT 2026)
 
-## Destination-aware packing list
+> **Reshaped 5 Oct 2026.** All three of the original items in this section —
+> the destination-aware packing list, the cost transparency enhancement, and
+> travel logistics — are **descoped**. They are kept below as history, with the
+> reasoning, so the decision reads straight rather than looking like an omission.
+> The frontend feature list is closed; the clean pass it would have led to has
+> been run (section 61).
+>
+> **Packing list — descoped.** The real cost was never the checklist UI; it was
+> authoring packing guidance for seven destinations across weather, style and
+> activity, and then keeping it honest against live weather. It is also the
+> least distinctive thing the product could carry: a packing checklist is what
+> every travel site has, and it would sit beside the editorial destination
+> pages and traveller profiles as the one utilitarian screen in a product whose
+> identity is "one continuous, living journey".
+>
+> **Cost transparency — descoped because it is already built.** The breakdown
+> ships today: "WHERE YOUR ESTIMATE GOES" splits the estimate into stay,
+> dining, experiences, transport and buffer, alongside per-day spend, the
+> total, currency conversion and a five-factor budget engine. Five of the
+> seven items this section asked for were already in place, buffer included,
+> and section 60 already recorded "Budget category breakdown" and "Day-by-day
+> spending" as done. Re-scoping it was costing half a day to restate a
+> feature that exists.
+>
+> The one gap this descopes: there is no plain statement of what the estimate
+> *includes* and excludes. If that is ever wanted, it is a short line under
+> the existing grid — an hour, not a phase.
+
+## Destination-aware packing list — DESCOPED (5 OCT 2026)
+
+*Original scope, kept for the record:*
 
 Estimated time: **0.5--1 day**
 
@@ -857,7 +902,9 @@ Potential scope:
 
 ------------------------------------------------------------------------
 
-## Travel logistics
+## Travel logistics — DESCOPED (5 OCT 2026)
+
+*Original scope, kept for the record:*
 
 Estimated time: **0.5--1 day**
 
@@ -871,9 +918,18 @@ Potential scope:
 -   Approximate travel time
 -   Check-in/check-out context
 
+**Why descoped.** This is reference content the planner already implies: the
+itinerary has days, directions have a destination, and every field listed above
+is static prose that would sit in one section with nothing to personalize it.
+It does not use the budget, the traveller profile, the live weather, or the
+journey itself — the four things this product is built on. Adding it would have
+made the feature count larger without making the journey better.
+
 ------------------------------------------------------------------------
 
-## Cost transparency enhancement
+## Cost transparency enhancement — DESCOPED (5 OCT 2026)
+
+*Original scope, kept for the record:*
 
 Estimated time: **0.5--1 day**
 
@@ -943,9 +999,13 @@ The permanent journey ID would ultimately come from the backend.
 
 ## Final frontend QA / polish
 
-Estimated time: **1--2 days**
+**Run 5 Oct 2026 -- see section 61.** The audit came out at three defects
+(stray indentation, an unlabelled slider, an undersized tap target), all fixed
+and verified. What it did not cover is listed in section 40 as optional.
 
-Scope:
+Original estimate, kept for the record: **1--2 days**
+
+Original scope:
 
 -   Mobile edge cases
 -   Tablet edge cases
@@ -1071,19 +1131,7 @@ account       ← auth accounts (email/password now; OAuth later)
 verification  ← tokens for future email verification
 ```
 
-Remaining entities (target design):
-
-## User Preferences
-
-``` text
-id
-user_id
-travel_style
-budget
-currency
-interests
-preferred_experiences
-```
+**Live entities:**
 
 ## Destinations
 
@@ -1128,7 +1176,9 @@ weather_note
 is_favourite
 ```
 
-The schema can evolve as the product becomes more sophisticated.
+The schema can evolve as the product becomes more sophisticated. The planned
+**user preferences table was descoped 5 Oct 2026** — no UI consumes it (see
+section 60).
 
 ------------------------------------------------------------------------
 
@@ -1146,31 +1196,22 @@ The schema can evolve as the product becomes more sophisticated.
 -   Wrong-credential handling — generic "Invalid email or password"
     (no user enumeration)
 
-Remaining:
+Shipped:
 
--   Protected API routes (requireAuth middleware for journey endpoints)
--   Frontend auth UI (SOLEN-styled sign-up/sign-in, session-aware
-    navbar via the better-auth/react client)
--   User-specific data access (journey ownership)
+-   Protected API routes (requireAuth middleware for journey endpoints) ✅
+-   Frontend auth UI (SOLEN-styled sign-up/sign-in, session-aware navbar
+    via the better-auth/react client) ✅
+-   User-specific data access (journey ownership) ✅
 
 Public trip planning remains available without an account, while
 persistent saved journeys become account-based.
 
 ------------------------------------------------------------------------
 
-# 48. PERSISTENT JOURNEYS --- REMAINING
+# 48. PERSISTENT JOURNEYS --- DONE (SHIPPED WITH PHASE 3, 17 SEP 2026)
 
-Estimated time: **1--2 days**
-
-Current:
-
-``` text
-Browser
-↓
-localStorage
-```
-
-Future:
+Journeys persist through the API rather than the browser. Implemented as
+originally sketched:
 
 ``` text
 React
@@ -1180,8 +1221,6 @@ API
 Database
 ```
 
-Potential API operations:
-
 ``` text
 POST   /api/journeys
 GET    /api/journeys
@@ -1190,17 +1229,13 @@ PUT    /api/journeys/:id
 DELETE /api/journeys/:id
 ```
 
-This would support the Journey Library.
+This supports the Journey Library.
 
 ------------------------------------------------------------------------
 
-# 49. JOURNEY SHARING --- REMAINING
+# 49. JOURNEY SHARING --- DONE (3 OCT 2026)
 
-Estimated time: **\~1 day**
-
-A saved journey can receive a unique public identifier.
-
-Conceptually:
+A saved journey receives a unique public identifier:
 
 ``` text
 Journey
@@ -1212,299 +1247,131 @@ Share URL
 Public journey page
 ```
 
-The backend can determine whether a journey is:
-
--   Private
--   Shared
--   Public
+The backend determines whether a journey is private, shared or public;
+`requireAuth` guards the private routes and `/api/journeys/public/:id` serves
+the shared one.
 
 ------------------------------------------------------------------------
 
-# 50. DYNAMIC ITINERARY ENGINE --- REMAINING
+# 50. ITINERARY GENERATION --- LIVES IN THE FRONTEND (BY DECISION, 5 OCT 2026)
 
-Estimated time: **2--3 days for a first useful version**
+**Descoped from the backend. Not remaining work.**
 
-This is one of the most important backend features.
+Generation (personalization, budget, journey assembly) runs in `frontend/src/engine/`
+as pure, tested modules, and stays there. Moving it server-side would relocate
+working logic to another process for zero user-visible gain: there is no secret
+to protect (forecast providers under consideration need no key), nothing to
+offload (microseconds of arithmetic), and no second consumer. The 49 handcrafted
+day blocks remain the quality bar; generated output is judged against them.
 
-Conceptual flow:
-
-``` text
-Destination
-+
-Duration
-+
-Budget
-+
-Travel Style
-+
-Interests
-+
-Experience
-+
-Weather
-        ↓
-Backend itinerary engine
-        ↓
-Personalized journey
-        ↓
-Frontend result page
-```
-
-The existing frontend personalization logic provides the behavioural
-foundation. Since the 17 Sep 2026 restructure it lives in
-`frontend/src/engine/` as pure, framework-free modules
-(personalization, budget, journey assembly) with all content in
-`frontend/src/data/` — deliberately shaped so the backend services can
-lift-and-shift them.
-
-The backend version would move core decision-making and data retrieval
-into server-side services.
+Revisit only if generation becomes non-deterministic/expensive (e.g. an LLM
+writing itineraries), a paid feature that must be enforced server-side, or a
+second client needing authoritative versioned output. None of those is true today.
 
 ------------------------------------------------------------------------
 
-# 51. ITINERARY DATA MODEL --- REMAINING
 
-The backend can maintain structured destination data instead of relying
-entirely on hard-coded JSX objects.
+# 51. ITINERARY DATA MODEL --- SUPERSEDED (5 OCT 2026)
 
-A destination can contain:
-
--   Attractions
--   Restaurants
--   Experiences
--   Activities
--   Areas
--   Accommodation categories
--   Transport options
--   Weather information
--   Seasonal information
-
-Activities can contain metadata such as:
-
-``` text
-destination
-category
-style
-interests
-estimated_cost
-duration
-weather suitability
-premium suitability
-```
-
-This enables more intelligent itinerary generation.
+Done differently than planned, and that is fine. Structured destination content
+lives in the `destination` + `itinerary_day` tables (migrations 0001-0003), seeded
+directly from the frontend data files with a field-level diff gate (7 destinations,
+49 day blocks). There is no separate richer model, and none is planned: nothing
+in the product consumes per-activity metadata, and adding it would be schema
+without a feature.
 
 ------------------------------------------------------------------------
 
-# 52. WEATHER API --- REMAINING
 
-Estimated time: **0.5--1.5 days**
+# 52. LIVE WEATHER SNIPPET --- DONE (5 OCT 2026)
 
-Current:
+Shipped. `GET /api/weather/:slug` reads Open-Meteo (free, no key) through a
+cached proxy and returns a live temperature and sky condition beside the
+planner's curated weather note.
 
--   Static destination weather information
+Scoped as originally written, and built to that scope: one user-visible thing
+and nothing more. No itinerary adjustments, no outdoor/indoor reselection, no
+clothing logic -- the curated copy already covers the planning; this only makes
+the weather claim live instead of static.
 
-Future:
+The design rule throughout is that the provider is an enhancement, never a
+dependency. A 4s hard timeout, shape-validated responses, a 10-minute cache
+that stores only successes, and a curated `weather_summary` fallback on every
+failure path. The planner cannot fail where it previously could not.
 
-``` text
-Destination
-↓
-Weather API
-↓
-Backend
-↓
-Current / forecast conditions
-↓
-Itinerary adjustments
-```
-
-Potential uses:
-
--   Outdoor activity selection
--   Indoor alternatives
--   Clothing suggestions
--   Flexible scheduling
--   Daily weather notes
+Note the honesty boundary this deliberately does not cross: the planner is
+**conditions**-aware, still not **forecast**-aware. Nothing reschedules around
+the reading.
 
 ------------------------------------------------------------------------
 
-# 53. MAP / ROUTE DATA --- REMAINING
 
-Estimated time: **1--2 days**
+# 53. MAP / ROUTE DATA --- DESCOPED (5 OCT 2026)
 
-Potential scope:
-
--   Destination coordinates
--   Stop coordinates
--   Route information
--   Approximate movement time
--   Area grouping
--   Route optimization
-
-The existing visual route can then become data-driven.
+Not on the to-do list. Maps need a vendor key and a billing decision, the existing
+visual route already reads real coordinates from the DB, and nothing in the
+reshaped scope (polish) needs route intelligence. Revisit only with a chosen
+vendor and a feature that consumes it.
 
 ------------------------------------------------------------------------
 
-# 54. DESTINATION DATA API --- REMAINING
 
-Estimated time: **0.5--1 day**
+# 54. DESTINATION DATA API --- DONE (30 SEP 2026)
 
-Note (17 Sep 2026): destination content is no longer duplicated across
-components — it is centralized in `frontend/src/data/` (destinations,
-destinationEditorial, globeDestinations, homeContent, plannerOptions).
-Those files become the seed data for this API.
-
-Future architecture:
-
-``` text
-Frontend
-↓
-GET /api/destinations
-↓
-Backend
-↓
-Database
-```
-
-This can eventually power:
-
--   Homepage destinations
--   Globe
--   Destination pages
--   Planner
--   Search/discovery
-
-The current visual design does not need to change to support this.
+Shipped as Phase 1: `GET /api/destinations`, `/all`, `/:slug`, served from the DB,
+consumed via `destinationSource.js` with the JS files as offline fallback.
+Kept here so the history reads straight.
 
 ------------------------------------------------------------------------
 
-# 55. SECURITY / VALIDATION --- REMAINING
 
-Estimated time: **\~1 day**
+# 55. SECURITY / VALIDATION --- DONE (3 OCT 2026)
 
-Scope:
-
--   Request validation
--   Authentication checks
--   Protected resources
--   Input sanitization
--   Password security
--   Environment variables
--   Error responses
--   User ownership checks
--   Rate limiting where appropriate
-
-The core objective is preventing unauthorized access or modification of
-another user's private journeys.
+Shipped: `journeyValidation.ts`, requireAuth + ownedBy (404 not 403 on non-owners),
+rate limiting + helmet, allowlisted public share serializer. Kept here so the
+history reads straight.
 
 ------------------------------------------------------------------------
 
-# 56. FRONTEND ↔ BACKEND INTEGRATION --- REMAINING
 
-Estimated time: **1--2 days**
+# 56. FRONTEND-BACKEND INTEGRATION --- DONE (5 OCT 2026)
 
-Conceptual flow:
-
-``` text
-React Planner
-      ↓
-POST /api/journeys/generate
-      ↓
-Backend
-      ↓
-Personalization service
-      ↓
-Destination data
-      ↓
-Weather data
-      ↓
-Budget engine
-      ↓
-Generated journey
-      ↓
-React Result Page
-```
-
-The current visual planner can remain largely intact while its data
-source changes from local/static logic to API-backed logic.
+The planner, library and sharing all read and write through the API, and the
+section 52 weather snippet is wired through the cached proxy. The generate
+arrow in the old diagram (`POST /api/journeys/generate`) was the descoped
+engine (see section 50) and will not be built.
 
 ------------------------------------------------------------------------
 
-# 57. BACKEND TESTING --- REMAINING
 
-Estimated time: **1 day**
+# 57. BACKEND TESTING --- DONE (3 OCT 2026)
 
-Scope:
-
--   API success cases
--   Invalid requests
--   Authentication failures
--   Missing data
--   Database failures
--   Journey ownership
--   Save/load/delete
--   Share links
--   Itinerary generation
--   External API failure handling
+66 tests passing (routes, validation, ownership, sharing, weather). External-provider failure
+handling gets covered by the section-52 snippet tests when it lands.
 
 ------------------------------------------------------------------------
 
-# 58. DEPLOYMENT --- REMAINING
 
-Estimated time: **1 day**
+# 58. DEPLOYMENT --- CONFIG DONE, FIRST BUILD IS SHIPPING-DAY WORK (5 OCT 2026)
 
-Scope:
-
-## Frontend
-
-Production deployment of the React/Vite application.
-
-## Backend
-
-Production deployment of the API server.
-
-## Database
-
-Production database connection.
-
-## Environment variables
-
-Separate development and production configuration.
+Dockerfile + compose are written; the image has never been built (no Docker in this
+environment). Not on the feature to-do: it returns the day anything ships, along
+with backups and CI. See docs/DEPLOYMENT.md section 7.
 
 ------------------------------------------------------------------------
 
-# 59. FINAL PRODUCT TESTING --- REMAINING
 
-Estimated time: **1--2 days**
+# 59. FINAL PRODUCT TESTING --- RUN AS THE CLEAN PASS (5 OCT 2026)
 
-Full end-to-end testing should cover:
-
--   Homepage
--   Globe
--   Destination pages
--   Planner
--   URL preselection
--   Personalization
--   Budget
--   Currency
--   Duration
--   Weather
--   Day regeneration
--   Favourites
--   Saving
--   Authentication
--   Database
--   Journey Library
--   Sharing
--   Mobile
--   Tablet
--   Desktop
--   Direct URL loading
--   Refresh behaviour
--   API failures
--   Empty states
+Not a separate phase. Each to-do item shipped with its own verification
+(screenshots for UI, tests for logic), and the clean pass in section 61 ended
+with a page-by-page sweep: homepage, globe, destination pages, planner, auth,
+library, sharing, mobile / tablet / desktop, direct URLs, refresh behaviour,
+API failures, empty states. Build, lint, typecheck and 66/66 tests all green
+afterwards.
 
 ------------------------------------------------------------------------
+
 
 # 60. COMPLETE FEATURE STATUS
 
@@ -1564,150 +1431,103 @@ Full end-to-end testing should cover:
 -   [x] Reduced-motion support
 -   [x] Mobile route presentation
 
-## REMAINING FRONTEND
+## TO-DO (CLOSED 5 OCT 2026)
 
--   [ ] Destination-aware packing list
--   [ ] Travel logistics section
--   [ ] Enhanced cost transparency
--   [ ] Journey Library UI
--   [ ] Shareable journey page
--   [ ] Full accessibility pass
--   [ ] Final responsive QA
--   [ ] Final performance polish
--   [ ] Final visual consistency pass
--   [ ] Empty/error/loading states where required
+**Nothing open.** Everything below shipped or was descoped with its reasoning
+(sections 42, 50-59). The scope closes with the clean pass; the site is
+called complete.
 
-## REMAINING BACKEND
+-   [x] Live weather snippet (section 52, shipped 5 Oct 2026 -- cached proxy, curated fallback)
+-   [x] Clean pass (shipped 5 Oct 2026 -- see CHANGELOG and section 40; see
+     section 61 for what it deliberately left out)
+
+Descoped 5 Oct 2026 -- see section 42 for the reasoning:
+
+-   Travel logistics (static reference content; nothing personalized to show)
+-   Destination-aware packing list (not distinctive; large content surface)
+-   Enhanced cost transparency (already shipped -- see the "WHERE YOUR
+    ESTIMATE GOES" breakdown)
+
+## DONE (INCLUDING THIS RESHAPE)
 
 -   [x] Backend project foundation (17 Sep 2026)
 -   [x] Database foundation (Drizzle + SQLite, migrations on boot)
--   [x] Database schema — auth tables (user/session/account/verification)
+-   [x] Database schema -- auth tables (user/session/account/verification)
 -   [x] Authentication core (Better Auth: email/password + sessions)
 -   [x] API error handling (central handler + JSON 404s)
--   [ ] User accounts UI (sign-up/sign-in pages, session-aware navbar)
--   [ ] Protected API routes (requireAuth middleware)
--   [ ] User preference persistence
--   [ ] Journey CRUD API
--   [ ] Persistent saved journeys
--   [ ] Journey Library backend
--   [ ] Public/shareable journey IDs
--   [ ] Public journey API
--   [ ] Destination API
--   [ ] Structured itinerary data
--   [ ] Dynamic itinerary engine
--   [ ] Weather API integration
--   [ ] Map/route data integration
--   [ ] Backend validation
--   [ ] Security hardening
--   [ ] Frontend/backend integration
--   [ ] Backend testing
--   [ ] Production deployment
--   [ ] Production database
--   [ ] End-to-end testing
+-   [x] User accounts UI (sign-up/sign-in, session-aware navbar, sign-out)
+-   [x] Protected API routes (requireAuth middleware)
+-   [x] Journey CRUD API + persistent saved journeys + Journey Library backend
+-   [x] Public/shareable journey IDs + public journey API
+-   [x] Destination API + structured itinerary data (seeded, diff-gated)
+-   [x] Backend validation + security hardening (rate limiting + helmet)
+-   [x] Frontend/backend integration + backend testing (66 tests)
+-   [x] Deployment + production DB config (first build/deploy is shipping-day work)
+
+## EXPLICITLY DESCOPED 5 OCT 2026 (NOT TO-DO -- SEE SECTIONS 50-59 FOR WHY)
+
+-   Server-side itinerary engine (relocation, not a feature)
+-   Maps / route intelligence (needs a vendor + billing decision first)
+-   User preference persistence (no UI consumes it)
+-   CI / backups / E2E phase / deployment run (shipping-day ops, not product work)
 
 ------------------------------------------------------------------------
 
-# 61. ESTIMATED REMAINING TIME
+# 61. ESTIMATED REMAINING TIME (CLOSED 5 OCT 2026)
 
-  Area                            Estimated time
-  ----------------------------- ----------------
-  Remaining frontend features          3--5 days
-  Frontend final polish                1--2 days
-  Backend foundation                       DONE
-  Authentication core                      DONE
-  Auth UI + protected routes           1--2 days
-  Product tables + journey CRUD        1--2 days
-  Dynamic itinerary engine             2--3 days
-  Weather integration              0.5--1.5 days
-  Maps/routes                          1--2 days
-  Shareable journeys                     ~1 day
-  Security/validation                    ~1 day
-  Integration/testing                  1--2 days
-  Deployment                             ~1 day
-  Final QA                             1--2 days
+  Item                                Estimated time
+  --------------------------------- ----------------
+  Clean pass (done)                  ~2 hours
 
-**Overall realistic remaining scope: approximately 11--18 focused
-working days** (was 14--22 before the 17 Sep 2026 backend session).
+  (Everything else either shipped or was descoped with its reasoning:
+   live weather section 52; travel logistics, packing list and cost
+   transparency section 42; engine section 50; maps section 53.)
 
-For a beginner simultaneously learning backend development, a practical
-project window is approximately **2--3 more weeks**.
+**Remaining scope: none. SOLEN is called complete.**
+
+The original estimate for this work was a full polish phase -- accessibility,
+responsive QA, performance, contrast, a skip link -- at 1-2 days. What that
+audit actually turned up was three small defects and no structural problems,
+so it was fixed as a clean pass in an afternoon rather than run as a phase.
+The items deliberately left out of "complete" are listed below so the
+decision is on record rather than implied:
+
+-   Prettier reformat -- never enforced here; it would rewrite every file
+    for no behavioural gain.
+-   Skip-to-content link and a formal WCAG contrast audit -- real work, but
+    beyond a small pass; see section 40 if ever wanted.
 
 ------------------------------------------------------------------------
 
-# 62. RECOMMENDED DEVELOPMENT PHASES
+# 62. RECOMMENDED DEVELOPMENT PHASES (CLOSED 5 OCT 2026)
 
-## Phase 1 --- Finish frontend product layer — not started
+Old phases 1-6 shipped everything they were going to ship. The remaining plan
+was one feature phase and one polish phase; the feature was descoped and the
+polish audit was run as a small clean pass. **No phases remain.**
 
-**Estimated: 3--5 days**
+## Phase A --- Clean pass (done 5 Oct 2026)
 
-Scope:
+-   One stray column-0 line in SharedJourneyPage.jsx repaired
+-   Budget slider given an accessible name and value text
+-   Favourite-day tap target extended to 44px, visual unchanged
+-   Missing `<meta name="description">` added to index.html
+-   Full sweep of eight pages: alt text, button types, form labels, main
+    landmarks, focus states, reduced motion, assets, stray debug output
+-   Verified: vite build, eslint (frontend + backend), tsc, 66/66 tests
 
--   Packing
--   Logistics
--   Cost transparency
--   Journey Library UI
--   Shareable journey UI
--   Final visual polish
+**After Phase A: complete.** Nothing follows it.
+-   Ends with a full page-by-page sweep (the old section-59 list, folded in)
 
-## Phase 2 --- Backend foundation — **DONE (17 Sep 2026)**
+## Retired phases (history, kept straight)
 
-Delivered ahead of estimate in one session:
-
--   npm workspace, Express 5 + TypeScript, environment setup
--   Drizzle ORM + SQLite, committed migrations applied on boot
--   Base API structure (/api/health) + error middleware
-
-## Phase 3 --- Accounts + persistence — **PARTIALLY DONE**
-
-Done (17 Sep 2026):
-
--   Authentication core — Better Auth email/password, DB-backed
-    sessions, httpOnly cookies
-
-Remaining (**estimated 2--3 days**):
-
--   Auth UI (sign-up/sign-in pages, session-aware navbar)
--   Protected API routes
--   journeys + user_preferences tables
--   Journey CRUD + Journey Library backend
-
-## Phase 4 --- Intelligent backend planner
-
-**Estimated: 3--5 days**
-
-Scope:
-
--   Structured destination data
--   Itinerary engine
--   Budget engine integration
--   Weather API
--   Route/location data
--   Dynamic itinerary response
-
-## Phase 5 --- Product-level sharing
-
-**Estimated: 1--2 days**
-
-Scope:
-
--   Public journey IDs
--   Shareable journey URLs
--   Public journey rendering
--   Privacy/public controls
-
-## Phase 6 --- Security + production
-
-**Estimated: 2--3 days**
-
-Scope:
-
--   Validation
--   Security
--   API testing
--   Deployment
--   Database deployment
--   Production configuration
--   End-to-end QA
+-   Old Phase 1 (frontend product layer): shipped library + sharing UI; its
+    packing and cost items are descoped (section 42).
+-   Old Phases 2, 3, 5 (foundation, accounts, sharing): DONE.
+-   Old Phase 4 (intelligent backend planner): DESCOPED -- engine stays in the
+    frontend by decision (section 50); maps descoped (section 53).
+-   Old Phase 6 (security + production): shipped validation, security, 66
+    tests, deployment config; first build/deploy + CI/backups are
+    shipping-day work.
 
 ------------------------------------------------------------------------
 
@@ -1724,7 +1544,7 @@ Scope:
           │                                 │
    ┌──────┼───────┐              ┌──────────┼──────────┐
    │      │       │              │          │          │
-Homepage Globe Planner       Auth       Journeys   Itinerary
+Homepage Globe Planner       Auth       Journeys   Destinations
    │      │       │              │          │          │
    └──────┴───────┘              └──────────┼──────────┘
                                              │
@@ -1732,12 +1552,15 @@ Homepage Globe Planner       Auth       Journeys   Itinerary
                                              │
                               ┌──────────────┼──────────────┐
                               │              │              │
-                           Users         Journeys     Destinations
+                            Users         Journeys     Destinations
+                             (journeys + itinerary_day rows)
                                              │
+                              Generation lives in frontend/src/engine (by decision, sec 50)
                                       Personalization
                                              │
                               ┌──────────────┼──────────────┐
                               │                             │
+                       Live weather snippet (sec 52, scoped)    Maps: descoped
                          Weather API                    Maps API
 ```
 
@@ -1771,8 +1594,8 @@ Itinerary
 
 ## Stage 3 --- Persistent application
 
-**In progress** — accounts + database foundation live (Better Auth,
-SQLite, Drizzle); saved journeys remaining
+**Done** -- accounts, database, saved journeys, library and sharing all
+shipped.
 
 ``` text
 Planner
@@ -1784,127 +1607,85 @@ Database
 Saved journeys
 ```
 
-## Stage 4 --- Intelligent travel product
+## Stage 4 --- Feature + polish finish (reshaped 5 Oct 2026)
 
-**Remaining**
-
-``` text
-Personalization
-+
-Live weather
-+
-Location/route data
-+
-Dynamic itinerary engine
-```
+**To-do:** nothing. The polish pass was run as a small clean pass (section 61)
+and closed. The old engine and maps plans are descoped (sections 50 and 53),
+as are travel logistics, the packing list and cost transparency (section 42).
+Live weather shipped 5 Oct (section 52).
 
 ## Stage 5 --- Full portfolio-level product
 
-**Target**
+**Target** -- SOLEN is functionally here and is now called complete. What
+remains is the shipping-day operations work (first Docker build, CI, backups).
+--------------------------------------------------------------------------
 
-``` text
-Luxury UI
-+
-Personalized planner
-+
-Real backend
-+
-Database
-+
-Authentication
-+
-APIs
-+
-Shareable journeys
-+
-Production deployment
-```
+# 65. OVERALL SOLEN STATUS (CLOSED 5 OCT 2026)
 
-------------------------------------------------------------------------
+**Frontend:** product layer done, clean pass applied.
 
-# 65. OVERALL SOLEN STATUS
+**Backend:** done. Engine descoped, maps descoped, weather snippet shipped,
+deployment config written (first build is shipping-day work).
 
-Approximate current status (updated 17 Sep 2026):
+**Remaining scope: none. SOLEN is complete.**
 
-**Frontend:** ~85--90% complete
+Everything is either shipped or descoped with its reasoning on the record.
+The site is called complete as of 5 Oct 2026; the only work left in the
+repository is shipping-day operations (Docker build, CI, backups), which
+needs a hosting decision rather than code.
 
-**Backend:** foundation + authentication complete (roughly 30% of
-backend scope). Persistence, itinerary engine, integrations and
-deployment remain.
+--------------------------------------------------------------------------
 
-**Overall full-stack product:** ~70% complete
+# 66. SCOPE PRIORITY (RESHAPED 5 OCT 2026)
 
-The existing frontend already provides the majority of the visible
-product experience. The largest remaining value is not additional
-decorative frontend features, but converting the existing planner into a
-real persistent and data-driven application.
+## Build now
 
-The final objective is for SOLEN to feel like a real luxury travel
-product while also demonstrating meaningful full-stack engineering
-capability.
+Nothing. The build-now list is empty as of 5 Oct 2026 -- the polish pass was
+run as a clean pass and closed (section 61).
 
-------------------------------------------------------------------------
+## Descoped -- do not build
 
-# 66. SCOPE PRIORITY
+Engine (section 50), maps/route data (section 53), travel logistics, packing
+list and cost transparency (section 42), user preference persistence,
+CI/backups, and the first deployment run.
 
-## Highest priority
-
-1.  Auth UI + protected routes (the visible half of accounts)
-2.  Journey CRUD API + ownership (persistent journeys)
-3.  Journey Library UI on top of the API
-4.  Dynamic itinerary engine (port of frontend/src/engine)
-5.  API integration (destinations, weather)
-6.  Shareable journeys
-7.  Security hardening
-8.  Deployment
-
-## Medium priority
-
-1.  Journey Library UI
-2.  Packing list
-3.  Travel logistics
-4.  Cost transparency
-5.  Route/map intelligence
-
-## Final polish
-
-1.  Accessibility
-2.  Performance
-3.  Mobile QA
-4.  Error states
-5.  Loading states
-6.  Production QA
-
-------------------------------------------------------------------------
+--------------------------------------------------------------------------
 
 # 67. SCOPE PHILOSOPHY
 
+**"a complete, persistent, personalized full-stack travel product -- finishing
+its last feature and its polish."**
+
 SOLEN should remain focused on the core promise:
 
-> **A luxury travel concierge that understands how the traveller wants
-> to feel, what they enjoy, where they want to go, how long they have,
-> and how much they want to spend --- then turns those preferences into
-> a considered journey.**
+> **A luxury travel concierge that understands how the traveller wants to feel,
+> what they enjoy, where they want to go, how long they have, and how much they
+> want to spend --- then turns those preferences into a considered journey.**
 
-The remaining backend work exists to make that promise technically real.
+That promise is now met end to end. The goal is no longer to add features
+simply to increase the feature count -- which is precisely why travel logistics,
+the packing list and the restated cost transparency were descoped rather than
+built. The goal is to finish what exists: make it correct on a phone, make it
+accessible, and make it load quickly.
 
-The goal is not to add features simply to increase the feature count.
-
-The goal is to move SOLEN from:
-
-**"a beautiful interactive travel planner"**
-
-to:
-
-**"a complete, persistent, personalized full-stack travel product."**
-
-------------------------------------------------------------------------
+--------------------------------------------------------------------------
 
 # 68. DOCUMENT HISTORY
 
--   **v2 — 17 Sep 2026:** repository restructured into a monorepo
+-   **v6 -- 5 Oct 2026:** clean pass run (section 61); stale headings in
+    sections 40, 46-49, 56, 59 corrected. **Scope closed -- SOLEN is called
+    complete.**
+-   **v5 -- 5 Oct 2026:** travel logistics descoped (section 42). Scope was
+    reduced to a single polish pass (~1-2 days).
+-   **v4 -- 5 Oct 2026:** live weather snippet shipped (section 52); packing
+    list and cost transparency descoped (section 42, the latter already
+    shipped).
+-   **v3 -- 5 Oct 2026:** scope reshaped to features + polish only. Engine
+    descoped (stays in frontend by decision), maps descoped, prefs descoped,
+    ops deferred to shipping day.
+-   **v2 -- 17 Sep 2026:** repository restructured into a monorepo
     (pages/components/data/engine), backend foundation + Better Auth
     completed (Phases 2 + auth core of 3), statuses/estimates/priorities
     updated throughout.
--   **v1 — initial:** scope as carried over from the original
-    development chat.
+-   **v1 -- initial:** scope as carried over from the original development
+    chat.

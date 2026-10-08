@@ -1,8 +1,8 @@
 # SOLEN Motion Foundation — conventions & rules
 
 Companion to `MOTION_ANALYSIS.md` (the spec). The analysis is the
-*why*; this file is the *how*. Built 17 Sep 2026. **No individual
-animations are implemented yet** — this is vocabulary only.
+*why*; this file is the *how*. Built 17 Sep 2026; the rules below still
+govern every entrance/reveal in the shipped site.
 
 ## What exists
 

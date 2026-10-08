@@ -1,7 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './DestinationDetail.css';
-import { destinationEditorial } from '../../data/destinationEditorial.js';
+import {
+  getEditorialBySlug,
+  isSettled,
+  loadDestinationContent,
+  subscribe,
+} from '../../data/destinationSource.js';
 import NotFoundPage from '../notFound/NotFoundPage.jsx';
 import { initM2GhostSolid } from './m2GhostSolid.js';
 
@@ -9,23 +14,46 @@ function DestinationDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
 
+  // Refresh from the API, and re-render when it lands. The bundled editorial
+  // is served immediately, so a real destination paints on the first frame
+  // exactly as it did before this migration.
+  const [, setVersion] = useState(0);
+  useEffect(() => {
+    loadDestinationContent();
+    return subscribe(setVersion);
+  }, []);
+
   // No fallback object: an unknown slug is a broken route, not Kyoto.
-  const destination = destinationEditorial[slug];
+  // `getEditorialBySlug` also resolves the legacy `amalfi` alias, which is
+  // the URL the globe used to link to and which 404'd.
+  const destination = getEditorialBySlug(slug);
 
   // Animation 02 — M2 ghost → solid ink-in on the destination title.
   // Re-initializes per destination so the observer always watches the
   // live title; cleanup disconnects the observer on unmount/change.
+  // Keyed on `slug` alone, so the API refresh below does not replay the
+  // animation over a page the visitor is already reading.
   useEffect(() => initM2GhostSolid(), [slug]);
 
   // Broken-slug handling (scope §42). This previously served Kyoto's
   // editorial page for any unknown slug — silently wrong content on a
-  // truthful URL. Kept BELOW the effect so the hook order is stable.
+  // truthful URL. Kept BELOW the effects so the hook order is stable.
+  //
+  // The not-found verdict waits for the load to settle. Ruling immediately
+  // would flash this page for a destination that is in the API but not yet
+  // in the bundle, then swap in real content — the same class of bug,
+  // reappearing in the other direction. The wait only ever affects slugs
+  // that are genuinely missing; the seven real destinations all resolve
+  // from the bundle on the first frame and never reach this branch.
+  //
+  // Returning `null` while undecided, rather than falling through to the
+  // hero below, is what stops `destination.image` being read off undefined.
   if (!destination) {
-    return <NotFoundPage />;
+    return isSettled() ? <NotFoundPage /> : null;
   }
 
   return (
-    <main className="destination-detail">
+    <main className="destination-detail" id="main-content" tabIndex={-1}>
       {/* =========================
           LOCKED DESTINATION HERO
           ========================= */}

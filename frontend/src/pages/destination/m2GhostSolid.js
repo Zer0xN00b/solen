@@ -1,6 +1,6 @@
 /**
  * Animation 02 — M2 Ghost → Solid Ink-In (reversible).
- * Spec: docs/MOTION_ANALYSIS.md (M2) · Handoff: user module, 2026-09-18.
+ * Spec: docs-backup/MOTION_ANALYSIS.md (M2) · Handoff: user module, 2026-09-18.
  *
  * Trigger: IntersectionObserver toggles `.is-materialized` as each
  * `.m2-title` enters/leaves the viewport — reversible, tied to normal

@@ -210,7 +210,7 @@
 }
 
 .destination-experience-item > span:first-child {
-  color: #8fa8b8;
+  color: var(--mist);
   font-size: 0.72rem;
   letter-spacing: 0.08em;
 }
@@ -248,8 +248,10 @@
   color: #faf7f1;
 }
 
+/* On plum — the original light mist, which passes ~5.6:1 here; the
+   darkened text token would fail on this ground. */
 .destination-plan .destination-detail-label {
-  color: #8fa8b8;
+  color: var(--mist-light);
 }
 
 .destination-plan h2 {
@@ -371,7 +373,7 @@
 
 /* ==========================================================================
    Animation 02 — M2 Ghost → Solid Ink-In
-   Spec: docs/MOTION_ANALYSIS.md (M2) · Handoff: user module, 2026-09-18.
+   Spec: docs-backup/MOTION_ANALYSIS.md (M2) · Handoff: user module, 2026-09-18.
    Tokens come from styles/motion.css (not redefined here, per R1).
    One unified title, one transition — no word-splitting (that's M3).
    Design (typography / colour / layout) untouched.

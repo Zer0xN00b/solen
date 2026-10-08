@@ -1,7 +1,8 @@
 /**
  * Animation 03 — M4 Horizontal Stepper (pinned, discrete pushes).
- * Spec: docs/MOTION_ANALYSIS.md (M4) · Handoff: user module, 2026-09-18
- * (rubric score 89/100 — see docs/ANIMATION_REVIEW_RUBRIC.md).
+ * Spec: docs-backup/MOTION_ANALYSIS.md (M4) · Handoff: user module, 2026-09-18
+ * (scored 89/100 against the animation review rubric — the rubric file
+ * itself was retired in the 5 Oct 2026 workspace cleanup).
  *
  * Vertical scroll position → discrete step index → one horizontal push.
  * No scroll-jacking: this only *reads* scroll position (one

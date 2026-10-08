@@ -1,17 +1,41 @@
 .solen-globe-section {
   position: relative;
   overflow: hidden;
-  padding: 150px 7vw 140px;
-  background: #f3ebdd;
-  color: #241c1d;
+  padding: 90px 7vw 80px;
+
+  /* Ambient ground — a graded haze field behind the globe. The asset
+     is a luminance-mapped duotone across the brand ramp (deep mist
+     -> mist -> oatmeal), so it reads as air for the dark sphere to
+     sit in and already ends on --oatmeal, meeting the intro chapter
+     seamlessly.
+
+     The two gradients on top are NOT decoration: they fade the top
+     and bottom edges of the photo into --oatmeal so the asset's own
+     borders never show as a seam, and so the ground still resolves
+     to the section's colour where the chips row sits. `local`
+     attachment keeps the image locked to the section while the
+     globe canvas repaints continuously — `fixed` here would force a
+     repaint of the photo on every frame of the globe's spin. */
+  background:
+    linear-gradient(180deg, var(--oatmeal) 0%, rgba(243, 235, 221, 0) 22%),
+    linear-gradient(0deg, var(--oatmeal) 0%, rgba(243, 235, 221, 0) 18%),
+    radial-gradient(ellipse 60% 50% at 50% 42%, var(--wash-mist), transparent 72%),
+    var(--ambient-globe) center / cover no-repeat,
+    var(--oatmeal);
+  color: var(--ink);
 }
 
+/* Section 02 now, not 05 — it sits directly under the hero. The
+   tighter top padding owns the beat; the hero above it already
+   fills a screen, so a full section rhythm here would push the
+   globe itself below the fold, which is the exact problem this
+   move is meant to fix. */
 .solen-globe-heading {
   display: grid;
   grid-template-columns: 1fr 1.35fr;
   gap: 70px;
   max-width: 1300px;
-  margin: 0 auto 80px;
+  margin: 0 auto 34px;
 }
 
 .solen-globe-label {
@@ -26,15 +50,15 @@
 }
 
 .solen-globe-label span {
-  color: #8fa8b8;
+  color: var(--mist);
 }
 
 .solen-globe-heading-copy h2 {
   margin: 0;
 
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(3rem, 5vw, 5.3rem);
-  line-height: 0.92;
+  font-size: clamp(2.4rem, 3.6vw, 3.9rem);
+  line-height: 0.94;
   font-weight: 500;
 }
 
@@ -49,7 +73,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 0.9rem;
   line-height: 1.8;
-  color: rgba(36, 28, 29, 0.62);
+  color: rgba(36, 28, 29, 0.65);
 }
 
 /* --- stage: the globe owns the full width now --- */
@@ -62,13 +86,20 @@
 .solen-globe-canvas {
   position: relative;
 
-  width: min(760px, 92vw);
+  /* Sized against BOTH axes so the globe fits a laptop screen
+     without scrolling. 760px was fine when this section sat below
+     the 340vh stepper, but directly under the hero it has to fit
+     in what's left of the first screen. vh keeps it inside a short
+     window; the px cap keeps it from ballooning on a tall display. */
+  width: min(760px, 92vw, 62vh);
   aspect-ratio: 1;
 
-  border-radius: 14px;
   overflow: hidden;
 
-  box-shadow: 0 35px 90px rgba(36, 28, 29, 0.18);
+  /* Kept as the documented globe-panel shadow exception, softened a
+     touch: the ambient wash now sits behind the sphere, so the old
+     0.18 drop read slightly heavy against the cool pool. */
+  box-shadow: 0 35px 90px rgba(36, 28, 29, 0.14);
 }
 
 .solen-globe-canvas canvas {
@@ -123,7 +154,6 @@
 .solen-globe-destination-label:focus-visible {
   outline: 1px solid rgba(250, 247, 241, 0.7);
   outline-offset: 2px;
-  border-radius: 4px;
 }
 
 /* --- hover preview card at the foot of the stage --- */
@@ -142,7 +172,6 @@
 
   background: rgba(20, 12, 20, 0.88);
   border: 1px solid rgba(250, 247, 241, 0.16);
-  border-radius: 10px;
 
   animation: solen-preview-in 450ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 
@@ -153,8 +182,6 @@
   width: 92px;
   height: 92px;
   object-fit: cover;
-
-  border-radius: 6px;
 
   flex: none;
 }
@@ -208,7 +235,7 @@
   gap: 10px 14px;
 
   max-width: 900px;
-  margin: 55px auto 0;
+  margin: 30px auto 0;
 }
 
 .solen-globe-chips button {
@@ -222,7 +249,7 @@
   font-size: 0.66rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(36, 28, 29, 0.62);
+  color: rgba(36, 28, 29, 0.65);
 
   cursor: pointer;
 
@@ -247,17 +274,17 @@
 
 @media (max-width: 900px) {
   .solen-globe-section {
-    padding: 100px 6vw;
+    padding: 70px 6vw 64px;
   }
 
   .solen-globe-heading {
     grid-template-columns: 1fr;
-    gap: 35px;
-    margin-bottom: 55px;
+    gap: 28px;
+    margin-bottom: 34px;
   }
 
   .solen-globe-canvas {
-    width: min(620px, 92vw);
+    width: min(620px, 92vw, 58vh);
   }
 
   .solen-globe-preview-card {
@@ -269,15 +296,17 @@
 
 @media (max-width: 560px) {
   .solen-globe-section {
-    padding: 80px 6vw 100px;
+    padding: 56px 6vw 60px;
   }
 
   .solen-globe-heading-copy h2 {
-    font-size: 3.2rem;
+    font-size: 2.5rem;
   }
 
   .solen-globe-canvas {
-    width: 94vw;
+    /* vh still in the list: on a short phone the width alone would
+       push the globe below the fold. */
+    width: min(94vw, 54vh);
   }
 
   .solen-globe-destination-label {

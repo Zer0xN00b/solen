@@ -30,7 +30,11 @@ export const auth = betterAuth({
   // The Vite dev server (and sandbox previews) call the API same-origin
   // through the /api proxy, but browsers still send an Origin header that
   // Better Auth's CSRF check validates against this list.
-  trustedOrigins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'https://*.e2b.app'],
+  //
+  // Derived from the frontend dev port rather than hardcoded: the port is
+  // pinned in frontend/vite.config.js and the two must agree, or every
+  // sign-in fails with a CSRF origin error.
+  trustedOrigins: env.trustedOrigins,
 
   session: {
     expiresIn: 60 * 60 * 24 * 30, // 30 days

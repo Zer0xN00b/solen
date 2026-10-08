@@ -1,6 +1,6 @@
 /**
  * Animation 01 — Hero headline per-word blur-in (M3).
- * Spec: docs/MOTION_ANALYSIS.md (M3) · Handoff: user prototype, 2026-09-17.
+ * Spec: docs-backup/MOTION_ANALYSIS.md (M3) · Handoff: user prototype, 2026-09-17.
  *
  * Responsibility (and only this): add `.is-revealed` to the hero headline
  * so the co-located CSS in HomePage.css resolves each word from
