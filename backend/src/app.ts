@@ -10,6 +10,23 @@ import { notFound } from './middleware/notFound.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { env, backendRoot } from './config/env.js';
 
+/**
+ * Default export for Vercel's Express auto-detection.
+ *
+ * Vercel scans fixed candidate paths (app, index, server, src/app, …)
+ * and ignores the services-mode `entrypoint` hint — the previous deploy
+ * proved it: it compiled THIS file to /var/task/app.js and crashed on
+ * `import` (resolved as CJS). So instead of fighting discovery, this
+ * module IS the entrypoint: it builds the serverless-safe app (no
+ * boot-time migration — N concurrent cold starts would race on
+ * __drizzle_migrations; migrate explicitly at deploy time) and default
+ * exports it, which is the shape Vercel's Node runtime routes requests
+ * to. Local dev and Docker still boot via server.ts → createApp().
+ */
+const app = createApp();
+
+export default app;
+
 export function createApp() {
   const app = express();
 
