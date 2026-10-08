@@ -20,6 +20,7 @@
     },
     "api": {
       "root": "backend",
+      "entrypoint": "src/app.ts",
       "functions": {
         "src/app.ts": { "maxDuration": 30, "includeFiles": "drizzle/**" }
       }
