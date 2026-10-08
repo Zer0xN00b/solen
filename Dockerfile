@@ -15,9 +15,9 @@
 FROM node:22-slim AS deps
 WORKDIR /app
 
-# better-sqlite3 is native. A toolchain in THIS layer means a platform with
-# no matching prebuilt binary can still compile it, instead of failing the
-# build with an opaque "Cannot find module" much later.
+# libSQL ships prebuilt native binaries, but a toolchain in THIS layer
+# means a platform quirk can still be worked around at build time
+# instead of failing with an opaque "Cannot find module" much later.
 RUN apt-get update \
   && apt-get install -y --no-install-recommends python3 make g++ ca-certificates \
   && rm -rf /var/lib/apt/lists/*
@@ -64,8 +64,9 @@ COPY --from=backend-build /app/backend/dist ./backend/dist
 COPY --from=backend-build /app/backend/drizzle ./backend/drizzle
 COPY --from=frontend-build /app/frontend/dist ./frontend/dist
 
-# The SQLite file lives on a mounted volume; the directory must exist and be
-# writable by the unprivileged user before the process starts.
+# The local libSQL file lives on a mounted volume; the directory must exist
+# and be writable by the unprivileged user before the process starts.
+# (Remote Turso mode needs no volume — DB_URL + DB_AUTH_TOKEN instead.)
 RUN mkdir -p /app/backend/data && chown -R node:node /app
 
 USER node

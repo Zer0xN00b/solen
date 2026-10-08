@@ -26,7 +26,6 @@
     "node": ">=20"
   },
   "allowScripts": {
-    "better-sqlite3": true,
     "esbuild": true,
     "@prisma/client": true
   },

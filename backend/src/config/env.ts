@@ -26,6 +26,14 @@ export const env = {
     ? path.resolve(process.cwd(), process.env.DB_FILE)
     : path.join(backendRoot, 'data', 'solen.db'),
 
+  // Remote libSQL (Turso) endpoint. When set, the app talks to it instead
+  // of the local file (see database/db.ts) — that is what makes the same
+  // codebase deployable to serverless platforms (Vercel), where there is
+  // no writable disk. Unset → local file, development unchanged.
+  dbUrl: process.env.DB_URL || '',
+  // Auth token for the remote endpoint. Required by Turso when DB_URL is set.
+  dbAuthToken: process.env.DB_AUTH_TOKEN || '',
+
   // Better Auth (scope doc §47) — secret signs session tokens, URL is the
   // API's own base URL (the frontend reaches it through the Vite /api proxy).
   betterAuthSecret: requireSecret('BETTER_AUTH_SECRET'),

@@ -90,7 +90,9 @@ Copy `.env.example` → `.env`. Required variables:
 | Variable             | Purpose                                        |
 | -------------------- | ---------------------------------------------- |
 | `PORT`               | API port (default 4000)                        |
-| `DB_FILE`            | SQLite file (default `./data/solen.db`)        |
+| `DB_FILE`            | local libSQL file (default `./data/solen.db`) — ignored when `DB_URL` is set |
+| `DB_URL`             | remote libSQL (Turso) endpoint — when set, the file above is unused |
+| `DB_AUTH_TOKEN`      | auth token for `DB_URL` (required by Turso)    |
 | `BETTER_AUTH_SECRET` | signs session tokens — generate a long random string |
 | `BETTER_AUTH_URL`    | the API's own base URL                         |
 | `FRONTEND_PORT`      | frontend dev port, default `5199` — **must match** the port pinned in `frontend/vite.config.js`, or sign-in fails with a CSRF origin error |
@@ -145,5 +147,6 @@ marker and managed through normal drizzle migrations.
 - **Drizzle ORM** — typed queries + SQL migrations; the Better Auth
   drizzle adapter supports SQLite and PostgreSQL alike, keeping the
   scope doc's long-term Postgres migration straightforward.
-- **SQLite (better-sqlite3)** — zero-setup local database for this
-  workspace; schema designed to stay portable.
+- **libSQL (`@libsql/client`, SQLite dialect)** — zero-setup local database
+  (`file:` URL, same folder as before); set `DB_URL` + `DB_AUTH_TOKEN` to
+  point at Turso for production/serverless. Schema designed to stay portable.
