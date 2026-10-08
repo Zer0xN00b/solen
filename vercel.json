@@ -20,10 +20,8 @@
     },
     "api": {
       "root": "backend",
-      "entrypoint": "api/index.mjs",
-      "buildCommand": "npm run build",
       "functions": {
-        "api/index.mjs": { "maxDuration": 30, "includeFiles": "drizzle/**" }
+        "src/app.ts": { "maxDuration": 30, "includeFiles": "drizzle/**" }
       }
     }
   },
