@@ -13,10 +13,13 @@ import { env, backendRoot } from './config/env.js';
 /**
  * Default export for Vercel's Express auto-detection.
  *
- * Vercel scans fixed candidate paths (app, index, server, src/app, …)
- * and ignores the services-mode `entrypoint` hint — the previous deploy
- * proved it: it compiled THIS file to /var/task/app.js and crashed on
- * `import` (resolved as CJS). So instead of fighting discovery, this
+ * Vercel scans fixed candidate paths (app, index, server, src/app, … —
+ * `.mts` included) and bundles the entrypoint to /var/task/app.js, which
+ * Node loads WITHOUT consulting backend/package.json "type": "module"
+ * (that boundary doesn't survive bundling) — so a `.ts` entry always
+ * crashes with `Cannot use import statement outside a module`. The `.mts`
+ * extension forces always-ESM output, which is the entire point of this
+ * filename. So instead of fighting discovery, this
  * module IS the entrypoint: it builds the serverless-safe app (no
  * boot-time migration — N concurrent cold starts would race on
  * __drizzle_migrations; migrate explicitly at deploy time) and default

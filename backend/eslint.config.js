@@ -13,7 +13,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['**/*.ts'],
+    files: ['**/*.ts', '**/*.mts', '**/*.cts'],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     languageOptions: {
       globals: { ...globals.node },

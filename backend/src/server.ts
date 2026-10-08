@@ -1,6 +1,6 @@
 import http from 'node:http';
 import { migrate } from 'drizzle-orm/libsql/migrator';
-import { createApp } from './app.js';
+import { createApp } from './app.mjs';
 import { env } from './config/env.js';
 import { db, migrationsFolder } from './database/db.js';
 

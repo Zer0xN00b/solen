@@ -20,9 +20,9 @@
     },
     "api": {
       "root": "backend",
-      "entrypoint": "src/app.ts",
+      "entrypoint": "src/app.mts",
       "functions": {
-        "src/app.ts": { "maxDuration": 30, "includeFiles": "drizzle/**" }
+        "src/app.mts": { "maxDuration": 30, "includeFiles": "drizzle/**" }
       }
     }
   },
