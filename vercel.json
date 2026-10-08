@@ -20,7 +20,7 @@
     },
     "api": {
       "root": "backend",
-      "framework": "express",
+      "entrypoint": "api/index.mjs",
       "buildCommand": "npm run build",
       "functions": {
         "api/index.mjs": { "maxDuration": 30, "includeFiles": "drizzle/**" }
