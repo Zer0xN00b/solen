@@ -1,23 +1,31 @@
 # SOLEN — Vercel deploy runbook (single full-stack project)
 
-This repo deploys to Vercel as **one project**: static frontend +
-serverless API. `vercel.json` at the repo root is the whole contract:
+This repo deploys to Vercel as **one project with two services**
+(`services` mode). `vercel.json` at the repo root is the whole contract:
 
-- `outputDirectory: frontend/dist` — the Vite build.
-- rewrite `/api/:path* → /api/index` — the Express app compiled to
-  `backend/dist/api/vercel.js`, wrapped by `api/index.mjs`.
-- rewrite `/(.*) → /index.html` — React Router fallback.
+- `web` (root `frontend/`, framework `vite`) — builds `vite build` to
+  `dist`, serves the SPA. Its own `rewrites: /(.*) → /index.html` is the
+  React Router fallback; headers cache fingerprinted assets immutably.
+- `api` (root `backend/`, framework `express`) — builds `tsc`, serves
+  the Express app via `api/index.mjs`, which imports the compiled
+  `dist/api/vercel.js`. `includeFiles: drizzle/**` ships migrations
+  alongside the function (serverless never migrates on boot).
+- Top-level `rewrites` route public traffic: `/api/:path* → api`
+  service, everything else → `web` service.
+
+No `bindings` between services: the browser calls both over the same
+public origin (`/api/*` is same-origin fetch with httpOnly cookies) —
+the frontend never calls the backend server-to-server, and the backend
+never calls the frontend. There is nothing to bind.
 
 ## 0. Pre-requisites
 
 - Vercel account, repo connected (Import Project from GitHub).
 - Turso account (free tier is fine) + Turso CLI **or** dashboard access.
-- Vercel Build settings (should be auto-detected from `vercel.json`,
-  verify they match):
-  - Build Command: `npm run build -w frontend && npm run build -w backend`
-  - Output Directory: `frontend/dist`
-  - Install Command: default (`npm ci` — leave as-is)
-  - Root Directory: repo root (leave as `.`)
+- Vercel Build settings: each service builds itself (`web`:
+  `npm run build` in `frontend/`, `api`: `npm run build` in
+  `backend/`) — no dashboard overrides needed. Root Directory: repo
+  root (leave as `.`).
 
 ## 1. Provision Turso (once)
 
@@ -119,4 +127,4 @@ zero-config single-file deploy for a stateful Express + DB backend.
 | `no such table` / empty data | migrations never ran against Turso | Step 2 |
 | Everyone rate-limited at once | `TRUST_PROXY` unset | Set to `1` |
 | Preview URL auth fails, prod works | preview origin untrusted | Append preview URL to `TRUSTED_ORIGINS_EXTRA` |
-| `/api/*` returns HTML | rewrite missing / `api/index.mjs` not deployed | Ensure `vercel.json` + `api/` are committed |
+| `/api/*` returns HTML | rewrite missing / `backend/api/index.mjs` not deployed | Ensure `vercel.json` + `backend/api/` are committed |
