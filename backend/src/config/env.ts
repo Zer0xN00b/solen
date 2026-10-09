@@ -56,6 +56,14 @@ export const env = {
   // in development so local IP spoofing can't quietly disable limiting.
   trustProxy: process.env.TRUST_PROXY || '',
 
+  // Set CROSS_SITE_COOKIES=true when the frontend and backend are on
+  // different sites (e.g. split hosting). Makes session cookies
+  // SameSite=None; Secure so browsers send them on cross-site requests.
+  // Default (unset/false) keeps the safer SameSite=Lax behaviour.
+  crossSiteCookies: ['true', '1'].includes(
+    (process.env.CROSS_SITE_COOKIES || '').trim().toLowerCase(),
+  ),
+
   trustedOrigins: [
     `http://localhost:${frontendPort}`,
     `http://127.0.0.1:${frontendPort}`,
