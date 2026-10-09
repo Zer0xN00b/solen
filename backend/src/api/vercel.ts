@@ -1,4 +1,4 @@
-import { createApp } from '../app.mjs';
+import { createApp } from '../app.js';
 
 /**
  * Serverless-safe Express factory for Vercel.
