@@ -6,7 +6,7 @@
   "description": "SOLEN API — Express + Drizzle + Better Auth + SQLite (scope doc §43-58)",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc && node scripts/bundle.mjs",
+    "build": "tsc",
     "start": "node dist/server.js",
     "lint": "eslint .",
     "db:generate": "drizzle-kit generate",
@@ -33,7 +33,6 @@
     "@types/express": "^5.0.3",
     "@types/node": "^24.0.0",
     "drizzle-kit": "^0.31.1",
-    "esbuild": "^0.28.2",
     "eslint": "^10.9.0",
     "globals": "^17.11.0",
     "tsx": "^4.20.3",

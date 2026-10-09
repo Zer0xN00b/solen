@@ -1,0 +1,20 @@
+# Build context for backend/Dockerfile is the repo ROOT (required for npm
+# workspaces — see the comment at the top of backend/Dockerfile). Without
+# this file, Docker uploads node_modules, frontend/, docs/, and .env files
+# into every build: slower, and .env would leave your machine unnecessarily.
+
+node_modules
+**/node_modules
+.git
+frontend
+docs
+docs-backup
+backend/dist
+backend/build
+backend/data
+.env
+.env.*
+!.env.example
+*.db
+*.db-*
+.probe.db

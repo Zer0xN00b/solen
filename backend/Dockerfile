@@ -1,20 +1,31 @@
-# Backend only — deploy this service on Railway / Render / Fly, etc.
-# Builds with tsc (dist/) and runs the long-lived server (src/server.ts),
-# NOT the Vercel bundle (backend/index.mjs + build/app.mjs), which is for
-# Vercel's serverless function and is unrelated to this image.
+# Backend only — deploy on Railway / Render / Fly, etc.
+#
+# IMPORTANT: this repo uses npm workspaces, so there is ONE package-lock.json
+# at the repo ROOT, not one inside backend/. That means:
+#   - the Docker BUILD CONTEXT must be the repo root, not backend/
+#   - Railway: Settings -> Root Directory must be EMPTY/"." (the repo root),
+#     NOT "backend" — Root Directory controls the build context, and setting
+#     it to backend/ is exactly what broke `npm ci` (no lockfile to find).
+#   - `npm ci -w backend` installs ONLY backend's deps, using the root
+#     lockfile, which is what workspaces are for.
+#
+# Builds with tsc (backend/dist/) and runs the long-lived server
+# (backend/src/server.ts) — NOT the old Vercel bundle, which is unrelated.
 FROM node:20-slim AS build
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npx tsc
+COPY package.json package-lock.json ./
+COPY backend/package.json ./backend/package.json
+RUN npm ci -w backend
+COPY backend ./backend
+RUN npm run build -w backend
 
 FROM node:20-slim
 WORKDIR /app
 ENV NODE_ENV=production
-COPY package*.json ./
-RUN npm ci --omit=dev
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/drizzle ./drizzle
+COPY package.json package-lock.json ./
+COPY backend/package.json ./backend/package.json
+RUN npm ci -w backend --omit=dev
+COPY --from=build /app/backend/dist ./backend/dist
+COPY --from=build /app/backend/drizzle ./backend/drizzle
 EXPOSE 4000
-CMD ["node", "dist/server.js"]
+CMD ["node", "backend/dist/server.js"]
