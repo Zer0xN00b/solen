@@ -1,11 +1,18 @@
 /**
  * SOLEN API client.
  *
- * Thin, dependency-free wrapper over the backend. Every call goes to a
- * relative `/api/...` URL so the Vite dev server proxies it to
- * localhost:4000 (see vite.config.js) — that keeps the browser on one
- * origin, which is what lets the httpOnly session cookie just work with
- * no CORS setup and no token in JS.
+ * Thin, dependency-free wrapper over the backend. By default every call
+ * goes to a relative `/api/...` URL so the Vite dev server proxies it to
+ * localhost:4000 (see vite.config.js), keeping frontend and backend on one
+ * origin with no CORS setup.
+ *
+ * When frontend and backend are deployed on DIFFERENT domains (e.g.
+ * frontend on Vercel, backend on Railway/Render), set VITE_API_BASE at
+ * build time to the backend's full URL, e.g.
+ *   VITE_API_BASE=https://solen-api.up.railway.app/api
+ * and add the frontend's deployed origin to the backend's
+ * TRUSTED_ORIGINS_EXTRA env var, or sign-in will fail with a CORS/origin
+ * error.
  *
  * `credentials: 'include'` is required on every request. Without it the
  * session cookie is not attached and the user silently reads as signed
@@ -13,7 +20,7 @@
  * setup, so it is set centrally here rather than at each call site.
  */
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_BASE || '/api';
 
 async function request(path, { method = 'GET', body } = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
