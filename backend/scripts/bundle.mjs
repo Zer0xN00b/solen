@@ -4,8 +4,9 @@
 // and its sibling modules as CommonJS, which makes Node's ESM linker reject
 // named imports ("does not provide an export named ...") and crashes the
 // whole function on boot. A single pre-bundled .mjs file has no sibling
-// modules and no format to disagree about. npm packages stay external
-// (Vercel installs and traces them from node_modules as usual).
+// modules and no format to disagree about. CJS is not an option: db.ts uses
+// a top-level await, which CommonJS cannot support. npm packages stay
+// external (Vercel installs and traces them from node_modules as usual).
 import { build } from 'esbuild';
 
 await build({

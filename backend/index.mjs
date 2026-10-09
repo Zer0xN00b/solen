@@ -1,6 +1,5 @@
-// Vercel entrypoint for the api service. Thin on purpose: the real app is
-// bundled into build/app.mjs by `npm run build` (scripts/bundle.mjs).
-// .mjs is always ESM, so there is no module-format guesswork.
+// Vercel entrypoint for the api service. .mjs is ALWAYS ESM to Node,
+// regardless of any "type" field or framework auto-detection elsewhere in
+// the build — the real app is bundled into build/app.mjs (scripts/bundle.mjs).
 import app from './build/app.mjs';
-
 export default app;
