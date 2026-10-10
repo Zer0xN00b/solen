@@ -1,5 +1,6 @@
 import express from 'express';
 import helmet from 'helmet';
+import cors from 'cors';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { toNodeHandler } from 'better-auth/node';
@@ -30,6 +31,12 @@ const app = createApp();
 
 export default app;
 
+// Escapes everything RegExp-special EXCEPT '*', which trustedOriginPatterns
+// (above) splits on first and turns into '.*' itself.
+function escapeRegExp(segment: string): string {
+  return segment.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export function createApp() {
   const app = express();
 
@@ -48,6 +55,37 @@ export function createApp() {
   if (isProduction) {
     app.use(helmet());
   }
+
+  // CORS. Frontend and backend can be on different origins (e.g. frontend
+  // on Vercel, backend on Railway/Render) — single-origin deployment
+  // through serveClientBuild() below still works too, where this is simply
+  // a no-op match on the one origin in play.
+  //
+  // Reuses env.trustedOrigins (the same list Better Auth's own CSRF check
+  // already validates against), with '*' wildcard support since that list
+  // contains entries like 'https://*.e2b.app'.
+  //
+  // credentials: true is required for the httpOnly session cookie to be
+  // sent/received cross-origin at all; it also means origin can never be
+  // '*' (the spec forbids combining the two), hence the explicit matcher.
+  // Placed before every route, including /api/auth, so the browser's
+  // preflight OPTIONS request is answered rather than falling through to
+  // a 404 (which has no CORS headers, so the browser blocks the real
+  // request before it is ever sent).
+  const trustedOriginPatterns = env.trustedOrigins.map(
+    (pattern) => new RegExp(`^${pattern.split('*').map(escapeRegExp).join('.*')}$`),
+  );
+
+  app.use(
+    cors({
+      origin(origin, callback) {
+        // No Origin header = same-origin request (e.g. curl, a server,
+        // or the SPA served by this same process) — always allowed.
+        callback(null, !origin || trustedOriginPatterns.some((re) => re.test(origin)));
+      },
+      credentials: true,
+    }),
+  );
 
   // Better Auth BEFORE express.json(): its handler reads the raw request
   // body itself, so the JSON parser must not consume it first.
